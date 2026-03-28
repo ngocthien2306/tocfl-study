@@ -58,6 +58,37 @@ export const T = {
   // ── Loading / Errors ───────────────────────────────────────────────────────
   loading:        { vi: 'Đang tải dữ liệu…',  zh: '載入資料中…',  en: 'Loading data…'    },
   error_load:     { vi: 'Lỗi tải dữ liệu',    zh: '載入資料錯誤', en: 'Failed to load data' },
+
+  // ── Reading module ─────────────────────────────────────────────────────────
+  read_band_label:    { vi: 'Band',             zh: '級別',          en: 'Band'              },
+  read_part_label:    { vi: 'Phần',             zh: '部分',          en: 'Part'              },
+  read_session_stat:  { vi: 'Phiên này',        zh: '本次練習',      en: 'Session'           },
+  read_correct_of:    { vi: 'đúng',             zh: '正確',          en: 'correct'           },
+  read_q_of:          { vi: 'Câu',              zh: '題',            en: 'Q'                 },
+  read_check:         { vi: 'Kiểm tra',         zh: '確認',          en: 'Check'             },
+  read_next_q:        { vi: 'Câu tiếp →',       zh: '下一題 →',      en: 'Next →'            },
+  read_correct_msg:   { vi: '✓ Chính xác!',     zh: '✓ 正確！',      en: '✓ Correct!'        },
+  read_wrong_msg:     { vi: '✗ Sai. Đáp án đúng:', zh: '✗ 錯誤。正確答案：', en: '✗ Wrong. Correct answer:' },
+  read_no_q:          { vi: 'Không có câu hỏi.', zh: '沒有題目。',   en: 'No questions.'     },
+
+  // Reading: Part labels (short, for filter chips in ReadingModule)
+  read_part3_label:   { vi: 'Phần 3 — Điền từ',       zh: '第三部分 — 選詞填空',  en: 'Part 3 — Gap Fill'    },
+  read_part4_label:   { vi: 'Phần 4 — Cloze',         zh: '第四部分 — 完形填空',  en: 'Part 4 — Cloze'       },
+  read_part5_label:   { vi: 'Phần 5 — Đọc hiểu',      zh: '第五部分 — 閱讀理解',  en: 'Part 5 — Reading'     },
+  read_part1_label:   { vi: 'Phần 1 — Điền từ',       zh: '第一部分 — 選詞填空',  en: 'Part 1 — Gap Fill'    },
+  read_part2_label:   { vi: 'Phần 2 — Đọc hiểu',      zh: '第二部分 — 閱讀理解',  en: 'Part 2 — Reading'     },
+
+  // Reading: Cloze
+  cloze_title:        { vi: 'Hoàn thiện đoạn văn',    zh: '完形填空',             en: 'Complete the Passage' },
+  cloze_check:        { vi: 'Kiểm tra',               zh: '提交',                 en: 'Check'                },
+  cloze_redo:         { vi: 'Làm lại',                zh: '重做',                 en: 'Redo'                 },
+  cloze_hint:         { vi: '💡 Nhấn vào ô trống để xoay vòng đáp án', zh: '💡 點擊空格循環切換答案', en: '💡 Tap blank to cycle answers' },
+  cloze_perfect:      { vi: '✓ Hoàn hảo!',            zh: '✓ 滿分！',             en: '✓ Perfect!'           },
+  cloze_score:        { vi: 'Đúng',                   zh: '答對',                 en: 'Correct'              },
+  cloze_blanks:       { vi: 'ô.',                     zh: '格。',                 en: 'blanks.'              },
+  cloze_answers:      { vi: 'Đáp án:',                zh: '答案：',               en: 'Answers:'             },
+  cloze_section_label:{ vi: 'Band A · Phần 4 — Cloze', zh: 'A級 · 第四部分 — 完形填空', en: 'Band A · Part 4 — Cloze' },
+  cloze_passage_n:    { vi: 'Bài',                    zh: '段落',                 en: 'Passage'              },
 } as const;
 
 export type TKey = keyof typeof T;

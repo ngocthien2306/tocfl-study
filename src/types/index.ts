@@ -88,10 +88,13 @@ export interface BandBReading {
   part2: ExamPart2B & { image_dir?: string; image_passages?: ImagePassage[] };
 }
 
+export type ExamKey = 'exam1' | 'exam2' | 'exam3';
+
 export interface ExamData {
-  bandA: { exam1: { title: string; reading: BandAReading } };
+  bandA: Record<ExamKey, { title: string; reading: BandAReading }>;
   bandB: { exam1: { title: string; reading: BandBReading } };
 }
+
 
 // ─── Progress / storage ───────────────────────────────────────────────────────
 export interface ExamRecord {
@@ -183,7 +186,7 @@ export interface ListeningExam {
 }
 
 export interface ListeningData {
-  bandA: { exam1: ListeningExam };
+  bandA: Record<ExamKey, ListeningExam>;
   bandB: { exam1: ListeningExam };
 }
 

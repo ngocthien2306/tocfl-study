@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef, useMemo } from 'react';
-import type { ListeningData, ListeningExam, ListeningQuestion, OptionKey } from '../../types';
+import type { ListeningData, ListeningExam, ListeningQuestion, OptionKey, ExamKey } from '../../types';
 import { useLang } from '../../i18n/LangContext';
 
 interface Props {
@@ -207,13 +207,14 @@ type Phase = 'select' | 'exam' | 'result';
 export const ListeningModule: React.FC<Props> = ({ listeningData }) => {
   const { lang } = useLang();
   const [band, setBand] = useState<'A' | 'B'>('A');
+  const [examKey, setExamKey] = useState<ExamKey>('exam1');
   const [phase, setPhase] = useState<Phase>('select');
   const [qIdx, setQIdx] = useState(0);
   const [answers, setAnswers] = useState<Record<number, OptionKey>>({});
   const [timerRunning, setTimerRunning] = useState(false);
 
   const exam: ListeningExam = band === 'A'
-    ? listeningData.bandA.exam1
+    ? (listeningData.bandA[examKey] ?? listeningData.bandA.exam1)
     : listeningData.bandB.exam1;
 
   const flat = useMemo(() => buildFlat(exam), [exam]);
@@ -258,10 +259,17 @@ export const ListeningModule: React.FC<Props> = ({ listeningData }) => {
   // ── Select phase ────────────────────────────────────────────────────────────
   if (phase === 'select') {
     const lbl = {
-      vi: { title: 'Thi Nghe TOCFL', sub: 'Chọn band và bắt đầu · Đếm giờ 60 phút', start: 'Bắt đầu →', bandA: 'Band A · 50 câu', bandB: 'Band B · 50 câu' },
-      zh: { title: 'TOCFL 聽力測驗', sub: '選擇程度並開始 · 計時60分鐘', start: '開始考試 →', bandA: 'A級 · 50題', bandB: 'B級 · 50題' },
-      en: { title: 'TOCFL Listening Exam', sub: 'Choose band and start · 60-minute timer', start: 'Start →', bandA: 'Band A · 50 q', bandB: 'Band B · 50 q' },
+      vi: { title: 'Thi Nghe TOCFL', sub: 'Chọn band và đề thi · Đếm giờ 60 phút', start: 'Bắt đầu →' },
+      zh: { title: 'TOCFL 聽力測驗', sub: '選擇程度與試題 · 計時60分鐘', start: '開始考試 →' },
+      en: { title: 'TOCFL Listening Exam', sub: 'Choose band & exam · 60-minute timer', start: 'Start →' },
     }[lang];
+
+    const examLabels: Record<ExamKey, Record<string, string>> = {
+      exam1: { vi: 'Đề 1', zh: '第1套', en: 'Exam 1' },
+      exam2: { vi: 'Đề 2', zh: '第2套', en: 'Exam 2' },
+      exam3: { vi: 'Đề 3', zh: '第3套', en: 'Exam 3' },
+    };
+    const availableBandAExams = Object.keys(listeningData.bandA) as ExamKey[];
 
     return (
       <div>
@@ -271,18 +279,35 @@ export const ListeningModule: React.FC<Props> = ({ listeningData }) => {
           <p className="text-sm text-muted">{lbl.sub}</p>
         </div>
 
-        <div style={{ display: 'flex', gap: 10, marginBottom: 16 }}>
+        {/* Band selector */}
+        <div style={{ display: 'flex', gap: 10, marginBottom: 10 }}>
           {(['A', 'B'] as const).map(b => (
             <button
               key={b}
               className={`btn ${band === b ? 'btn-primary' : 'btn-outline'}`}
-              style={{ flex: 1, minHeight: 52, fontSize: '.95rem' }}
+              style={{ flex: 1, minHeight: 48, fontSize: '.95rem' }}
               onClick={() => setBand(b)}
             >
-              {b === 'A' ? lbl.bandA : lbl.bandB}
+              Band {b}
             </button>
           ))}
         </div>
+
+        {/* Exam selector (Band A only) */}
+        {band === 'A' && availableBandAExams.length > 1 && (
+          <div style={{ display: 'flex', gap: 8, marginBottom: 14 }}>
+            {availableBandAExams.map(ek => (
+              <button
+                key={ek}
+                className={`btn btn-sm ${examKey === ek ? 'btn-primary' : 'btn-outline'}`}
+                style={{ flex: 1, minHeight: 40 }}
+                onClick={() => setExamKey(ek)}
+              >
+                {examLabels[ek][lang]}
+              </button>
+            ))}
+          </div>
+        )}
 
         {/* Exam info */}
         <div className="card card--compact mb-12">

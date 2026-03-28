@@ -1,6 +1,9 @@
 import React, { useMemo, useState } from 'react';
 import type { ExamData, FlatQuestion, Progress, OptionKey } from '../../types';
 import { ClozeQuestion } from './ClozeQuestion';
+import { useLang } from '../../i18n/LangContext';
+import type { Lang } from '../../i18n/translations';
+import { t } from '../../i18n/translations';
 
 interface Props {
   examData: ExamData;
@@ -8,24 +11,25 @@ interface Props {
   markReading: (key: string, correct: boolean) => void;
 }
 
-type Band     = 'A' | 'B';
-type PartKey  = 'part3' | 'part4' | 'part5' | 'part1' | 'part2';
+type Band    = 'A' | 'B';
+type PartKey = 'part3' | 'part4' | 'part5' | 'part1' | 'part2';
 
-const PARTS: Record<Band, { key: PartKey; label: string }[]> = {
-  A: [
-    { key: 'part3', label: 'Phần 3 — Điền từ' },
-    { key: 'part4', label: 'Phần 4 — Cloze' },
-    { key: 'part5', label: 'Phần 5 — Đọc hiểu' },
-  ],
-  B: [
-    { key: 'part1', label: 'Phần 1 — Điền từ' },
-    { key: 'part2', label: 'Phần 2 — Đọc hiểu' },
-  ],
-};
+function getPartLabel(key: PartKey, lang: Lang): string {
+  const map: Record<PartKey, string> = {
+    part1: t('read_part1_label', lang),
+    part2: t('read_part2_label', lang),
+    part3: t('read_part3_label', lang),
+    part4: t('read_part4_label', lang),
+    part5: t('read_part5_label', lang),
+  };
+  return map[key];
+}
+
+const BAND_A_PARTS: PartKey[] = ['part3', 'part4', 'part5'];
+const BAND_B_PARTS: PartKey[] = ['part1', 'part2'];
 
 function buildQuestions(band: Band, part: PartKey, data: ExamData): FlatQuestion[] {
   const out: FlatQuestion[] = [];
-
   if (band === 'A') {
     if (part === 'part3') {
       data.bandA.exam1.reading.part3.groups.forEach(g =>
@@ -61,28 +65,26 @@ function buildQuestions(band: Band, part: PartKey, data: ExamData): FlatQuestion
 interface SessionStat { correct: number; total: number }
 
 export const ReadingModule: React.FC<Props> = ({ examData, markReading }) => {
-  const [band,    setBand]    = useState<Band>('B');
-  const [part,    setPart]    = useState<PartKey>('part2');
-  const [qIdx,    setQIdx]    = useState(0);
+  const { lang } = useLang();
+  const [band,     setBand]     = useState<Band>('B');
+  const [part,     setPart]     = useState<PartKey>('part2');
+  const [qIdx,     setQIdx]     = useState(0);
   const [selected, setSelected] = useState<OptionKey | null>(null);
   const [answered, setAnswered] = useState(false);
-  const [stat,    setStat]    = useState<SessionStat>({ correct: 0, total: 0 });
+  const [stat,     setStat]     = useState<SessionStat>({ correct: 0, total: 0 });
 
   const questions = useMemo(
     () => buildQuestions(band, part, examData),
     [band, part, examData]
   );
 
-  // Special: cloze for Part 4
   const isCloze = band === 'A' && part === 'part4';
   if (isCloze) {
-    return (
-      <ClozeSection examData={examData} markReading={markReading} />
-    );
+    return <ClozeSection examData={examData} markReading={markReading} />;
   }
 
   const q = questions[qIdx];
-  if (!q) return <div className="card empty-state"><p>Không có câu hỏi.</p></div>;
+  if (!q) return <div className="card empty-state"><p>{t('read_no_q', lang)}</p></div>;
 
   function handleSelect(key: OptionKey) {
     if (answered) return;
@@ -130,30 +132,40 @@ export const ReadingModule: React.FC<Props> = ({ examData, markReading }) => {
   const prevPassage = qIdx > 0 ? questions[qIdx - 1].passage : null;
   const showPassage = !!q.passage && q.passage !== prevPassage;
 
+  const qLabel = lang === 'zh'
+    ? `第 ${qIdx + 1} / ${questions.length} 題`
+    : `${t('read_q_of', lang)} ${qIdx + 1} / ${questions.length}`;
+
+  const qNumLabel = lang === 'zh'
+    ? `第 ${q.id} 題`
+    : `${t('read_q_of', lang)} ${q.id}.`;
+
   return (
     <div>
       {/* Filters */}
       <div className="card card--compact mb-12">
         <div className="filter-group mb-8">
-          <span className="filter-label">Band</span>
-          {(['A','B'] as Band[]).map(b => (
+          <span className="filter-label">{t('read_band_label', lang)}</span>
+          {(['A', 'B'] as Band[]).map(b => (
             <button key={b} className={`chip ${band === b ? 'active' : ''}`} onClick={() => changeBand(b)}>
               Band {b}
             </button>
           ))}
         </div>
         <div className="filter-group mb-8">
-          <span className="filter-label">Phần</span>
-          {PARTS[band].map(p => (
-            <button key={p.key} className={`chip ${part === p.key ? 'active' : ''}`} onClick={() => changePart(p.key)}>
-              {p.label}
+          <span className="filter-label">{t('read_part_label', lang)}</span>
+          {(band === 'A' ? BAND_A_PARTS : BAND_B_PARTS).map(p => (
+            <button key={p} className={`chip ${part === p ? 'active' : ''}`} onClick={() => changePart(p)}>
+              {getPartLabel(p, lang)}
             </button>
           ))}
         </div>
         {stat.total > 0 && (
           <div>
             <div className="progress-row">
-              <span>Phiên này: {stat.correct}/{stat.total} đúng</span>
+              <span>
+                {t('read_session_stat', lang)}: {stat.correct}/{stat.total} {t('read_correct_of', lang)}
+              </span>
               <span>{Math.round(stat.correct / stat.total * 100)}%</span>
             </div>
             <div className="progress-track">
@@ -166,7 +178,7 @@ export const ReadingModule: React.FC<Props> = ({ examData, markReading }) => {
       {/* Q progress */}
       <div style={{ marginBottom: 10 }}>
         <div className="progress-row">
-          <span>Câu {qIdx + 1} / {questions.length}</span>
+          <span>{qLabel}</span>
           <span>{Math.round((qIdx + 1) / questions.length * 100)}%</span>
         </div>
         <div className="progress-track">
@@ -176,33 +188,29 @@ export const ReadingModule: React.FC<Props> = ({ examData, markReading }) => {
 
       {/* Question card */}
       <div className="card">
-        {/* Context note */}
         {q.context && (
           <div style={{ background: 'var(--warn-light)', border: '1px solid #fde68a', borderRadius: 'var(--radius)', padding: '8px 12px', marginBottom: 12, fontSize: '.83rem', color: 'var(--warn)' }}>
             {q.context}
           </div>
         )}
 
-        {/* Passage */}
         {showPassage && q.passage && (
           <div className="passage-box">
-            <div className="passage-label">Đoạn văn</div>
+            <div className="passage-label">{t('passage_label', lang)}</div>
             {q.passage}
           </div>
         )}
 
-        {/* Question */}
         <div className="question-header">
-          <span className="question-num">Câu {q.id}.</span>
+          <span className="question-num">{qNumLabel}</span>
           {q.question ?? q.sentence}
         </div>
 
-        {/* Options */}
         <div className="option-list">
           {(Object.entries(q.options) as [OptionKey, string][]).map(([key, text]) => {
             let cls = 'option-btn';
             if (answered) {
-              if (key === q.answer)  cls += ' correct';
+              if (key === q.answer)      cls += ' correct';
               else if (key === selected) cls += ' wrong';
             } else if (key === selected) cls += ' selected';
             return (
@@ -214,20 +222,27 @@ export const ReadingModule: React.FC<Props> = ({ examData, markReading }) => {
           })}
         </div>
 
-        {/* Feedback */}
         {answered && (
           <div className={`result-notice ${selected === q.answer ? 'correct' : 'wrong'}`}>
-            {selected === q.answer ? '✓ Chính xác!' : `✗ Sai. Đáp án đúng: (${q.answer}) ${q.options[q.answer]}`}
+            {selected === q.answer
+              ? t('read_correct_msg', lang)
+              : `${t('read_wrong_msg', lang)} (${q.answer}) ${q.options[q.answer]}`
+            }
             {q.explanation && <div className="expl">💡 {q.explanation}</div>}
           </div>
         )}
 
-        {/* Navigation */}
         <div className="flex gap-8 mt-16">
-          <button className="btn btn-outline" onClick={handlePrev} disabled={qIdx === 0}>← Trước</button>
+          <button className="btn btn-outline" onClick={handlePrev} disabled={qIdx === 0}>
+            {t('btn_prev', lang)}
+          </button>
           {!answered
-            ? <button className="btn btn-primary" onClick={handleCheck} disabled={!selected}>Kiểm tra</button>
-            : <button className="btn btn-primary" onClick={handleNext} disabled={qIdx === questions.length - 1}>Câu tiếp →</button>
+            ? <button className="btn btn-primary" onClick={handleCheck} disabled={!selected}>
+                {t('read_check', lang)}
+              </button>
+            : <button className="btn btn-primary" onClick={handleNext} disabled={qIdx === questions.length - 1}>
+                {t('read_next_q', lang)}
+              </button>
           }
         </div>
       </div>
@@ -241,6 +256,7 @@ interface ClozeProps {
   markReading: (key: string, correct: boolean) => void;
 }
 const ClozeSection: React.FC<ClozeProps> = ({ examData, markReading }) => {
+  const { lang } = useLang();
   const passages = examData.bandA.exam1.reading.part4.passages;
   const [pIdx, setPIdx] = useState(0);
   const passage = passages[pIdx];
@@ -249,15 +265,21 @@ const ClozeSection: React.FC<ClozeProps> = ({ examData, markReading }) => {
     <div>
       <div className="card card--compact mb-12">
         <div className="filter-group">
-          <span className="filter-label">Band A · Phần 4 — Cloze</span>
+          <span className="filter-label">{t('cloze_section_label', lang)}</span>
           {passages.map((_, i) => (
             <button key={i} className={`chip ${pIdx === i ? 'active' : ''}`} onClick={() => setPIdx(i)}>
-              Bài {i + 1}
+              {t('cloze_passage_n', lang)} {i + 1}
             </button>
           ))}
         </div>
       </div>
-      {passage && <ClozeQuestion key={pIdx} passage={passage} onDone={(score, total) => markReading(`A_part4_${pIdx}`, score === total)} />}
+      {passage && (
+        <ClozeQuestion
+          key={pIdx}
+          passage={passage}
+          onDone={(score, total) => markReading(`A_part4_${pIdx}`, score === total)}
+        />
+      )}
     </div>
   );
 };

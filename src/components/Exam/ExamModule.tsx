@@ -1,5 +1,5 @@
 import React, { useMemo, useState } from 'react';
-import type { ExamData, FlatQuestion, OptionKey, ExamRecord } from '../../types';
+import type { ExamData, ExamKey, FlatQuestion, OptionKey, ExamRecord } from '../../types';
 import { useTimer } from '../../hooks/useTimer';
 import { useLang } from '../../i18n/LangContext';
 
@@ -13,10 +13,11 @@ type Phase = 'select' | 'exam' | 'result';
 
 const EXAM_DURATION = 60 * 60; // 60 min
 
-function buildExamQuestions(band: 'A' | 'B', data: ExamData): FlatQuestion[] {
+function buildExamQuestions(band: 'A' | 'B', examKey: ExamKey, data: ExamData): FlatQuestion[] {
   const out: FlatQuestion[] = [];
   if (band === 'A') {
-    const r = data.bandA.exam1.reading;
+    const exam = data.bandA[examKey] ?? data.bandA.exam1;
+    const r = exam.reading;
 
     // Part 1 — image choice (select picture matching sentence)
     if (r.part1) {
@@ -91,15 +92,17 @@ export const ExamModule: React.FC<Props> = ({ examData, addExam, pastExams }) =>
   const { t } = useLang();
   const [phase, setPhase] = useState<Phase>('select');
   const [band,  setBand]  = useState<'A' | 'B'>('B');
+  const [examKey, setExamKey] = useState<ExamKey>('exam1');
   const [answers, setAnswers] = useState<Record<number, OptionKey>>({});
   const [qIdx,  setQIdx]  = useState(0);
 
-  const questions = useMemo(() => buildExamQuestions(band, examData), [band, examData]);
+  const questions = useMemo(() => buildExamQuestions(band, examKey, examData), [band, examKey, examData]);
 
   const timer = useTimer(EXAM_DURATION, () => finishExam());
 
-  function startExam(b: 'A' | 'B') {
+  function startExam(b: 'A' | 'B', ek: ExamKey) {
     setBand(b);
+    setExamKey(ek);
     setAnswers({});
     setQIdx(0);
     setPhase('exam');
@@ -114,7 +117,7 @@ export const ExamModule: React.FC<Props> = ({ examData, addExam, pastExams }) =>
     setPhase('result');
   }
 
-  if (phase === 'select') return <SelectPhase onStart={startExam} pastExams={pastExams} examData={examData} />;
+  if (phase === 'select') return <SelectPhase onStart={startExam} pastExams={pastExams} examData={examData} selectedBand={band} selectedExam={examKey} onBandChange={setBand} onExamChange={setExamKey} />;
   if (phase === 'result') return (
     <ResultPhase
       questions={questions}
@@ -263,20 +266,16 @@ export const ExamModule: React.FC<Props> = ({ examData, addExam, pastExams }) =>
 
 // ── Select phase ───────────────────────────────────────────────────────────────
 const SelectPhase: React.FC<{
-  onStart: (b: 'A' | 'B') => void;
+  onStart: (b: 'A' | 'B', ek: ExamKey) => void;
   pastExams: ExamRecord[];
   examData: ExamData;
-}> = ({ onStart, pastExams, examData }) => {
-  const { t } = useLang();
+  selectedBand: 'A' | 'B';
+  selectedExam: ExamKey;
+  onBandChange: (b: 'A' | 'B') => void;
+  onExamChange: (ek: ExamKey) => void;
+}> = ({ onStart, pastExams, examData, selectedBand, selectedExam, onBandChange, onExamChange }) => {
+  const { t, lang } = useLang();
 
-  const countA = (() => {
-    const r = examData.bandA.exam1.reading;
-    return (r.part1?.questions.length ?? 0)
-         + (r.part2?.questions.length ?? 0)
-         + r.part3.groups.reduce((s, g) => s + g.questions.length, 0)
-         + r.part4.passages.reduce((s, p) => s + p.blanks.length, 0)
-         + r.part5.passages.reduce((s, p) => s + p.questions.length, 0);
-  })();
   const countB = (() => {
     const r = examData.bandB.exam1.reading;
     const imgCount = r.part2.image_passages?.reduce((s, ip) => s + ip.questions.length, 0) ?? 0;
@@ -285,14 +284,64 @@ const SelectPhase: React.FC<{
          + imgCount;
   })();
 
+  const examLabels: Record<ExamKey, Record<string, string>> = {
+    exam1: { vi: 'Đề 1', zh: '第1套', en: 'Exam 1' },
+    exam2: { vi: 'Đề 2', zh: '第2套', en: 'Exam 2' },
+    exam3: { vi: 'Đề 3', zh: '第3套', en: 'Exam 3' },
+  };
+
+  const availableBandAExams = Object.keys(examData.bandA) as ExamKey[];
+
   return (
     <div>
       <div className="card">
         <h2 style={{ marginBottom: 6 }}>{t('exam_title')}</h2>
-        <p className="text-sm text-muted" style={{ marginBottom: 20 }}>{t('exam_subtitle')}</p>
-        <div className="flex gap-12" style={{ flexWrap: 'wrap' }}>
-          <ExamCard band="A" count={countA} parts="Phần 1 · 2 · 3 · 4 · 5" onClick={() => onStart('A')} />
-          <ExamCard band="B" count={countB} parts="Phần 1 · 2"              onClick={() => onStart('B')} />
+        <p className="text-sm text-muted" style={{ marginBottom: 16 }}>{t('exam_subtitle')}</p>
+
+        {/* Band selector */}
+        <div style={{ display: 'flex', gap: 8, marginBottom: 12 }}>
+          {(['A', 'B'] as const).map(b => (
+            <button
+              key={b}
+              onClick={() => onBandChange(b)}
+              className={`btn ${selectedBand === b ? 'btn-primary' : 'btn-outline'}`}
+              style={{ flex: 1, minHeight: 44 }}
+            >
+              Band {b}
+            </button>
+          ))}
+        </div>
+
+        {/* Exam selector (only for Band A with multiple exams) */}
+        {selectedBand === 'A' && availableBandAExams.length > 1 && (
+          <div style={{ display: 'flex', gap: 8, marginBottom: 16 }}>
+            {availableBandAExams.map(ek => (
+              <button
+                key={ek}
+                onClick={() => onExamChange(ek)}
+                className={`btn btn-sm ${selectedExam === ek ? 'btn-primary' : 'btn-outline'}`}
+                style={{ flex: 1, minHeight: 40 }}
+              >
+                {examLabels[ek][lang]}
+              </button>
+            ))}
+          </div>
+        )}
+
+        <button
+          className="btn btn-primary"
+          style={{ width: '100%', minHeight: 52, fontSize: '1rem' }}
+          onClick={() => onStart(selectedBand, selectedBand === 'A' ? selectedExam : 'exam1')}
+        >
+          {t('exam_start')}
+        </button>
+
+        <div className="flex gap-12 mt-12" style={{ flexWrap: 'wrap' }}>
+          {selectedBand === 'A' ? (
+            <ExamCard band="A" count={50} parts="Phần 1 · 2 · 3 · 4 · 5" onClick={() => onStart('A', selectedExam)} />
+          ) : (
+            <ExamCard band="B" count={countB} parts="Phần 1 · 2" onClick={() => onStart('B', 'exam1')} />
+          )}
         </div>
       </div>
 
