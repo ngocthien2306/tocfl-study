@@ -4,17 +4,19 @@ import './styles/global.css';
 import { useData }     from './hooks/useData';
 import { useProgress } from './hooks/useProgress';
 
-import { Header }         from './components/Layout/Header';
-import { Nav }            from './components/Layout/Nav';
-import type { TabId }     from './components/Layout/Nav';
-import { FlashcardModule }from './components/Flashcard/FlashcardModule';
-import { ReadingModule }  from './components/Reading/ReadingModule';
-import { ExamModule }     from './components/Exam/ExamModule';
-import { ProgressModule } from './components/Progress/ProgressModule';
+import { Header }              from './components/Layout/Header';
+import { Nav }                 from './components/Layout/Nav';
+import type { TabId }          from './components/Layout/Nav';
+import { FlashcardModule }     from './components/Flashcard/FlashcardModule';
+import { ReadingModule }       from './components/Reading/ReadingModule';
+import { ExamModule }          from './components/Exam/ExamModule';
+import { ListeningModule }     from './components/Listening/ListeningModule';
+import { ProgressModule }      from './components/Progress/ProgressModule';
+import { AIGeneratorModule }   from './components/AIGenerator/AIGeneratorModule';
 
 export default function App() {
   const [tab, setTab] = useState<TabId>('flashcard');
-  const { vocabulary, examData, loading, error } = useData();
+  const { vocabulary, examData, listeningData, loading, error } = useData();
   const { progress, markWord, markReading, addExam, resetAll } = useProgress();
 
   if (loading) return (
@@ -60,6 +62,14 @@ export default function App() {
           addExam={addExam}
           pastExams={progress.exams}
         />
+      )}
+
+      {tab === 'listening' && listeningData && (
+        <ListeningModule listeningData={listeningData} />
+      )}
+
+      {tab === 'ai' && (
+        <AIGeneratorModule />
       )}
 
       {tab === 'progress' && (

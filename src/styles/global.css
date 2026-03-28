@@ -275,34 +275,29 @@ button { cursor: pointer; font-family: inherit; }
 .badge-B2 { background: #ede9fe; color: #5b21b6; border-color: #ddd6fe; }
 
 /* ── Nav tabs ─────────────────────────────────────────────────────────────── */
-.nav-tabs {
-  display: flex;
-  border-bottom: 2px solid var(--border);
-  margin-bottom: 20px;
-  gap: 0;
-}
-.nav-tab {
-  padding: 10px 20px;
-  font-size: .875rem;
-  font-weight: 600;
-  color: var(--text-secondary);
-  background: transparent;
-  border: none;
-  border-bottom: 2px solid transparent;
-  margin-bottom: -2px;
-  transition: color .15s, border-color .15s;
-}
-.nav-tab:hover   { color: var(--text-primary); }
-.nav-tab.active  { color: var(--accent); border-bottom-color: var(--accent); }
+/* Nav is now fully inline-styled in Nav.tsx for flexibility */
+/* Hide scrollbar for tab strip */
+nav div::-webkit-scrollbar { display: none; }
+
+/* nav-tab-text: hidden on very small screens */
+.nav-tab-text { display: inline; }
 
 /* ── Header ───────────────────────────────────────────────────────────────── */
 .app-header {
-  padding: 18px 0 14px;
+  padding: 14px 0 12px;
   border-bottom: 1px solid var(--border);
-  margin-bottom: 20px;
+  margin-bottom: 12px;
+  position: sticky;
+  top: 0;
+  z-index: 110;
+  background: var(--surface);
 }
-.app-header h1 { font-size: 1.2rem; }
-.app-header p  { font-size: .82rem; color: var(--text-secondary); margin-top: 2px; }
+.app-header h1 { font-size: 1.1rem; }
+.app-header p  { font-size: .78rem; color: var(--text-secondary); margin-top: 2px; }
+
+@media (max-width: 480px) {
+  .app-header { padding: 10px 0 8px; margin-bottom: 0; }
+}
 
 /* ── Flashcard specific ───────────────────────────────────────────────────── */
 .fc-wrap { perspective: 1200px; margin: 4px 0 16px; cursor: pointer; user-select: none; }
@@ -428,9 +423,76 @@ button { cursor: pointer; font-family: inherit; }
 .empty-state p { margin-top: 8px; font-size: .9rem; }
 
 /* ── Responsive ───────────────────────────────────────────────────────────── */
-@media (max-width: 600px) {
-  .stats-row { grid-template-columns: repeat(2, 1fr); }
-  .q-grid    { grid-template-columns: repeat(8, 1fr); }
-  .nav-tab   { padding: 10px 12px; font-size: .8rem; }
+
+/* Tablet / large phone */
+@media (max-width: 640px) {
+  .app-shell { padding: 0 10px 80px; } /* bottom padding for thumb zone */
+
+  .card         { padding: 16px 16px; }
+  .card--compact{ padding: 12px 14px; }
+
+  .stats-row { grid-template-columns: repeat(3, 1fr); gap: 8px; }
+  .stat-box  { padding: 10px 8px; }
+  .stat-num  { font-size: 1.4rem; }
+
+  .btn    { padding: 9px 14px; min-height: 44px; }
+  .btn-sm { padding: 7px 12px; min-height: 38px; font-size: .8rem; }
+  .btn-lg { padding: 11px 20px; }
+
+  .option-btn { padding: 13px 12px; min-height: 48px; font-size: .875rem; }
+
+  .fc-inner  { height: 200px; }
   .fc-hanzi  { font-size: 2.8rem; }
+  .fc-pinyin { font-size: 1rem; }
+  .fc-meaning{ font-size: 1.1rem; }
+
+  .passage-box { font-size: .875rem; padding: 12px 14px; line-height: 1.8; }
+
+  .q-grid { grid-template-columns: repeat(10, 1fr); gap: 4px; }
+  .q-dot  { font-size: .65rem; }
+
+  .timer { font-size: 1.2rem; }
+
+  .score-ring { width: 80px; height: 80px; }
+  .score-ring .num { font-size: 1.4rem; }
+}
+
+/* Small phone (≤ 480px) */
+@media (max-width: 480px) {
+  html { font-size: 15px; }
+
+  .app-shell { padding: 0 8px 80px; }
+
+  .card          { padding: 14px 14px; border-radius: var(--radius); }
+  .card--compact { padding: 10px 12px; }
+
+  h1 { font-size: 1.15rem; }
+  h2 { font-size: 1rem; }
+
+  /* Nav: icon-only on tiny screens to save space */
+  .nav-tab-text   { display: none; }
+
+  .stats-row { grid-template-columns: repeat(3, 1fr); gap: 6px; }
+  .stat-box  { padding: 8px 6px; }
+  .stat-num  { font-size: 1.25rem; }
+  .stat-label{ font-size: .68rem; }
+
+  /* Q-grid: 8 columns so dots are bigger */
+  .q-grid { grid-template-columns: repeat(8, 1fr); gap: 4px; }
+
+  .fc-inner  { height: 180px; }
+  .fc-hanzi  { font-size: 2.4rem; }
+
+  .question-header { font-size: .95rem; }
+
+  .timer { font-size: 1.1rem; }
+}
+
+/* Very small (≤ 360px) */
+@media (max-width: 360px) {
+  .nav-tab { padding: 8px 7px; font-size: .72rem; }
+  .card    { padding: 12px 12px; }
+  .fc-hanzi{ font-size: 2rem; }
+  .q-grid  { grid-template-columns: repeat(8, 1fr); gap: 3px; }
+  .q-dot   { font-size: .6rem; }
 }

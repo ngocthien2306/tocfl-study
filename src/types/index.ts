@@ -52,7 +52,8 @@ export interface GapPassage {
 export interface ExamPart3 {
   title: string;
   instruction: string;
-  groups: Array<{ context: string; questions: MCQuestion[] }>;
+  image_dir?: string;
+  groups: Array<{ context: string; page_image?: string; questions: MCQuestion[] }>;
 }
 export interface ExamPart4 {
   title: string;
@@ -76,13 +77,15 @@ export interface ExamPart2B {
 }
 
 export interface BandAReading {
+  part1?: ExamPart1A;
+  part2?: ExamPart2A;
   part3: ExamPart3;
   part4: ExamPart4;
   part5: ExamPart5;
 }
 export interface BandBReading {
   part1: ExamPart1B;
-  part2: ExamPart2B;
+  part2: ExamPart2B & { image_dir?: string; image_passages?: ImagePassage[] };
 }
 
 export interface ExamData {
@@ -104,12 +107,134 @@ export interface Progress {
   exams: ExamRecord[];
 }
 
+// ─── Image-based question types ───────────────────────────────────────────────
+export type ImageQuestionType = 'image_choice' | 'picture_description' | 'image_material';
+
+export interface ImageQuestion {
+  id: number;
+  sentence?: string;          // Part 1: the sentence stimulus
+  text?: string;              // Part 2 / Band B: question text
+  options: Options;
+  answer: OptionKey;
+  page_image: string;         // e.g. "page-04.png"
+}
+
+export interface ExamPart1A {
+  title: string;
+  instruction: string;
+  type: 'image_choice';
+  image_dir: string;
+  questions: ImageQuestion[];
+}
+
+export interface ExamPart2A {
+  title: string;
+  instruction: string;
+  type: 'picture_description';
+  image_dir: string;
+  questions: ImageQuestion[];
+}
+
+export interface ImagePassage {
+  id: string;
+  page_image: string;
+  type: 'image_material';
+  questions: ImageQuestion[];
+}
+
 // ─── Flat question for exam/practice ─────────────────────────────────────────
-export type QuestionType = 'mc' | 'gap' | 'cloze';
+export type QuestionType = 'mc' | 'gap' | 'cloze' | 'image_choice' | 'picture_description' | 'image_material';
 
 export interface FlatQuestion extends MCQuestion {
   type: QuestionType;
   part: string;
   passage?: string;
   passageId?: string | number;
+  // Image-based fields
+  pageImage?: string;   // full relative path e.g. "exam-images/band-a/exam1/page-04.png"
+  sentence?: string;    // for Part 1 image_choice
+  imageQuestionText?: string; // for Part 2 / image_material
 }
+
+// ─── Listening exam types ─────────────────────────────────────────────────────
+export type ListeningPartType = 'image_choice' | 'text_choice';
+
+export interface ListeningQuestion {
+  id: number;
+  audio: string[];          // 1+ MP3 paths (relative to public/)
+  page_image?: string;      // for image_choice parts
+  question?: string;        // optional spoken question text
+  options: Partial<Record<OptionKey, string>>;
+  answer: OptionKey;
+}
+
+export interface ListeningPart {
+  id: string;
+  type: ListeningPartType;
+  title: string;
+  instruction?: string;
+  questions: ListeningQuestion[];
+}
+
+export interface ListeningExam {
+  title: string;
+  duration: number;         // seconds (3600 = 60 min)
+  parts: ListeningPart[];
+}
+
+export interface ListeningData {
+  bandA: { exam1: ListeningExam };
+  bandB: { exam1: ListeningExam };
+}
+
+// ─── AI Generator types ───────────────────────────────────────────────────────
+export type AIContentType = 'sentences' | 'reading';
+
+export interface AIKeyWord {
+  word: string;
+  pinyin: string;
+  meaning: string;
+}
+
+export interface AISentence {
+  chinese: string;
+  pinyin: string;
+  vietnamese: string;
+  grammar_note: string;
+  key_words: AIKeyWord[];
+}
+
+export interface AIQuestion {
+  question: string;
+  options: { A: string; B: string; C: string; D: string };
+  answer: 'A' | 'B' | 'C' | 'D';
+  explanation: string;
+}
+
+export interface AIReading {
+  passage: string;
+  passage_pinyin: string;
+  passage_vietnamese: string;
+  questions: AIQuestion[];
+}
+
+export interface AISentenceResult {
+  type: 'sentences';
+  topic: string;
+  band: string;
+  sentences: AISentence[];
+  createdAt: string;
+}
+
+export interface AIReadingResult {
+  type: 'reading';
+  topic: string;
+  band: string;
+  passage: string;
+  passage_pinyin: string;
+  passage_vietnamese: string;
+  questions: AIQuestion[];
+  createdAt: string;
+}
+
+export type AIResult = AISentenceResult | AIReadingResult;

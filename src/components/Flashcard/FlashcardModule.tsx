@@ -1,5 +1,6 @@
 import React, { useMemo, useState } from 'react';
 import type { Word, Progress } from '../../types';
+import { useLang } from '../../i18n/LangContext';
 
 interface Props {
   vocabulary: Word[];
@@ -11,6 +12,7 @@ type Band  = 'all' | 'A' | 'B';
 type Level = 'all' | 'A1' | 'A2' | 'B1' | 'B2';
 
 export const FlashcardModule: React.FC<Props> = ({ vocabulary, progress, markWord }) => {
+  const { t } = useLang();
   const [band,       setBand]       = useState<Band>('all');
   const [level,      setLevel]      = useState<Level>('all');
   const [hideKnown,  setHideKnown]  = useState(false);
@@ -143,15 +145,23 @@ export const FlashcardModule: React.FC<Props> = ({ vocabulary, progress, markWor
             </div>
           </div>
 
-          {/* Action row */}
-          <div className="flex-center gap-8" style={{ marginBottom: 8 }}>
-            <button className="btn btn-outline" onClick={() => go(-1)} disabled={idx === 0}>← Trước</button>
-            <button className="btn btn-danger"  onClick={() => markWord(word.hanzi, false)}>✗ Chưa biết</button>
-            <button className="btn btn-success" onClick={() => { markWord(word.hanzi, true); go(1); }}>✓ Đã biết</button>
-            <button className="btn btn-outline" onClick={() => go(1)} disabled={idx === total - 1}>Sau →</button>
+          {/* Action rows — know/unknown prominent, prev/next secondary */}
+          <div style={{ display: 'flex', gap: 10, marginBottom: 8, justifyContent: 'center' }}>
+            <button
+              className="btn btn-danger"
+              style={{ flex: 1, maxWidth: 180, minHeight: 48, fontSize: '.95rem', justifyContent: 'center' }}
+              onClick={() => markWord(word.hanzi, false)}
+            >{t('fc_unknown')}</button>
+            <button
+              className="btn btn-success"
+              style={{ flex: 1, maxWidth: 180, minHeight: 48, fontSize: '.95rem', justifyContent: 'center' }}
+              onClick={() => { markWord(word.hanzi, true); go(1); }}
+            >{t('fc_known')}</button>
           </div>
-          <div className="flex-center">
-            <button className="btn btn-ghost btn-sm" onClick={shuffle}>↺ Ngẫu nhiên</button>
+          <div style={{ display: 'flex', gap: 8, justifyContent: 'center' }}>
+            <button className="btn btn-outline btn-sm" onClick={() => go(-1)} disabled={idx === 0}>{t('btn_prev')}</button>
+            <button className="btn btn-ghost btn-sm" onClick={shuffle}>{t('fc_shuffle')}</button>
+            <button className="btn btn-outline btn-sm" onClick={() => go(1)} disabled={idx === total - 1}>{t('btn_next')}</button>
           </div>
         </>
       )}
