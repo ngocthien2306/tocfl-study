@@ -65,7 +65,8 @@
                   "answer": "B",
                   "explanation": "跟 = với; cô bé và chú chó là bạn tốt"
                 }
-              ]
+              ],
+              "page_image": "page-13.png"
             },
             {
               "context": "Ngữ cảnh: Sinh nhật của một bé gái.",
@@ -125,9 +126,11 @@
                   "answer": "A",
                   "explanation": "到...去玩 = đi...chơi; cô bé muốn đến Đức chơi"
                 }
-              ]
+              ],
+              "page_image": "page-14.png"
             }
-          ]
+          ],
+          "image_dir": "exam-images/band-a/exam1"
         },
         "part4": {
           "title": "Phần 4: Hoàn thiện đoạn văn",
@@ -248,6 +251,1391 @@
                     "D": "看電影的人都有責任要打掃垃圾"
                   },
                   "answer": "A"
+                }
+              ]
+            }
+          ]
+        },
+        "part1": {
+          "title": "Phần 1: Nghe câu, chọn hình",
+          "instruction": "Nhìn hình, từ (A)(B)(C) chọn hình phù hợp nhất với câu.",
+          "type": "image_choice",
+          "image_dir": "exam-images/band-a/exam1",
+          "questions": [
+            {
+              "id": 1,
+              "sentence": "桌子上放著三種水果。",
+              "answer": "B",
+              "page_image": "page-04.png"
+            },
+            {
+              "id": 2,
+              "sentence": "老王正畫著小天的臉。",
+              "answer": "B",
+              "page_image": "page-04.png"
+            },
+            {
+              "id": 3,
+              "sentence": "他的房間很乾淨。",
+              "answer": "A",
+              "page_image": "page-04.png"
+            },
+            {
+              "id": 4,
+              "sentence": "王小明把李天華三個字寫在紙上。",
+              "answer": "C",
+              "page_image": "page-04.png"
+            },
+            {
+              "id": 5,
+              "sentence": "志明什麼球都玩，但是最喜歡玩足球。",
+              "answer": "B",
+              "page_image": "page-04.png"
+            },
+            {
+              "id": 6,
+              "sentence": "小心！你杯子裡的水快要滿了！",
+              "answer": "C",
+              "page_image": "page-05.png"
+            },
+            {
+              "id": 7,
+              "sentence": "過了前面的路口，再往前走一會兒就到醫院了。",
+              "answer": "A",
+              "page_image": "page-05.png"
+            },
+            {
+              "id": 8,
+              "sentence": "我平常都六點起床，可是今天晚了半小時。",
+              "answer": "C",
+              "page_image": "page-05.png"
+            },
+            {
+              "id": 9,
+              "sentence": "張先生開車的時候喜歡聽音樂。",
+              "answer": "C",
+              "page_image": "page-05.png"
+            },
+            {
+              "id": 10,
+              "sentence": "這幾天晚上的風好大。",
+              "answer": "B",
+              "page_image": "page-05.png"
+            },
+            {
+              "id": 11,
+              "sentence": "妹妹看完信以後，心情很愉快。",
+              "answer": "B",
+              "page_image": "page-06.png"
+            },
+            {
+              "id": 12,
+              "sentence": "我們全家下個月就要搬到院子裡有大樹的房子住了。",
+              "answer": "B",
+              "page_image": "page-06.png"
+            },
+            {
+              "id": 13,
+              "sentence": "因為媽媽怕高，所以沒和爸爸一起爬過山。",
+              "answer": "C",
+              "page_image": "page-06.png"
+            },
+            {
+              "id": 14,
+              "sentence": "他們約好下課以後，先在學校門口見面，再一起去打球。",
+              "answer": "C",
+              "page_image": "page-06.png"
+            },
+            {
+              "id": 15,
+              "sentence": "小美和朋友想到百貨公司買帽子，可是最後只買了點心就離開了。",
+              "answer": "B",
+              "page_image": "page-06.png"
+            }
+          ]
+        },
+        "part2": {
+          "title": "Phần 2: Nhìn hình, chọn câu",
+          "instruction": "Nhìn hình, từ (A)(B)(C) chọn câu phù hợp nhất.",
+          "type": "picture_description",
+          "image_dir": "exam-images/band-a/exam1",
+          "questions": [
+            {
+              "id": 16,
+              "options": {
+                "A": "小狗正追著小貓。",
+                "B": "屋子裡面什麼都沒有。",
+                "C": "幾隻小鳥停在屋子上面。"
+              },
+              "answer": "C",
+              "page_image": "page-08.png"
+            },
+            {
+              "id": 17,
+              "options": {
+                "A": "這裡有樹和一間房子。",
+                "B": "房子的前面停了幾輛車。",
+                "C": "有一些人站在房子旁邊。"
+              },
+              "answer": "A",
+              "page_image": "page-08.png"
+            },
+            {
+              "id": 18,
+              "options": {
+                "A": "她正在休息。",
+                "B": "她在床上睡覺。",
+                "C": "她正寫著作業。"
+              },
+              "answer": "A",
+              "page_image": "page-08.png"
+            },
+            {
+              "id": 19,
+              "options": {
+                "A": "短頭髮的小姐在喝酒。",
+                "B": "長頭髮的小姐穿裙子。",
+                "C": "穿裙子的小姐拿著皮包。"
+              },
+              "answer": "B",
+              "page_image": "page-08.png"
+            },
+            {
+              "id": 20,
+              "options": {
+                "A": "小吃店九點以前休息。",
+                "B": "小吃店十二點開始休息。",
+                "C": "十二點以後可以去小吃店吃飯。"
+              },
+              "answer": "C",
+              "page_image": "page-08.png"
+            },
+            {
+              "id": 21,
+              "options": {
+                "A": "一天吃三粒。",
+                "B": "三天吃一次。",
+                "C": "先吃飯再吃藥。"
+              },
+              "answer": "C",
+              "page_image": "page-09.png"
+            },
+            {
+              "id": 22,
+              "options": {
+                "A": "中午以後買票比較貴。",
+                "B": "上午買兩張票要500元。",
+                "C": "想看電影要中午以後才行。"
+              },
+              "answer": "A",
+              "page_image": "page-09.png"
+            },
+            {
+              "id": 23,
+              "options": {
+                "A": "教室的門是關著的。",
+                "B": "這位老師今天穿裙子。",
+                "C": "這位老師的頭髮短短的。"
+              },
+              "answer": "B",
+              "page_image": "page-09.png"
+            },
+            {
+              "id": 24,
+              "options": {
+                "A": "他們現在正在上課。",
+                "B": "他們從學校走出來。",
+                "C": "男孩走在女孩的前面。"
+              },
+              "answer": "C",
+              "page_image": "page-10.png"
+            },
+            {
+              "id": 25,
+              "options": {
+                "A": "這家餐廳不賣飲料。",
+                "B": "餐廳裡一個人都沒有。",
+                "C": "這位女客人買了兩杯果汁。"
+              },
+              "answer": "C",
+              "page_image": "page-10.png"
+            },
+            {
+              "id": 26,
+              "options": {
+                "A": "小美下午三點多才到旅館。",
+                "B": "在這兒住一晚要兩百多塊。",
+                "C": "小美帶了好幾件大的行李。"
+              },
+              "answer": "B",
+              "page_image": "page-10.png"
+            },
+            {
+              "id": 27,
+              "options": {
+                "A": "那位男生正在賣麵包。",
+                "B": "等車的小姐拿著一袋水果。",
+                "C": "有一位小姐在等七十六號公車。"
+              },
+              "answer": "B",
+              "page_image": "page-10.png"
+            },
+            {
+              "id": 28,
+              "options": {
+                "A": "王小姐買了三雙鞋子。",
+                "B": "這家店只賣鞋子和襪子。",
+                "C": "這家店也賣褲子和皮包。"
+              },
+              "answer": "C",
+              "page_image": "page-10.png"
+            },
+            {
+              "id": 29,
+              "options": {
+                "A": "李天明教台北人英文。",
+                "B": "李天明要找外國人學英文。",
+                "C": "李天明覺得學中文很便宜。"
+              },
+              "answer": "B",
+              "page_image": "page-11.png"
+            },
+            {
+              "id": 30,
+              "options": {
+                "A": "兩個人一起去，就有紅茶可以喝。",
+                "B": "一個人不到兩萬就可以去韓國旅行。",
+                "C": "三個人一起去的話，一共可以少給1000元。"
+              },
+              "answer": "B",
+              "page_image": "page-11.png"
+            }
+          ]
+        }
+      }
+    },
+    "exam2": {
+      "title": "TOCFL Band A · Đọc (Đề 2)",
+      "reading": {
+        "part1": {
+          "title": "第一部分 · 看圖選句 (1–15)",
+          "instruction": "看圖，選出與圖片內容相符的句子。",
+          "type": "image_choice",
+          "image_dir": "exam-images/band-a/exam2",
+          "questions": [
+            {
+              "id": 1,
+              "sentence": "那杯牛奶被喝了一半。",
+              "options": {
+                "A": "(A)",
+                "B": "(B)",
+                "C": "(C)"
+              },
+              "answer": "C",
+              "page_image": "page-04.png"
+            },
+            {
+              "id": 2,
+              "sentence": "我家一共三口人。",
+              "options": {
+                "A": "(A)",
+                "B": "(B)",
+                "C": "(C)"
+              },
+              "answer": "C",
+              "page_image": "page-04.png"
+            },
+            {
+              "id": 3,
+              "sentence": "樹下一個禮物也沒有。",
+              "options": {
+                "A": "(A)",
+                "B": "(B)",
+                "C": "(C)"
+              },
+              "answer": "B",
+              "page_image": "page-04.png"
+            },
+            {
+              "id": 4,
+              "sentence": "餐廳的樓上有洗手間。",
+              "options": {
+                "A": "(A)",
+                "B": "(B)",
+                "C": "(C)"
+              },
+              "answer": "A",
+              "page_image": "page-04.png"
+            },
+            {
+              "id": 5,
+              "sentence": "沒戴眼鏡的那位先生就是林明華。",
+              "options": {
+                "A": "(A)",
+                "B": "(B)",
+                "C": "(C)"
+              },
+              "answer": "B",
+              "page_image": "page-04.png"
+            },
+            {
+              "id": 6,
+              "sentence": "公車快兩點才來。",
+              "options": {
+                "A": "(A)",
+                "B": "(B)",
+                "C": "(C)"
+              },
+              "answer": "A",
+              "page_image": "page-05.png"
+            },
+            {
+              "id": 7,
+              "sentence": "學生看著黑板上的句子說話。",
+              "options": {
+                "A": "(A)",
+                "B": "(B)",
+                "C": "(C)"
+              },
+              "answer": "C",
+              "page_image": "page-05.png"
+            },
+            {
+              "id": 8,
+              "sentence": "弟弟喜歡用電腦玩遊戲。",
+              "options": {
+                "A": "(A)",
+                "B": "(B)",
+                "C": "(C)"
+              },
+              "answer": "A",
+              "page_image": "page-05.png"
+            },
+            {
+              "id": 9,
+              "sentence": "樓梯上的門不知道被誰打開了。",
+              "options": {
+                "A": "(A)",
+                "B": "(B)",
+                "C": "(C)"
+              },
+              "answer": "C",
+              "page_image": "page-05.png"
+            },
+            {
+              "id": 10,
+              "sentence": "大明受傷了，他現在躺在醫院，不能站也不能坐。",
+              "options": {
+                "A": "(A)",
+                "B": "(B)",
+                "C": "(C)"
+              },
+              "answer": "B",
+              "page_image": "page-05.png"
+            },
+            {
+              "id": 11,
+              "sentence": "哥哥在冰箱旁邊放了一部洗衣機。",
+              "options": {
+                "A": "(A)",
+                "B": "(B)",
+                "C": "(C)"
+              },
+              "answer": "B",
+              "page_image": "page-06.png"
+            },
+            {
+              "id": 12,
+              "sentence": "弟弟不會寫書法。",
+              "options": {
+                "A": "(A)",
+                "B": "(B)",
+                "C": "(C)"
+              },
+              "answer": "C",
+              "page_image": "page-06.png"
+            },
+            {
+              "id": 13,
+              "sentence": "因為他都把菜吃光了，所以已經吃不下了。",
+              "options": {
+                "A": "(A)",
+                "B": "(B)",
+                "C": "(C)"
+              },
+              "answer": "C",
+              "page_image": "page-06.png"
+            },
+            {
+              "id": 14,
+              "sentence": "小文喜歡一邊寫作業，一邊吃東西。",
+              "options": {
+                "A": "(A)",
+                "B": "(B)",
+                "C": "(C)"
+              },
+              "answer": "A",
+              "page_image": "page-06.png"
+            },
+            {
+              "id": 15,
+              "sentence": "小華只有右手受傷，其他地方都沒事。",
+              "options": {
+                "A": "(A)",
+                "B": "(B)",
+                "C": "(C)"
+              },
+              "answer": "B",
+              "page_image": "page-06.png"
+            }
+          ]
+        },
+        "part2": {
+          "title": "第二部分 · 看圖說話 (16–30)",
+          "instruction": "看圖，從選項中選出描述圖片內容的句子。",
+          "type": "picture_description",
+          "image_dir": "exam-images/band-a/exam2",
+          "questions": [
+            {
+              "id": 16,
+              "options": {
+                "A": "這裡是機場。",
+                "B": "火車到車站了。",
+                "C": "很多人在等車。"
+              },
+              "answer": "B",
+              "page_image": "page-08.png"
+            },
+            {
+              "id": 17,
+              "options": {
+                "A": "他們換了新家具。",
+                "B": "他們忘了打開窗戶。",
+                "C": "他們兩個人搬不了沙發。"
+              },
+              "answer": "A",
+              "page_image": "page-08.png"
+            },
+            {
+              "id": 18,
+              "options": {
+                "A": "老師準備上課。",
+                "B": "學生們正在休息。",
+                "C": "教室裡有人在說話。"
+              },
+              "answer": "A",
+              "page_image": "page-08.png"
+            },
+            {
+              "id": 19,
+              "options": {
+                "A": "郵局在銀行旁邊。",
+                "B": "銀行的對面是郵局。",
+                "C": "車站在郵局的前面。"
+              },
+              "answer": "B",
+              "page_image": "page-08.png"
+            },
+            {
+              "id": 20,
+              "options": {
+                "A": "他們點了麵和湯。",
+                "B": "他們覺得很傷心。",
+                "C": "女生坐在男生的右邊。"
+              },
+              "answer": "C",
+              "page_image": "page-09.png"
+            },
+            {
+              "id": 21,
+              "options": {
+                "A": "他看不懂這本書。",
+                "B": "他覺得這本書很有趣。",
+                "C": "他看書的時候很緊張。"
+              },
+              "answer": "B",
+              "page_image": "page-09.png"
+            },
+            {
+              "id": 22,
+              "options": {
+                "A": "這家飯館中午不休息。",
+                "B": "這家飯館最貴的是雞肉飯。",
+                "C": "這家飯館十一點以後休息。"
+              },
+              "answer": "A",
+              "page_image": "page-09.png"
+            },
+            {
+              "id": 23,
+              "options": {
+                "A": "這家店也賣果汁。",
+                "B": "這位小姐買了香蕉牛奶。",
+                "C": "香蕉牛奶便宜了十塊錢。"
+              },
+              "answer": "A",
+              "page_image": "page-09.png"
+            },
+            {
+              "id": 24,
+              "options": {
+                "A": "妹妹是十點多離開家的。",
+                "B": "妹妹到家的時候快十點了。",
+                "C": "妹妹十點的時候就要回家了。"
+              },
+              "answer": "B",
+              "page_image": "page-10.png"
+            },
+            {
+              "id": 25,
+              "options": {
+                "A": "初級中文課每一次上三個小時。",
+                "B": "初級中文課在二○一教室上課。",
+                "C": "這個班的學生五月三日不上課。"
+              },
+              "answer": "C",
+              "page_image": "page-10.png"
+            },
+            {
+              "id": 26,
+              "options": {
+                "A": "病人正在讓醫生檢查。",
+                "B": "醫生要病人試著站起來。",
+                "C": "護士幫忙看病人哪裡受傷了。"
+              },
+              "answer": "A",
+              "page_image": "page-10.png"
+            },
+            {
+              "id": 27,
+              "options": {
+                "A": "小華一星期運動四天。",
+                "B": "小華只有星期二下午能休息。",
+                "C": "小華每星期上兩天的中文課。"
+              },
+              "answer": "C",
+              "page_image": "page-10.png"
+            },
+            {
+              "id": 28,
+              "options": {
+                "A": "這班公車從火車站出發。",
+                "B": "下午五點還有車到博物館。",
+                "C": "66號公車每兩個鐘頭一班。"
+              },
+              "answer": "A",
+              "page_image": "page-11.png"
+            },
+            {
+              "id": 29,
+              "options": {
+                "A": "這間公寓在學校附近。",
+                "B": "公寓裡面只有一個房間。",
+                "C": "想租這間公寓的人上網找陳先生。"
+              },
+              "answer": "A",
+              "page_image": "page-11.png"
+            },
+            {
+              "id": 30,
+              "options": {
+                "A": "這個晚會的飲料有三種。",
+                "B": "第二次喝飲料不能用新的杯子。",
+                "C": "每人只能在晚會裡喝一杯飲料。"
+              },
+              "answer": "B",
+              "page_image": "page-12.png"
+            }
+          ]
+        },
+        "part3": {
+          "title": "第三部分 · 選詞填空 (31–40)",
+          "instruction": "根據情境圖片，選出最合適的答案填入空格。",
+          "image_dir": "exam-images/band-a/exam2",
+          "groups": [
+            {
+              "context": "Ngữ cảnh: Một người phụ nữ đang kể về chuyến du lịch của mình.",
+              "page_image": "page-14.png",
+              "questions": [
+                {
+                  "id": 31,
+                  "sentence": "王小姐___旅遊很有興趣。",
+                  "options": {
+                    "A": "跟",
+                    "B": "和",
+                    "C": "對"
+                  },
+                  "answer": "C"
+                },
+                {
+                  "id": 32,
+                  "sentence": "她放假的時候___出國玩。",
+                  "options": {
+                    "A": "多少",
+                    "B": "可能",
+                    "C": "常常"
+                  },
+                  "answer": "C"
+                },
+                {
+                  "id": 33,
+                  "sentence": "她跟我說她第一次旅行時，在旅館___丟了行李。",
+                  "options": {
+                    "A": "做",
+                    "B": "弄",
+                    "C": "走"
+                  },
+                  "answer": "B"
+                },
+                {
+                  "id": 34,
+                  "sentence": "她緊張___好幾天，三天以後才找到行李。",
+                  "options": {
+                    "A": "著",
+                    "B": "了",
+                    "C": "得"
+                  },
+                  "answer": "B"
+                },
+                {
+                  "id": 35,
+                  "sentence": "從那一次開始，她旅行的時候就更___自己的東西了。",
+                  "options": {
+                    "A": "小心",
+                    "B": "知道",
+                    "C": "認識"
+                  },
+                  "answer": "A"
+                }
+              ]
+            },
+            {
+              "context": "Ngữ cảnh: Một người đang kể về chuyện đi siêu thị mua đồ.",
+              "page_image": "page-15.png",
+              "questions": [
+                {
+                  "id": 36,
+                  "sentence": "我很喜歡到附近一家很大的___買菜。",
+                  "options": {
+                    "A": "藥房",
+                    "B": "書店",
+                    "C": "超市"
+                  },
+                  "answer": "C"
+                },
+                {
+                  "id": 37,
+                  "sentence": "那裡的東西不怎麼便宜，___比較新鮮，吃起來很放心。",
+                  "options": {
+                    "A": "但是",
+                    "B": "或是",
+                    "C": "還是"
+                  },
+                  "answer": "A"
+                },
+                {
+                  "id": 38,
+                  "sentence": "聽說今天八點那裡有特別活動，所以我早上六點___起床了。",
+                  "options": {
+                    "A": "再",
+                    "B": "才",
+                    "C": "就"
+                  },
+                  "answer": "C"
+                },
+                {
+                  "id": 39,
+                  "sentence": "到了那裡以後，我買了好多___我愛吃的餅乾和一些青菜。",
+                  "options": {
+                    "A": "枝",
+                    "B": "包",
+                    "C": "口"
+                  },
+                  "answer": "B"
+                },
+                {
+                  "id": 40,
+                  "sentence": "不過___付錢的人太多了，等的時間比買東西的時間還久。",
+                  "options": {
+                    "A": "掛號",
+                    "B": "點菜",
+                    "C": "排隊"
+                  },
+                  "answer": "C"
+                }
+              ]
+            }
+          ]
+        },
+        "part4": {
+          "title": "第四部分 · 完成段落 (41–45)",
+          "instruction": "根據短文上下文，選出最適合空格的答案。",
+          "passages": [
+            {
+              "id": 1,
+              "passage": "林一正的孩子快要出生了，他覺得現在的家太小了，所以他在自己的公司附近（41）。那裡有很多商店，而且離房子走路五分鐘的地方，（42）。房子對面還有一個小公園，以後他和太太（43），雖然那裡的房子很貴，讓（44），但是林一正覺得沒關係，因為（45），林一正相信太太一定也很喜歡這間房子。",
+              "passage_vi": "Con của Lâm Nhất Chính sắp ra đời, anh thấy ngôi nhà hiện tại quá nhỏ nên đã (41) gần công ty. Ở đó có nhiều cửa hàng, và cách nhà đi bộ 5 phút (42). Đối diện nhà còn có một công viên nhỏ, sau này anh và vợ (43), dù nhà ở đó khá đắt, khiến (44), nhưng Lâm Nhất Chính cảm thấy không sao, vì (45), anh tin vợ mình cũng sẽ rất thích ngôi nhà này.",
+              "options": {
+                "A": "買了一間房子",
+                "B": "就有一家大醫院",
+                "C": "林一正沒花多少錢",
+                "D": "林一正花了不少錢",
+                "E": "那裡的生活很方便",
+                "F": "可以常常帶孩子到公園玩"
+              },
+              "blanks": [
+                41,
+                42,
+                43,
+                44,
+                45
+              ],
+              "answers": {
+                "41": "A",
+                "42": "B",
+                "43": "F",
+                "44": "D",
+                "45": "E"
+              }
+            }
+          ]
+        },
+        "part5": {
+          "title": "第五部分 · 閱讀理解 (46–50)",
+          "instruction": "根據短文內容回答問題。",
+          "passages": [
+            {
+              "id": "一",
+              "text": "明麗的朋友都覺得明麗總是開心地過生活，大家從來沒有看過她傷心或生氣。有一次，我問她是怎麼辦到的，她回答我：「每天一早醒來，我都有兩個選擇，可以選擇壞心情，討厭自己的生活；也可以選擇好心情，喜愛自己的生活。如果是你，不會選第二個嗎？」",
+              "questions": [
+                {
+                  "id": 46,
+                  "question": "明麗最後要說的意思是什麼？",
+                  "options": {
+                    "A": "想太多事情對自己沒用",
+                    "B": "心情好壞可以自己決定",
+                    "C": "早睡早起的人一定快樂",
+                    "D": "生活進步的方法有很多"
+                  },
+                  "answer": "B"
+                }
+              ]
+            },
+            {
+              "id": "二",
+              "text": "你怎麼處理那些已經不再看的書呢？直接丟掉？送給別人？還是賣給書店？現代網路的進步，使賣書變得更容易。於是有些人就利用網路開店賣舊書，把賺來的錢分給需要的人，有時也將舊書送到鄉下或山裡的學校，這樣的話，不但可以保護環境，還可以讓更多的人有機會讀書。",
+              "questions": [
+                {
+                  "id": 47,
+                  "question": "這篇文章在談什麼？",
+                  "options": {
+                    "A": "用家中舊書換新書的方法",
+                    "B": "上網看書才不會用太多紙",
+                    "C": "學會賣書可以賺更多的錢",
+                    "D": "把不要的書變成有用的書"
+                  },
+                  "answer": "D"
+                }
+              ]
+            },
+            {
+              "id": "三",
+              "text": "順文歌唱得很好，上個月，她參加了一個唱歌比賽，為了能把歌唱好，她每天都練習五個小時，非常辛苦。沒想到，就在比賽開始的前一天，順文不小心感冒了，大家都非常擔心這會對她有不好的影響。結果，比賽的成績真的不太好。但順文卻一點也不難過，她告訴我們，能參加比賽就已經很幸福了，比賽讓她學到很多。",
+              "questions": [
+                {
+                  "id": 48,
+                  "question": "從參加比賽到比賽結束，順文是怎麼想的？",
+                  "options": {
+                    "A": "她只想拿第一名",
+                    "B": "這是一次很好的經驗",
+                    "C": "成績不好都是因為生病",
+                    "D": "為了比賽，健康已經不重要"
+                  },
+                  "answer": "B"
+                }
+              ]
+            },
+            {
+              "id": "四",
+              "text": "一天工作八小時，有的人覺得剛剛好，有的人覺得不夠用，會出現這樣的不同，我覺得是因為沒有好好安排時間的關係。下面兩點建議可以給大家參考：第一，試試看申請兩個手機號碼，一個只用在工作上，另一個用來聯繫家人或朋友，上班時間只接工作用的電話。第二，每天進辦公室或下班以前，可以留半小時到一小時，收、寄電子郵件，這樣的話，就不會因為經常得花時間寫郵件，影響了自己的工作。",
+              "questions": [
+                {
+                  "id": 49,
+                  "question": "作者覺得，為什麼有人會覺得上班時間不夠？",
+                  "options": {
+                    "A": "他們太喜歡找家人、朋友聊天兒",
+                    "B": "他們常常忘了回重要的電子郵件",
+                    "C": "他們可能經常工作到一半就得停下來",
+                    "D": "他們不太常注意自己上、下班的時間"
+                  },
+                  "answer": "C"
+                }
+              ]
+            },
+            {
+              "id": "五",
+              "text": "上週，校長邀請了一位大公司的老闆到學校來，跟同學們談一談他的成功經驗，講完以後，還讓同學們問問題。因為那位老闆講得太好，同學們的問題一個接著一個，大家最想知道的就是：要怎麼做才能快一點兒成功？我本來以為，大老闆會教大家一些實際的方法，但他卻告訴我們：「做好現在應該做的，你們就已經成功了」。",
+              "questions": [
+                {
+                  "id": 50,
+                  "question": "老闆聽了同學們最想問的問題以後，他怎麼回答？",
+                  "options": {
+                    "A": "好好學習就可以了",
+                    "B": "必頇像他一樣努力才行",
+                    "C": "要知道什麼事情不應該做",
+                    "D": "得學會馬上聽懂老闆說的話"
+                  },
+                  "answer": "A"
+                }
+              ]
+            }
+          ]
+        }
+      }
+    },
+    "exam3": {
+      "title": "TOCFL Band A · Đọc (Đề 3)",
+      "reading": {
+        "part1": {
+          "title": "第一部分 · 看圖選句 (1–15)",
+          "instruction": "看圖，選出與圖片內容相符的句子。",
+          "type": "image_choice",
+          "image_dir": "exam-images/band-a/exam3",
+          "questions": [
+            {
+              "id": 1,
+              "sentence": "弟弟今天很累，什麼事都不想做。",
+              "options": {
+                "A": "(A)",
+                "B": "(B)",
+                "C": "(C)"
+              },
+              "answer": "A",
+              "page_image": "page-04.png"
+            },
+            {
+              "id": 2,
+              "sentence": "他拿著手機幫朋友照相。",
+              "options": {
+                "A": "(A)",
+                "B": "(B)",
+                "C": "(C)"
+              },
+              "answer": "A",
+              "page_image": "page-04.png"
+            },
+            {
+              "id": 3,
+              "sentence": "這杯飲料太甜了，小林想加一點水。",
+              "options": {
+                "A": "(A)",
+                "B": "(B)",
+                "C": "(C)"
+              },
+              "answer": "B",
+              "page_image": "page-04.png"
+            },
+            {
+              "id": 4,
+              "sentence": "林小姐昨天晚上睡覺以前喝了一杯牛奶。",
+              "options": {
+                "A": "(A)",
+                "B": "(B)",
+                "C": "(C)"
+              },
+              "answer": "C",
+              "page_image": "page-04.png"
+            },
+            {
+              "id": 5,
+              "sentence": "他今天很晚才起床，所以起床以後，就吃午餐。",
+              "options": {
+                "A": "(A)",
+                "B": "(B)",
+                "C": "(C)"
+              },
+              "answer": "C",
+              "page_image": "page-04.png"
+            },
+            {
+              "id": 6,
+              "sentence": "房間的門跟窗戶都是關著的。",
+              "options": {
+                "A": "(A)",
+                "B": "(B)",
+                "C": "(C)"
+              },
+              "answer": "C",
+              "page_image": "page-05.png"
+            },
+            {
+              "id": 7,
+              "sentence": "大明昨天很晚睡覺，因為電影太好看了。",
+              "options": {
+                "A": "(A)",
+                "B": "(B)",
+                "C": "(C)"
+              },
+              "answer": "C",
+              "page_image": "page-05.png"
+            },
+            {
+              "id": 8,
+              "sentence": "經過兩個路口以後，就會看見公園旁邊的車站。",
+              "options": {
+                "A": "(A)",
+                "B": "(B)",
+                "C": "(C)"
+              },
+              "answer": "A",
+              "page_image": "page-05.png"
+            },
+            {
+              "id": 9,
+              "sentence": "她已經寫完作業，正在聽音樂。",
+              "options": {
+                "A": "(A)",
+                "B": "(B)",
+                "C": "(C)"
+              },
+              "answer": "B",
+              "page_image": "page-05.png"
+            },
+            {
+              "id": 10,
+              "sentence": "他看書看得太累了，所以躺在床上就睡著了。",
+              "options": {
+                "A": "(A)",
+                "B": "(B)",
+                "C": "(C)"
+              },
+              "answer": "A",
+              "page_image": "page-05.png"
+            },
+            {
+              "id": 11,
+              "sentence": "他們都先穿襪子，再穿褲子。",
+              "options": {
+                "A": "(A)",
+                "B": "(B)",
+                "C": "(C)"
+              },
+              "answer": "C",
+              "page_image": "page-06.png"
+            },
+            {
+              "id": 12,
+              "sentence": "媽媽每天七點起床，但是今天比較晚。",
+              "options": {
+                "A": "(A)",
+                "B": "(B)",
+                "C": "(C)"
+              },
+              "answer": "C",
+              "page_image": "page-06.png"
+            },
+            {
+              "id": 13,
+              "sentence": "他的車子壞了，所以今天坐計程車上班。",
+              "options": {
+                "A": "(A)",
+                "B": "(B)",
+                "C": "(C)"
+              },
+              "answer": "C",
+              "page_image": "page-06.png"
+            },
+            {
+              "id": 14,
+              "sentence": "她用電腦練習寫字。",
+              "options": {
+                "A": "(A)",
+                "B": "(B)",
+                "C": "(C)"
+              },
+              "answer": "B",
+              "page_image": "page-06.png"
+            },
+            {
+              "id": 15,
+              "sentence": "很多人正在排隊掛號。",
+              "options": {
+                "A": "(A)",
+                "B": "(B)",
+                "C": "(C)"
+              },
+              "answer": "A",
+              "page_image": "page-06.png"
+            }
+          ]
+        },
+        "part2": {
+          "title": "第二部分 · 看圖說話 (16–30)",
+          "instruction": "看圖，從選項中選出描述圖片內容的句子。",
+          "type": "picture_description",
+          "image_dir": "exam-images/band-a/exam3",
+          "questions": [
+            {
+              "id": 16,
+              "options": {
+                "A": "外面出太陽。",
+                "B": "他們在看電視。",
+                "C": "水果放在椅子上。"
+              },
+              "answer": "B",
+              "page_image": "page-08.png"
+            },
+            {
+              "id": 17,
+              "options": {
+                "A": "弟弟的眼鏡壞了。",
+                "B": "弟弟找不到眼鏡。",
+                "C": "弟弟戴著眼鏡睡覺。"
+              },
+              "answer": "B",
+              "page_image": "page-08.png"
+            },
+            {
+              "id": 18,
+              "options": {
+                "A": "這裡是機場。",
+                "B": "有位女生在打球。",
+                "C": "小男孩正在騎腳踏車。"
+              },
+              "answer": "C",
+              "page_image": "page-08.png"
+            },
+            {
+              "id": 19,
+              "options": {
+                "A": "小華有三天語法課。",
+                "B": "小華星期三上音樂課。",
+                "C": "小華星期二會用電腦。"
+              },
+              "answer": "C",
+              "page_image": "page-08.png"
+            },
+            {
+              "id": 20,
+              "options": {
+                "A": "美美要大華帶禮物來。",
+                "B": "美美要請小芳到餐廳吃飯。",
+                "C": "小芳請大華一起到美美的家。"
+              },
+              "answer": "C",
+              "page_image": "page-09.png"
+            },
+            {
+              "id": 21,
+              "options": {
+                "A": "全票比半票貴兩百元。",
+                "B": "晚上八點可以看電影。",
+                "C": "中午以前的電影有兩場。"
+              },
+              "answer": "A",
+              "page_image": "page-09.png"
+            },
+            {
+              "id": 22,
+              "options": {
+                "A": "星期一可能要帶雨傘。",
+                "B": "星期二天氣可能不好。",
+                "C": "星期二比星期一涼快。"
+              },
+              "answer": "A",
+              "page_image": "page-09.png"
+            },
+            {
+              "id": 23,
+              "options": {
+                "A": "大家都吃完飯了。",
+                "B": "全部的人都拿著杯子。",
+                "C": "四個人坐在圓桌前面。"
+              },
+              "answer": "B",
+              "page_image": "page-09.png"
+            },
+            {
+              "id": 24,
+              "options": {
+                "A": "每個人都戴著帽子。",
+                "B": "大家都在唱歌和跳舞。",
+                "C": "蛋糕旁邊有一些禮物。"
+              },
+              "answer": "C",
+              "page_image": "page-10.png"
+            },
+            {
+              "id": 25,
+              "options": {
+                "A": "她只用一條腿站著。",
+                "B": "她的手放在身體前面。",
+                "C": "她戴著一頂漂亮的帽子。"
+              },
+              "answer": "A",
+              "page_image": "page-10.png"
+            },
+            {
+              "id": 26,
+              "options": {
+                "A": "來這家公司只能租一種車。",
+                "B": "想搭計程車可以打電話給這家公司。",
+                "C": "租車的價格，一天最少一千二百元。"
+              },
+              "answer": "C",
+              "page_image": "page-10.png"
+            },
+            {
+              "id": 27,
+              "options": {
+                "A": "醫院離他最遠。",
+                "B": "今天商店都開門。",
+                "C": "公車站在飲料店前面。"
+              },
+              "answer": "A",
+              "page_image": "page-10.png"
+            },
+            {
+              "id": 28,
+              "options": {
+                "A": "林心心跟王老師學中文。",
+                "B": "卡片是王老師寫給林心心的。",
+                "C": "他們約好還要再上三個月的課。"
+              },
+              "answer": "A",
+              "page_image": "page-11.png"
+            },
+            {
+              "id": 29,
+              "options": {
+                "A": "十月只有兩間房間比較便宜。",
+                "B": "十月五日住兩人房可以得到禮物。",
+                "C": "來來旅館每個月都有特別的活動。"
+              },
+              "answer": "B",
+              "page_image": "page-11.png"
+            },
+            {
+              "id": 30,
+              "options": {
+                "A": "去這家店喝紅茶，就送早餐。",
+                "B": "在這家店吃早餐，就送一杯飲料。",
+                "C": "這家店早上七點關門，下午兩點開門。"
+              },
+              "answer": "B",
+              "page_image": "page-11.png"
+            }
+          ]
+        },
+        "part3": {
+          "title": "第三部分 · 選詞填空 (31–35)",
+          "instruction": "根據情境圖片，選出最合適的答案填入空格。",
+          "image_dir": "exam-images/band-a/exam3",
+          "groups": [
+            {
+              "context": "Ngữ cảnh: Một ngôi nhà yên tĩnh với hoa, mèo và chó.",
+              "page_image": "page-14.png",
+              "questions": [
+                {
+                  "id": 31,
+                  "sentence": "屋子裡一個人___沒有。",
+                  "options": {
+                    "A": "就",
+                    "B": "也",
+                    "C": "些"
+                  },
+                  "answer": "B"
+                },
+                {
+                  "id": 32,
+                  "sentence": "花瓶裡___很多漂亮的花。",
+                  "options": {
+                    "A": "有",
+                    "B": "掛",
+                    "C": "換"
+                  },
+                  "answer": "A"
+                },
+                {
+                  "id": 33,
+                  "sentence": "小狗在桌子下睡得很___。",
+                  "options": {
+                    "A": "隨便",
+                    "B": "方便",
+                    "C": "舒服"
+                  },
+                  "answer": "C"
+                },
+                {
+                  "id": 34,
+                  "sentence": "兩隻貓一起在沙發___玩兒。",
+                  "options": {
+                    "A": "上面",
+                    "B": "下面",
+                    "C": "裡面"
+                  },
+                  "answer": "A"
+                },
+                {
+                  "id": 35,
+                  "sentence": "王先生一家人一個小時後___回來。",
+                  "options": {
+                    "A": "再",
+                    "B": "才",
+                    "C": "常"
+                  },
+                  "answer": "B"
+                }
+              ]
+            }
+          ]
+        },
+        "part4": {
+          "title": "第四部分 · 完成段落 (36–45)",
+          "instruction": "根據短文上下文，選出最適合空格的答案。",
+          "passages": [
+            {
+              "id": 1,
+              "passage": "我今天跟我的台灣朋友一起去百貨公司。台灣的百貨公司（36），裡面（37）。我買了幾件毛衣，還有（38）。我們（39），就到（40），雖然有一點貴，但是大家還是吃得很開心。",
+              "passage_vi": "Hôm nay tôi cùng bạn Đài Loan đi trung tâm thương mại. Trung tâm thương mại Đài Loan (36), bên trong (37). Tôi mua vài chiếc áo len, còn có (38). Chúng tôi (39), rồi đến (40), dù hơi đắt nhưng mọi người vẫn ăn rất vui.",
+              "options": {
+                "A": "一雙手套",
+                "B": "外面很漂亮",
+                "C": "買完東西以後",
+                "D": "買完東西以前",
+                "E": "什麼東西都有",
+                "F": "樓下的餐廳吃晚餐"
+              },
+              "blanks": [
+                36,
+                37,
+                38,
+                39,
+                40
+              ],
+              "answers": {
+                "36": "B",
+                "37": "E",
+                "38": "A",
+                "39": "C",
+                "40": "F"
+              }
+            },
+            {
+              "id": 2,
+              "passage": "我不上課的時候，只要有空就找工作做，所以（41）。在這些工作裡，（42）就是在書店工作。第一是因為我很愛看書，第二是因為那裡的客人比較有禮貌，工作的時候，（43）。可是我不太喜歡新書的味道，要是沒有那種奇怪的味道，（44）。雖然有這樣的問題，（45）到書店工作。",
+              "passage_vi": "Khi không có giờ học, miễn là có thời gian là tôi đi tìm việc làm, vì vậy (41). Trong số những công việc đó, (42) là làm ở hiệu sách. Thứ nhất vì tôi rất thích đọc sách, thứ hai vì khách ở đó khá lịch sự, khi làm việc (43). Nhưng tôi không thích mùi sách mới, nếu không có mùi kỳ lạ đó thì (44). Dù có vấn đề như vậy, (45) đi làm ở hiệu sách.",
+              "options": {
+                "A": "我最喜歡的",
+                "B": "我還是願意",
+                "C": "那就更好了",
+                "D": "心情總是特別好",
+                "E": "心情總是特別壞",
+                "F": "有很多工作經驗"
+              },
+              "blanks": [
+                41,
+                42,
+                43,
+                44,
+                45
+              ],
+              "answers": {
+                "41": "F",
+                "42": "A",
+                "43": "D",
+                "44": "C",
+                "45": "B"
+              }
+            }
+          ]
+        },
+        "part5": {
+          "title": "第五部分 · 閱讀理解 (46–50)",
+          "instruction": "根據短文內容回答問題。",
+          "passages": [
+            {
+              "id": "一",
+              "text": "小明的爸爸對小明說：「這裡有十元，你到郵局買兩張郵票，然後把這兩封信寄出去，這一封是給王伯伯的，另外一封是給李伯伯的。」小明回來以後，還給爸爸五塊錢。爸爸問小明：「怎麼還剩五塊錢呢？」小明回答：「我把給王伯伯的信裝在給李伯伯的信裡面，這樣就不必多花五塊錢啊！」",
+              "questions": [
+                {
+                  "id": 46,
+                  "question": "小明把信寄出去以後，會發生什麼事？",
+                  "options": {
+                    "A": "王伯伯收到兩封信",
+                    "B": "李伯伯收到兩封信",
+                    "C": "李伯伯要到王伯伯家拿信",
+                    "D": "王伯伯和李伯伯都沒收到信"
+                  },
+                  "answer": "B"
+                }
+              ]
+            },
+            {
+              "id": "二",
+              "text": "最近越來越流行上網買東西，不論是吃的、穿的還是用的，只要輕鬆點幾下滑鼠就買得到，還能到處比較價錢再買。不過上網買東西也有一些問題，像是衣服不能先試穿，或是一不小心就被「買一送一」、「滿兩千送一百」的廣告吸引，買了一堆本來不必買的東西。這樣看來，上網買東西雖然方便，卻不一定省錢。",
+              "questions": [
+                {
+                  "id": 47,
+                  "question": "寫這段短文的人覺得上網買東西怎麼樣？",
+                  "options": {
+                    "A": "可以少花一些錢",
+                    "B": "容易買太多東西",
+                    "C": "能買到最流行的衣服",
+                    "D": "不像大家說的那麼方便"
+                  },
+                  "answer": "B"
+                }
+              ]
+            },
+            {
+              "id": "三",
+              "text": "我最近學會一道臺灣菜，叫做「鹹蛋苦瓜」，這道菜是房東陳媽媽教我做的。以前，我覺得苦瓜吃起來和藥一樣苦，一直不喜歡吃。可是陳媽媽教我做的苦瓜一點都不苦，吃起來又香又甜。而且陳媽媽說，吃沒煮過的苦瓜對身體更好，還說下一次要教我用沒煮過的苦瓜做好喝的果汁，我學會以後，要先做給我的好朋友玉芳喝，希望她和我一樣愛上苦瓜。",
+              "questions": [
+                {
+                  "id": 48,
+                  "question": "寫這段話的人說了什麼？",
+                  "options": {
+                    "A": "他一道臺灣菜也不會做",
+                    "B": "陳媽媽和他一樣不吃苦瓜",
+                    "C": "他發現苦瓜在臺灣是一種藥",
+                    "D": "他的好朋友玉芳也不喜歡苦瓜"
+                  },
+                  "answer": "D"
+                }
+              ]
+            },
+            {
+              "id": "四",
+              "text": "有一天，李先生和陳先生一起聊天。陳先生說：「我每天都很忙，一天要工作二十五個小時。」李先生說：「可是，一天只有二十四小時啊！」陳先生回答他：「沒關係，我每天可以早一個小時起床。」",
+              "questions": [
+                {
+                  "id": 49,
+                  "question": "這段短文說了什麼事？",
+                  "options": {
+                    "A": "陳先生每天幾點起床",
+                    "B": "李先生的數學不太好",
+                    "C": "陳先生沒有李先生忙",
+                    "D": "李先生不相信陳先生"
+                  },
+                  "answer": "D"
+                }
+              ]
+            },
+            {
+              "id": "五",
+              "text": "有三個學生，因為不喜歡每天去餐廳吃飯，開始自己學習做菜。但是每次做菜的時候，都聞到鄰居家的香味，聞起來比自己煮的香。所以他們決定開一家網路廚房公司，讓學生可以和會做菜的媽媽們買美食，這家公司負責把食物送到學生宿舍。很多媽媽認為，不管煮給幾個人吃，要花的時間差不多，所以願意加入這家公司，讓這家公司的三位老闆也賺了不少錢。",
+              "questions": [
+                {
+                  "id": 50,
+                  "question": "這家網路廚房公司有什麼服務？",
+                  "options": {
+                    "A": "出租廚房給學生用",
+                    "B": "請媽媽們教學生做菜",
+                    "C": "幫學生把家人煮的菜送到學校",
+                    "D": "讓不太會煮菜的人吃到好吃的菜"
+                  },
+                  "answer": "D"
                 }
               ]
             }
@@ -697,6 +2085,250 @@
                     "B": "隨時都要做好預防災害的準備",
                     "C": "人們無法預先知道將發生什麼事",
                     "D": "無論發生任何事情都有方法解決"
+                  },
+                  "answer": "D"
+                }
+              ]
+            },
+            {
+              "id": "十二",
+              "text": "你有什麼有趣的經歷可以告訴大家，和大家分享的？請寫成三百字長度的故事寄來本報社。必須是未經發表過的真實故事，內容必須是溫馨的、勵志的或是與各地風土人情有關的。來稿請附上真實姓名、地址、電話（或傳真號碼）。故事一經本社採用登出，每篇稿酬三千元，版權歸本社所有，若不獲採用，恕不退還。",
+              "questions": [
+                {
+                  "id": 36,
+                  "question": "下面哪一種作品符合這個報社的需要？",
+                  "options": {
+                    "A": "長篇小說",
+                    "B": "本地名人介紹",
+                    "C": "歷史電影的劇本",
+                    "D": "自己設計的笑話"
+                  },
+                  "answer": "B"
+                },
+                {
+                  "id": 37,
+                  "question": "根據這段說明，下面哪一個正確？",
+                  "options": {
+                    "A": "故事可以自編",
+                    "B": "故事愈長，稿酬愈多",
+                    "C": "如果被採用，版權不是作者的",
+                    "D": "如果沒被採用，就會退還給作者"
+                  },
+                  "answer": "C"
+                }
+              ]
+            },
+            {
+              "id": "十四",
+              "text": "柯林斯夫婦是美國人，有一次他們去中國旅遊，住在一間老舊的旅館。到達旅館的時候，服務人員對他們說：「我必須告訴你們，你們要住進去的那個房間裡有喜歡說英文的中國鬼。」雖然柯林斯夫婦覺得很可怕，但是因為旅館的所有房間都被訂了，想要換旅館也太晚了，於是，他們仍然住進了那個房間。睡到半夜的時候，柯林斯先生聽到奇怪的聲音。他把在睡夢中的太太搖醒，對她說：「那個中國鬼出現了。既然妳的中文比我好，妳去請他離開好不好？」他太太回答：「好吧！」柯林斯太太便起床看看那個中國鬼在哪裡。幾分鐘之後，她回到丈夫身邊說：「那個中國鬼不喜歡跟我講中文，倒是比較想跟你練習英文，他要你去跟他說話。」",
+              "questions": [
+                {
+                  "id": 41,
+                  "question": "為什麼柯林斯夫婦不換房間？",
+                  "options": {
+                    "A": "旅館沒有空房了",
+                    "B": "他們覺得換房間麻煩",
+                    "C": "他們想知道鬼的樣子",
+                    "D": "原本的房間非常舒服"
+                  },
+                  "answer": "A"
+                },
+                {
+                  "id": 42,
+                  "question": "為什麼柯林斯先生把太太叫醒？",
+                  "options": {
+                    "A": "鬼來找他說話",
+                    "B": "他覺得鬼來了",
+                    "C": "服務生來找他們",
+                    "D": "他想和太太聊天"
+                  },
+                  "answer": "B"
+                },
+                {
+                  "id": 43,
+                  "question": "下面哪一個是錯的？",
+                  "options": {
+                    "A": "鬼想和柯林斯太太說英文",
+                    "B": "柯林斯先生感覺到鬼的存在",
+                    "C": "柯林斯夫婦住進有鬼的房間",
+                    "D": "服務員告訴柯林斯夫婦房間裡有鬼"
+                  },
+                  "answer": "A"
+                }
+              ]
+            }
+          ],
+          "image_dir": "exam-images/band-b/exam1",
+          "image_passages": [
+            {
+              "id": "六",
+              "page_image": "page-12.png",
+              "type": "image_material",
+              "questions": [
+                {
+                  "id": 24,
+                  "text": "關於這四個廣告，下面哪一個是對的？",
+                  "options": {
+                    "A": "這四個廣告都是賣電腦的",
+                    "B": "小陳賣的電腦用了一年了",
+                    "C": "李小姐的電腦要賣9500元",
+                    "D": "早上九點可以打電話給小陳"
+                  },
+                  "answer": "B"
+                },
+                {
+                  "id": 25,
+                  "text": "如果你想要買新電腦，應該找誰？",
+                  "options": {
+                    "A": "小陳",
+                    "B": "李小姐",
+                    "C": "王先生",
+                    "D": "林先生"
+                  },
+                  "answer": "C"
+                }
+              ]
+            },
+            {
+              "id": "七",
+              "page_image": "page-13.png",
+              "type": "image_material",
+              "questions": [
+                {
+                  "id": 26,
+                  "text": "這封信說了小美的什麼事？",
+                  "options": {
+                    "A": "她決定出國念書",
+                    "B": "她來美國已經兩年了",
+                    "C": "她男朋友找到了新工作",
+                    "D": "下週五晚上，她的學校有活動"
+                  },
+                  "answer": "C"
+                },
+                {
+                  "id": 27,
+                  "text": "關於這封信，下面哪一個不對？",
+                  "options": {
+                    "A": "小美本來打算出國念書",
+                    "B": "明真希望小美參加學校晚會",
+                    "C": "明真先收到了一封小美寄來的信",
+                    "D": "小美想知道大忠的工作做得好不好"
+                  },
+                  "answer": "D"
+                }
+              ]
+            },
+            {
+              "id": "八",
+              "page_image": "page-14.png",
+              "type": "image_material",
+              "questions": [
+                {
+                  "id": 28,
+                  "text": "這是心美的記事本，下面哪一個不對？",
+                  "options": {
+                    "A": "心美星期四有會議",
+                    "B": "心美週末要看電影",
+                    "C": "心美星期二上數學課",
+                    "D": "心美打算送禮物給小英"
+                  },
+                  "answer": "C"
+                },
+                {
+                  "id": 29,
+                  "text": "心美哪幾天要上班？",
+                  "options": {
+                    "A": "星期日和星期一",
+                    "B": "星期一和星期二",
+                    "C": "星期四和星期五",
+                    "D": "星期五和星期一"
+                  },
+                  "answer": "D"
+                }
+              ]
+            },
+            {
+              "id": "九",
+              "page_image": "page-15.png",
+              "type": "image_material",
+              "questions": [
+                {
+                  "id": 30,
+                  "text": "這個自助加油機要怎麼使用？",
+                  "options": {
+                    "A": "拿到發票以後再付錢",
+                    "B": "加完油以後，才能拿回信用卡",
+                    "C": "當機器有問題的時候，按「F1」",
+                    "D": "油槍放入油箱後，再按「開始」"
+                  },
+                  "answer": "D"
+                },
+                {
+                  "id": 31,
+                  "text": "客人使用這個機器的時候，可以做哪件事？",
+                  "options": {
+                    "A": "坐在車裡讓人服務",
+                    "B": "找服務員解決問題",
+                    "C": "讓15歲的學生使用",
+                    "D": "一邊打手機，一邊加油"
+                  },
+                  "answer": "B"
+                }
+              ]
+            },
+            {
+              "id": "十",
+              "page_image": "page-16.png",
+              "type": "image_material",
+              "questions": [
+                {
+                  "id": 32,
+                  "text": "關於這個產品，下面哪一個是對的？",
+                  "options": {
+                    "A": "是在台北市製造的",
+                    "B": "打開後不必放進冰箱",
+                    "C": "不能放在陽光照得到的地方",
+                    "D": "放到2010年1月1日就過期了"
+                  },
+                  "answer": "C"
+                },
+                {
+                  "id": 33,
+                  "text": "根據說明，如果覺得這個產品吃起來味道怪怪的，該怎麼做？",
+                  "options": {
+                    "A": "寫信給這家公司",
+                    "B": "打電話給這家公司",
+                    "C": "把產品寄給這家公司",
+                    "D": "請這家公司來收這個產品"
+                  },
+                  "answer": "C"
+                }
+              ]
+            },
+            {
+              "id": "十一",
+              "page_image": "page-17.png",
+              "type": "image_material",
+              "questions": [
+                {
+                  "id": 34,
+                  "text": "下面哪一個是對的？",
+                  "options": {
+                    "A": "大衛想要一個空房間",
+                    "B": "這家飯店只有兩個空房間",
+                    "C": "這家飯店還不知道大衛的決定",
+                    "D": "兩個空房間一個晚上要3200元"
+                  },
+                  "answer": "C"
+                },
+                {
+                  "id": 35,
+                  "text": "如果大衛想要住這家飯店，他可以在什麼時候打電話給飯店？",
+                  "options": {
+                    "A": "12/21早上八點",
+                    "B": "12/21晚上十點",
+                    "C": "12/22早上七點",
+                    "D": "12/22晚上九點"
                   },
                   "answer": "D"
                 }
