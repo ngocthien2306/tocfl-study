@@ -1,0 +1,2762 @@
+{
+  "bandA": {
+    "exam1": {
+      "title": "TOCFL Band A · Nghe (Đề 1)",
+      "duration": 3600,
+      "parts": [
+        {
+          "id": "part1",
+          "type": "image_choice",
+          "title": "Phần 1: Xem hình, nghe câu hỏi (1–25)",
+          "instruction": "Nghe câu hỏi và 3 lựa chọn. Dựa vào hình, chọn đáp án đúng.",
+          "questions": [
+            {
+              "id": 1,
+              "audio": [
+                "audio/band-a/exam1/1-01.mp3"
+              ],
+              "page_image": "exam-images/listening/band-a/exam1/page-04.png",
+              "options": {
+                "A": "(A)",
+                "B": "(B)",
+                "C": "(C)"
+              },
+              "answer": "B"
+            },
+            {
+              "id": 2,
+              "audio": [
+                "audio/band-a/exam1/1-02.mp3"
+              ],
+              "page_image": "exam-images/listening/band-a/exam1/page-04.png",
+              "options": {
+                "A": "(A)",
+                "B": "(B)",
+                "C": "(C)"
+              },
+              "answer": "A"
+            },
+            {
+              "id": 3,
+              "audio": [
+                "audio/band-a/exam1/1-03.mp3"
+              ],
+              "page_image": "exam-images/listening/band-a/exam1/page-04.png",
+              "options": {
+                "A": "(A)",
+                "B": "(B)",
+                "C": "(C)"
+              },
+              "answer": "B"
+            },
+            {
+              "id": 4,
+              "audio": [
+                "audio/band-a/exam1/1-04.mp3"
+              ],
+              "page_image": "exam-images/listening/band-a/exam1/page-04.png",
+              "options": {
+                "A": "(A)",
+                "B": "(B)",
+                "C": "(C)"
+              },
+              "answer": "B"
+            },
+            {
+              "id": 5,
+              "audio": [
+                "audio/band-a/exam1/1-05.mp3"
+              ],
+              "page_image": "exam-images/listening/band-a/exam1/page-04.png",
+              "options": {
+                "A": "(A)",
+                "B": "(B)",
+                "C": "(C)"
+              },
+              "answer": "A"
+            },
+            {
+              "id": 6,
+              "audio": [
+                "audio/band-a/exam1/1-06.mp3"
+              ],
+              "page_image": "exam-images/listening/band-a/exam1/page-05.png",
+              "options": {
+                "A": "(A)",
+                "B": "(B)",
+                "C": "(C)"
+              },
+              "answer": "A"
+            },
+            {
+              "id": 7,
+              "audio": [
+                "audio/band-a/exam1/1-07.mp3"
+              ],
+              "page_image": "exam-images/listening/band-a/exam1/page-05.png",
+              "options": {
+                "A": "(A)",
+                "B": "(B)",
+                "C": "(C)"
+              },
+              "answer": "C"
+            },
+            {
+              "id": 8,
+              "audio": [
+                "audio/band-a/exam1/1-08.mp3"
+              ],
+              "page_image": "exam-images/listening/band-a/exam1/page-05.png",
+              "options": {
+                "A": "(A)",
+                "B": "(B)",
+                "C": "(C)"
+              },
+              "answer": "A"
+            },
+            {
+              "id": 9,
+              "audio": [
+                "audio/band-a/exam1/1-09.mp3"
+              ],
+              "page_image": "exam-images/listening/band-a/exam1/page-05.png",
+              "options": {
+                "A": "(A)",
+                "B": "(B)",
+                "C": "(C)"
+              },
+              "answer": "B"
+            },
+            {
+              "id": 10,
+              "audio": [
+                "audio/band-a/exam1/1-10.mp3"
+              ],
+              "page_image": "exam-images/listening/band-a/exam1/page-05.png",
+              "options": {
+                "A": "(A)",
+                "B": "(B)",
+                "C": "(C)"
+              },
+              "answer": "B"
+            },
+            {
+              "id": 11,
+              "audio": [
+                "audio/band-a/exam1/1-11.mp3"
+              ],
+              "page_image": "exam-images/listening/band-a/exam1/page-06.png",
+              "options": {
+                "A": "(A)",
+                "B": "(B)",
+                "C": "(C)"
+              },
+              "answer": "A"
+            },
+            {
+              "id": 12,
+              "audio": [
+                "audio/band-a/exam1/1-12.mp3"
+              ],
+              "page_image": "exam-images/listening/band-a/exam1/page-06.png",
+              "options": {
+                "A": "(A)",
+                "B": "(B)",
+                "C": "(C)"
+              },
+              "answer": "C"
+            },
+            {
+              "id": 13,
+              "audio": [
+                "audio/band-a/exam1/1-13.mp3"
+              ],
+              "page_image": "exam-images/listening/band-a/exam1/page-06.png",
+              "options": {
+                "A": "(A)",
+                "B": "(B)",
+                "C": "(C)"
+              },
+              "answer": "A"
+            },
+            {
+              "id": 14,
+              "audio": [
+                "audio/band-a/exam1/1-14.mp3"
+              ],
+              "page_image": "exam-images/listening/band-a/exam1/page-06.png",
+              "options": {
+                "A": "(A)",
+                "B": "(B)",
+                "C": "(C)"
+              },
+              "answer": "B"
+            },
+            {
+              "id": 15,
+              "audio": [
+                "audio/band-a/exam1/1-15.mp3"
+              ],
+              "page_image": "exam-images/listening/band-a/exam1/page-06.png",
+              "options": {
+                "A": "(A)",
+                "B": "(B)",
+                "C": "(C)"
+              },
+              "answer": "C"
+            },
+            {
+              "id": 16,
+              "audio": [
+                "audio/band-a/exam1/1-16.mp3"
+              ],
+              "page_image": "exam-images/listening/band-a/exam1/page-07.png",
+              "options": {
+                "A": "(A)",
+                "B": "(B)",
+                "C": "(C)"
+              },
+              "answer": "C"
+            },
+            {
+              "id": 17,
+              "audio": [
+                "audio/band-a/exam1/1-17.mp3"
+              ],
+              "page_image": "exam-images/listening/band-a/exam1/page-07.png",
+              "options": {
+                "A": "(A)",
+                "B": "(B)",
+                "C": "(C)"
+              },
+              "answer": "A"
+            },
+            {
+              "id": 18,
+              "audio": [
+                "audio/band-a/exam1/1-18.mp3"
+              ],
+              "page_image": "exam-images/listening/band-a/exam1/page-07.png",
+              "options": {
+                "A": "(A)",
+                "B": "(B)",
+                "C": "(C)"
+              },
+              "answer": "A"
+            },
+            {
+              "id": 19,
+              "audio": [
+                "audio/band-a/exam1/1-19.mp3"
+              ],
+              "page_image": "exam-images/listening/band-a/exam1/page-07.png",
+              "options": {
+                "A": "(A)",
+                "B": "(B)",
+                "C": "(C)"
+              },
+              "answer": "C"
+            },
+            {
+              "id": 20,
+              "audio": [
+                "audio/band-a/exam1/1-20.mp3"
+              ],
+              "page_image": "exam-images/listening/band-a/exam1/page-07.png",
+              "options": {
+                "A": "(A)",
+                "B": "(B)",
+                "C": "(C)"
+              },
+              "answer": "B"
+            },
+            {
+              "id": 21,
+              "audio": [
+                "audio/band-a/exam1/1-21.mp3"
+              ],
+              "page_image": "exam-images/listening/band-a/exam1/page-08.png",
+              "options": {
+                "A": "(A)",
+                "B": "(B)",
+                "C": "(C)"
+              },
+              "answer": "C"
+            },
+            {
+              "id": 22,
+              "audio": [
+                "audio/band-a/exam1/1-22.mp3"
+              ],
+              "page_image": "exam-images/listening/band-a/exam1/page-08.png",
+              "options": {
+                "A": "(A)",
+                "B": "(B)",
+                "C": "(C)"
+              },
+              "answer": "C"
+            },
+            {
+              "id": 23,
+              "audio": [
+                "audio/band-a/exam1/1-23.mp3"
+              ],
+              "page_image": "exam-images/listening/band-a/exam1/page-08.png",
+              "options": {
+                "A": "(A)",
+                "B": "(B)",
+                "C": "(C)"
+              },
+              "answer": "A"
+            },
+            {
+              "id": 24,
+              "audio": [
+                "audio/band-a/exam1/1-24.mp3"
+              ],
+              "page_image": "exam-images/listening/band-a/exam1/page-08.png",
+              "options": {
+                "A": "(A)",
+                "B": "(B)",
+                "C": "(C)"
+              },
+              "answer": "B"
+            },
+            {
+              "id": 25,
+              "audio": [
+                "audio/band-a/exam1/1-25.mp3"
+              ],
+              "page_image": "exam-images/listening/band-a/exam1/page-08.png",
+              "options": {
+                "A": "(A)",
+                "B": "(B)",
+                "C": "(C)"
+              },
+              "answer": "A"
+            }
+          ]
+        },
+        {
+          "id": "part2",
+          "type": "image_choice",
+          "title": "Phần 2: Nghe hội thoại, chọn hình (26–40)",
+          "instruction": "Nghe hội thoại ngắn. Chọn hình phù hợp với nội dung.",
+          "questions": [
+            {
+              "id": 26,
+              "audio": [
+                "audio/band-a/exam1/2-26.mp3"
+              ],
+              "page_image": "exam-images/listening/band-a/exam1/page-10.png",
+              "options": {
+                "A": "(A)",
+                "B": "(B)",
+                "C": "(C)"
+              },
+              "answer": "C"
+            },
+            {
+              "id": 27,
+              "audio": [
+                "audio/band-a/exam1/2-27.mp3"
+              ],
+              "page_image": "exam-images/listening/band-a/exam1/page-10.png",
+              "options": {
+                "A": "(A)",
+                "B": "(B)",
+                "C": "(C)"
+              },
+              "answer": "A"
+            },
+            {
+              "id": 28,
+              "audio": [
+                "audio/band-a/exam1/2-28.mp3"
+              ],
+              "page_image": "exam-images/listening/band-a/exam1/page-10.png",
+              "options": {
+                "A": "(A)",
+                "B": "(B)",
+                "C": "(C)"
+              },
+              "answer": "B"
+            },
+            {
+              "id": 29,
+              "audio": [
+                "audio/band-a/exam1/2-29.mp3"
+              ],
+              "page_image": "exam-images/listening/band-a/exam1/page-10.png",
+              "options": {
+                "A": "(A)",
+                "B": "(B)",
+                "C": "(C)"
+              },
+              "answer": "C"
+            },
+            {
+              "id": 30,
+              "audio": [
+                "audio/band-a/exam1/2-30.mp3"
+              ],
+              "page_image": "exam-images/listening/band-a/exam1/page-10.png",
+              "options": {
+                "A": "(A)",
+                "B": "(B)",
+                "C": "(C)"
+              },
+              "answer": "A"
+            },
+            {
+              "id": 31,
+              "audio": [
+                "audio/band-a/exam1/2-31.mp3"
+              ],
+              "page_image": "exam-images/listening/band-a/exam1/page-11.png",
+              "options": {
+                "A": "(A)",
+                "B": "(B)",
+                "C": "(C)"
+              },
+              "answer": "C"
+            },
+            {
+              "id": 32,
+              "audio": [
+                "audio/band-a/exam1/2-32.mp3"
+              ],
+              "page_image": "exam-images/listening/band-a/exam1/page-11.png",
+              "options": {
+                "A": "(A)",
+                "B": "(B)",
+                "C": "(C)"
+              },
+              "answer": "B"
+            },
+            {
+              "id": 33,
+              "audio": [
+                "audio/band-a/exam1/2-33.mp3"
+              ],
+              "page_image": "exam-images/listening/band-a/exam1/page-11.png",
+              "options": {
+                "A": "(A)",
+                "B": "(B)",
+                "C": "(C)"
+              },
+              "answer": "C"
+            },
+            {
+              "id": 34,
+              "audio": [
+                "audio/band-a/exam1/2-34.mp3"
+              ],
+              "page_image": "exam-images/listening/band-a/exam1/page-11.png",
+              "options": {
+                "A": "(A)",
+                "B": "(B)",
+                "C": "(C)"
+              },
+              "answer": "B"
+            },
+            {
+              "id": 35,
+              "audio": [
+                "audio/band-a/exam1/2-35.mp3"
+              ],
+              "page_image": "exam-images/listening/band-a/exam1/page-11.png",
+              "options": {
+                "A": "(A)",
+                "B": "(B)",
+                "C": "(C)"
+              },
+              "answer": "C"
+            },
+            {
+              "id": 36,
+              "audio": [
+                "audio/band-a/exam1/2-36.mp3"
+              ],
+              "page_image": "exam-images/listening/band-a/exam1/page-12.png",
+              "options": {
+                "A": "(A)",
+                "B": "(B)",
+                "C": "(C)"
+              },
+              "answer": "C"
+            },
+            {
+              "id": 37,
+              "audio": [
+                "audio/band-a/exam1/2-37.mp3"
+              ],
+              "page_image": "exam-images/listening/band-a/exam1/page-12.png",
+              "options": {
+                "A": "(A)",
+                "B": "(B)",
+                "C": "(C)"
+              },
+              "answer": "B"
+            },
+            {
+              "id": 38,
+              "audio": [
+                "audio/band-a/exam1/2-38.mp3"
+              ],
+              "page_image": "exam-images/listening/band-a/exam1/page-12.png",
+              "options": {
+                "A": "(A)",
+                "B": "(B)",
+                "C": "(C)"
+              },
+              "answer": "C"
+            },
+            {
+              "id": 39,
+              "audio": [
+                "audio/band-a/exam1/2-39.mp3"
+              ],
+              "page_image": "exam-images/listening/band-a/exam1/page-12.png",
+              "options": {
+                "A": "(A)",
+                "B": "(B)",
+                "C": "(C)"
+              },
+              "answer": "B"
+            },
+            {
+              "id": 40,
+              "audio": [
+                "audio/band-a/exam1/2-40.mp3"
+              ],
+              "page_image": "exam-images/listening/band-a/exam1/page-12.png",
+              "options": {
+                "A": "(A)",
+                "B": "(B)",
+                "C": "(C)"
+              },
+              "answer": "A"
+            }
+          ]
+        },
+        {
+          "id": "part3",
+          "type": "image_choice",
+          "title": "Phần 3: Nghe đối thoại dài, chọn hình (41–45)",
+          "instruction": "Nghe đoạn hội thoại 4 câu. Trả lời câu hỏi bằng cách chọn hình.",
+          "questions": [
+            {
+              "id": 41,
+              "audio": [
+                "audio/band-a/exam1/3-41.mp3"
+              ],
+              "page_image": "exam-images/listening/band-a/exam1/page-14.png",
+              "options": {
+                "A": "(A)",
+                "B": "(B)",
+                "C": "(C)"
+              },
+              "answer": "C"
+            },
+            {
+              "id": 42,
+              "audio": [
+                "audio/band-a/exam1/3-42.mp3"
+              ],
+              "page_image": "exam-images/listening/band-a/exam1/page-14.png",
+              "options": {
+                "A": "(A)",
+                "B": "(B)",
+                "C": "(C)"
+              },
+              "answer": "B"
+            },
+            {
+              "id": 43,
+              "audio": [
+                "audio/band-a/exam1/3-43.mp3"
+              ],
+              "page_image": "exam-images/listening/band-a/exam1/page-14.png",
+              "options": {
+                "A": "(A)",
+                "B": "(B)",
+                "C": "(C)"
+              },
+              "answer": "C"
+            },
+            {
+              "id": 44,
+              "audio": [
+                "audio/band-a/exam1/3-44.mp3"
+              ],
+              "page_image": "exam-images/listening/band-a/exam1/page-14.png",
+              "options": {
+                "A": "(A)",
+                "B": "(B)",
+                "C": "(C)"
+              },
+              "answer": "A"
+            },
+            {
+              "id": 45,
+              "audio": [
+                "audio/band-a/exam1/3-45.mp3"
+              ],
+              "page_image": "exam-images/listening/band-a/exam1/page-14.png",
+              "options": {
+                "A": "(A)",
+                "B": "(B)",
+                "C": "(C)"
+              },
+              "answer": "C"
+            }
+          ]
+        },
+        {
+          "id": "part4",
+          "type": "text_choice",
+          "title": "Phần 4: Nghe hội thoại, chọn đáp án (46–50)",
+          "instruction": "Nghe hội thoại. Đọc 4 lựa chọn trong đề thi và chọn đáp án đúng.",
+          "questions": [
+            {
+              "id": 46,
+              "audio": [
+                "audio/band-a/exam1/4-46.mp3"
+              ],
+              "options": {
+                "A": "她要兒子再找找",
+                "B": "課本不在書桌上",
+                "C": "她把課本收起來了",
+                "D": "書桌上放了本字典"
+              },
+              "answer": "A"
+            },
+            {
+              "id": 47,
+              "audio": [
+                "audio/band-a/exam1/4-47.mp3"
+              ],
+              "options": {
+                "A": "這裡很吵",
+                "B": "這裡人不多",
+                "C": "這裡的環境很好",
+                "D": "這裡的風景很美"
+              },
+              "answer": "A"
+            },
+            {
+              "id": 48,
+              "audio": [
+                "audio/band-a/exam1/4-48.mp3"
+              ],
+              "options": {
+                "A": "穿褲子比較好看",
+                "B": "這些裙子太小了",
+                "C": "她不喜歡穿裙子了",
+                "D": "穿裙子時不方便照顧小孩"
+              },
+              "answer": "D"
+            },
+            {
+              "id": 49,
+              "audio": [
+                "audio/band-a/exam1/4-49.mp3"
+              ],
+              "options": {
+                "A": "讓她休息一個月",
+                "B": "讓她的工作少一點",
+                "C": "兩星期後，可以休息幾天",
+                "D": "一個月後，讓她離開公司"
+              },
+              "answer": "A"
+            },
+            {
+              "id": 50,
+              "audio": [
+                "audio/band-a/exam1/4-50.mp3"
+              ],
+              "options": {
+                "A": "沒收到衣服",
+                "B": "沒錢吃東西",
+                "C": "沒錢買衣服",
+                "D": "請母親寄衣服"
+              },
+              "answer": "C"
+            }
+          ]
+        }
+      ]
+    },
+    "exam2": {
+      "title": "TOCFL Band A · Nghe (Đề 2)",
+      "duration": 3600,
+      "parts": [
+        {
+          "id": "part1",
+          "type": "image_choice",
+          "title": "Phần 1: Xem hình, nghe câu hỏi (1–25)",
+          "instruction": "Mỗi câu có một hình ảnh. Nghe câu hỏi và (A)(B)(C) ba lựa chọn, căn cứ vào hình chọn đáp án đúng.",
+          "questions": [
+            {
+              "id": 1,
+              "audio": [
+                "audio/band-a/exam2/1-01.mp3"
+              ],
+              "page_image": "exam-images/listening/band-a/exam2/page-04.png",
+              "options": {
+                "A": "(A)",
+                "B": "(B)",
+                "C": "(C)"
+              },
+              "answer": "A"
+            },
+            {
+              "id": 2,
+              "audio": [
+                "audio/band-a/exam2/1-02.mp3"
+              ],
+              "page_image": "exam-images/listening/band-a/exam2/page-04.png",
+              "options": {
+                "A": "(A)",
+                "B": "(B)",
+                "C": "(C)"
+              },
+              "answer": "C"
+            },
+            {
+              "id": 3,
+              "audio": [
+                "audio/band-a/exam2/1-03.mp3"
+              ],
+              "page_image": "exam-images/listening/band-a/exam2/page-04.png",
+              "options": {
+                "A": "(A)",
+                "B": "(B)",
+                "C": "(C)"
+              },
+              "answer": "B"
+            },
+            {
+              "id": 4,
+              "audio": [
+                "audio/band-a/exam2/1-04.mp3"
+              ],
+              "page_image": "exam-images/listening/band-a/exam2/page-04.png",
+              "options": {
+                "A": "(A)",
+                "B": "(B)",
+                "C": "(C)"
+              },
+              "answer": "B"
+            },
+            {
+              "id": 5,
+              "audio": [
+                "audio/band-a/exam2/1-05.mp3"
+              ],
+              "page_image": "exam-images/listening/band-a/exam2/page-04.png",
+              "options": {
+                "A": "(A)",
+                "B": "(B)",
+                "C": "(C)"
+              },
+              "answer": "C"
+            },
+            {
+              "id": 6,
+              "audio": [
+                "audio/band-a/exam2/1-06.mp3"
+              ],
+              "page_image": "exam-images/listening/band-a/exam2/page-05.png",
+              "options": {
+                "A": "(A)",
+                "B": "(B)",
+                "C": "(C)"
+              },
+              "answer": "A"
+            },
+            {
+              "id": 7,
+              "audio": [
+                "audio/band-a/exam2/1-07.mp3"
+              ],
+              "page_image": "exam-images/listening/band-a/exam2/page-05.png",
+              "options": {
+                "A": "(A)",
+                "B": "(B)",
+                "C": "(C)"
+              },
+              "answer": "A"
+            },
+            {
+              "id": 8,
+              "audio": [
+                "audio/band-a/exam2/1-08.mp3"
+              ],
+              "page_image": "exam-images/listening/band-a/exam2/page-05.png",
+              "options": {
+                "A": "(A)",
+                "B": "(B)",
+                "C": "(C)"
+              },
+              "answer": "C"
+            },
+            {
+              "id": 9,
+              "audio": [
+                "audio/band-a/exam2/1-09.mp3"
+              ],
+              "page_image": "exam-images/listening/band-a/exam2/page-05.png",
+              "options": {
+                "A": "(A)",
+                "B": "(B)",
+                "C": "(C)"
+              },
+              "answer": "A"
+            },
+            {
+              "id": 10,
+              "audio": [
+                "audio/band-a/exam2/1-10.mp3"
+              ],
+              "page_image": "exam-images/listening/band-a/exam2/page-05.png",
+              "options": {
+                "A": "(A)",
+                "B": "(B)",
+                "C": "(C)"
+              },
+              "answer": "A"
+            },
+            {
+              "id": 11,
+              "audio": [
+                "audio/band-a/exam2/1-11.mp3"
+              ],
+              "page_image": "exam-images/listening/band-a/exam2/page-06.png",
+              "options": {
+                "A": "(A)",
+                "B": "(B)",
+                "C": "(C)"
+              },
+              "answer": "A"
+            },
+            {
+              "id": 12,
+              "audio": [
+                "audio/band-a/exam2/1-12.mp3"
+              ],
+              "page_image": "exam-images/listening/band-a/exam2/page-06.png",
+              "options": {
+                "A": "(A)",
+                "B": "(B)",
+                "C": "(C)"
+              },
+              "answer": "B"
+            },
+            {
+              "id": 13,
+              "audio": [
+                "audio/band-a/exam2/1-13.mp3"
+              ],
+              "page_image": "exam-images/listening/band-a/exam2/page-06.png",
+              "options": {
+                "A": "(A)",
+                "B": "(B)",
+                "C": "(C)"
+              },
+              "answer": "A"
+            },
+            {
+              "id": 14,
+              "audio": [
+                "audio/band-a/exam2/1-14.mp3"
+              ],
+              "page_image": "exam-images/listening/band-a/exam2/page-06.png",
+              "options": {
+                "A": "(A)",
+                "B": "(B)",
+                "C": "(C)"
+              },
+              "answer": "C"
+            },
+            {
+              "id": 15,
+              "audio": [
+                "audio/band-a/exam2/1-15.mp3"
+              ],
+              "page_image": "exam-images/listening/band-a/exam2/page-06.png",
+              "options": {
+                "A": "(A)",
+                "B": "(B)",
+                "C": "(C)"
+              },
+              "answer": "C"
+            },
+            {
+              "id": 16,
+              "audio": [
+                "audio/band-a/exam2/1-16.mp3"
+              ],
+              "page_image": "exam-images/listening/band-a/exam2/page-07.png",
+              "options": {
+                "A": "(A)",
+                "B": "(B)",
+                "C": "(C)"
+              },
+              "answer": "B"
+            },
+            {
+              "id": 17,
+              "audio": [
+                "audio/band-a/exam2/1-17.mp3"
+              ],
+              "page_image": "exam-images/listening/band-a/exam2/page-07.png",
+              "options": {
+                "A": "(A)",
+                "B": "(B)",
+                "C": "(C)"
+              },
+              "answer": "C"
+            },
+            {
+              "id": 18,
+              "audio": [
+                "audio/band-a/exam2/1-18.mp3"
+              ],
+              "page_image": "exam-images/listening/band-a/exam2/page-07.png",
+              "options": {
+                "A": "(A)",
+                "B": "(B)",
+                "C": "(C)"
+              },
+              "answer": "B"
+            },
+            {
+              "id": 19,
+              "audio": [
+                "audio/band-a/exam2/1-19.mp3"
+              ],
+              "page_image": "exam-images/listening/band-a/exam2/page-07.png",
+              "options": {
+                "A": "(A)",
+                "B": "(B)",
+                "C": "(C)"
+              },
+              "answer": "B"
+            },
+            {
+              "id": 20,
+              "audio": [
+                "audio/band-a/exam2/1-20.mp3"
+              ],
+              "page_image": "exam-images/listening/band-a/exam2/page-07.png",
+              "options": {
+                "A": "(A)",
+                "B": "(B)",
+                "C": "(C)"
+              },
+              "answer": "A"
+            },
+            {
+              "id": 21,
+              "audio": [
+                "audio/band-a/exam2/1-21.mp3"
+              ],
+              "page_image": "exam-images/listening/band-a/exam2/page-08.png",
+              "options": {
+                "A": "(A)",
+                "B": "(B)",
+                "C": "(C)"
+              },
+              "answer": "B"
+            },
+            {
+              "id": 22,
+              "audio": [
+                "audio/band-a/exam2/1-22.mp3"
+              ],
+              "page_image": "exam-images/listening/band-a/exam2/page-08.png",
+              "options": {
+                "A": "(A)",
+                "B": "(B)",
+                "C": "(C)"
+              },
+              "answer": "C"
+            },
+            {
+              "id": 23,
+              "audio": [
+                "audio/band-a/exam2/1-23.mp3"
+              ],
+              "page_image": "exam-images/listening/band-a/exam2/page-08.png",
+              "options": {
+                "A": "(A)",
+                "B": "(B)",
+                "C": "(C)"
+              },
+              "answer": "A"
+            },
+            {
+              "id": 24,
+              "audio": [
+                "audio/band-a/exam2/1-24.mp3"
+              ],
+              "page_image": "exam-images/listening/band-a/exam2/page-08.png",
+              "options": {
+                "A": "(A)",
+                "B": "(B)",
+                "C": "(C)"
+              },
+              "answer": "A"
+            },
+            {
+              "id": 25,
+              "audio": [
+                "audio/band-a/exam2/1-25.mp3"
+              ],
+              "page_image": "exam-images/listening/band-a/exam2/page-08.png",
+              "options": {
+                "A": "(A)",
+                "B": "(B)",
+                "C": "(C)"
+              },
+              "answer": "C"
+            }
+          ]
+        },
+        {
+          "id": "part2",
+          "type": "image_choice",
+          "title": "Phần 2: Nghe đối thoại, chọn hình (26–40)",
+          "instruction": "Nghe đoạn hội thoại, chọn hình ảnh phù hợp nhất.",
+          "questions": [
+            {
+              "id": 26,
+              "audio": [
+                "audio/band-a/exam2/2-26.mp3"
+              ],
+              "page_image": "exam-images/listening/band-a/exam2/page-10.png",
+              "options": {
+                "A": "(A)",
+                "B": "(B)",
+                "C": "(C)"
+              },
+              "answer": "C"
+            },
+            {
+              "id": 27,
+              "audio": [
+                "audio/band-a/exam2/2-27.mp3"
+              ],
+              "page_image": "exam-images/listening/band-a/exam2/page-10.png",
+              "options": {
+                "A": "(A)",
+                "B": "(B)",
+                "C": "(C)"
+              },
+              "answer": "C"
+            },
+            {
+              "id": 28,
+              "audio": [
+                "audio/band-a/exam2/2-28.mp3"
+              ],
+              "page_image": "exam-images/listening/band-a/exam2/page-10.png",
+              "options": {
+                "A": "(A)",
+                "B": "(B)",
+                "C": "(C)"
+              },
+              "answer": "B"
+            },
+            {
+              "id": 29,
+              "audio": [
+                "audio/band-a/exam2/2-29.mp3"
+              ],
+              "page_image": "exam-images/listening/band-a/exam2/page-10.png",
+              "options": {
+                "A": "(A)",
+                "B": "(B)",
+                "C": "(C)"
+              },
+              "answer": "C"
+            },
+            {
+              "id": 30,
+              "audio": [
+                "audio/band-a/exam2/2-30.mp3"
+              ],
+              "page_image": "exam-images/listening/band-a/exam2/page-10.png",
+              "options": {
+                "A": "(A)",
+                "B": "(B)",
+                "C": "(C)"
+              },
+              "answer": "B"
+            },
+            {
+              "id": 31,
+              "audio": [
+                "audio/band-a/exam2/2-31.mp3"
+              ],
+              "page_image": "exam-images/listening/band-a/exam2/page-11.png",
+              "options": {
+                "A": "(A)",
+                "B": "(B)",
+                "C": "(C)"
+              },
+              "answer": "B"
+            },
+            {
+              "id": 32,
+              "audio": [
+                "audio/band-a/exam2/2-32.mp3"
+              ],
+              "page_image": "exam-images/listening/band-a/exam2/page-11.png",
+              "options": {
+                "A": "(A)",
+                "B": "(B)",
+                "C": "(C)"
+              },
+              "answer": "C"
+            },
+            {
+              "id": 33,
+              "audio": [
+                "audio/band-a/exam2/2-33.mp3"
+              ],
+              "page_image": "exam-images/listening/band-a/exam2/page-11.png",
+              "options": {
+                "A": "(A)",
+                "B": "(B)",
+                "C": "(C)"
+              },
+              "answer": "A"
+            },
+            {
+              "id": 34,
+              "audio": [
+                "audio/band-a/exam2/2-34.mp3"
+              ],
+              "page_image": "exam-images/listening/band-a/exam2/page-11.png",
+              "options": {
+                "A": "(A)",
+                "B": "(B)",
+                "C": "(C)"
+              },
+              "answer": "A"
+            },
+            {
+              "id": 35,
+              "audio": [
+                "audio/band-a/exam2/2-35.mp3"
+              ],
+              "page_image": "exam-images/listening/band-a/exam2/page-11.png",
+              "options": {
+                "A": "(A)",
+                "B": "(B)",
+                "C": "(C)"
+              },
+              "answer": "B"
+            },
+            {
+              "id": 36,
+              "audio": [
+                "audio/band-a/exam2/2-36.mp3"
+              ],
+              "page_image": "exam-images/listening/band-a/exam2/page-12.png",
+              "options": {
+                "A": "(A)",
+                "B": "(B)",
+                "C": "(C)"
+              },
+              "answer": "B"
+            },
+            {
+              "id": 37,
+              "audio": [
+                "audio/band-a/exam2/2-37.mp3"
+              ],
+              "page_image": "exam-images/listening/band-a/exam2/page-12.png",
+              "options": {
+                "A": "(A)",
+                "B": "(B)",
+                "C": "(C)"
+              },
+              "answer": "A"
+            },
+            {
+              "id": 38,
+              "audio": [
+                "audio/band-a/exam2/2-38.mp3"
+              ],
+              "page_image": "exam-images/listening/band-a/exam2/page-12.png",
+              "options": {
+                "A": "(A)",
+                "B": "(B)",
+                "C": "(C)"
+              },
+              "answer": "C"
+            },
+            {
+              "id": 39,
+              "audio": [
+                "audio/band-a/exam2/2-39.mp3"
+              ],
+              "page_image": "exam-images/listening/band-a/exam2/page-12.png",
+              "options": {
+                "A": "(A)",
+                "B": "(B)",
+                "C": "(C)"
+              },
+              "answer": "B"
+            },
+            {
+              "id": 40,
+              "audio": [
+                "audio/band-a/exam2/2-40.mp3"
+              ],
+              "page_image": "exam-images/listening/band-a/exam2/page-12.png",
+              "options": {
+                "A": "(A)",
+                "B": "(B)",
+                "C": "(C)"
+              },
+              "answer": "A"
+            }
+          ]
+        },
+        {
+          "id": "part3",
+          "type": "image_choice",
+          "title": "Phần 3: Nghe đối thoại dài, chọn hình (41–45)",
+          "instruction": "Nghe đoạn hội thoại 4 câu, chọn hình ảnh trả lời câu hỏi.",
+          "questions": [
+            {
+              "id": 41,
+              "audio": [
+                "audio/band-a/exam2/3-41.mp3"
+              ],
+              "page_image": "exam-images/listening/band-a/exam2/page-14.png",
+              "options": {
+                "A": "(A)",
+                "B": "(B)",
+                "C": "(C)"
+              },
+              "answer": "B"
+            },
+            {
+              "id": 42,
+              "audio": [
+                "audio/band-a/exam2/3-42.mp3"
+              ],
+              "page_image": "exam-images/listening/band-a/exam2/page-14.png",
+              "options": {
+                "A": "(A)",
+                "B": "(B)",
+                "C": "(C)"
+              },
+              "answer": "C"
+            },
+            {
+              "id": 43,
+              "audio": [
+                "audio/band-a/exam2/3-43.mp3"
+              ],
+              "page_image": "exam-images/listening/band-a/exam2/page-14.png",
+              "options": {
+                "A": "(A)",
+                "B": "(B)",
+                "C": "(C)"
+              },
+              "answer": "A"
+            },
+            {
+              "id": 44,
+              "audio": [
+                "audio/band-a/exam2/3-44.mp3"
+              ],
+              "page_image": "exam-images/listening/band-a/exam2/page-14.png",
+              "options": {
+                "A": "(A)",
+                "B": "(B)",
+                "C": "(C)"
+              },
+              "answer": "C"
+            },
+            {
+              "id": 45,
+              "audio": [
+                "audio/band-a/exam2/3-45.mp3"
+              ],
+              "page_image": "exam-images/listening/band-a/exam2/page-14.png",
+              "options": {
+                "A": "(A)",
+                "B": "(B)",
+                "C": "(C)"
+              },
+              "answer": "A"
+            }
+          ]
+        },
+        {
+          "id": "part4",
+          "type": "text_choice",
+          "title": "Phần 4: Nghe đối thoại, chọn đáp án (46–50)",
+          "instruction": "Nghe đoạn hội thoại và câu hỏi, chọn đáp án đúng từ (A)(B)(C)(D).",
+          "questions": [
+            {
+              "id": 46,
+              "audio": [
+                "audio/band-a/exam2/4-46.mp3"
+              ],
+              "options": {
+                "A": "睡得不好",
+                "B": "沒有吃藥",
+                "C": "天氣變了",
+                "D": "不常運動"
+              },
+              "answer": "C"
+            },
+            {
+              "id": 47,
+              "audio": [
+                "audio/band-a/exam2/4-47.mp3"
+              ],
+              "options": {
+                "A": "她沒辦法讓鄰居安靜一些",
+                "B": "她想搬到交通方便的地方",
+                "C": "她打算請警察跟鄰居談談",
+                "D": "她想找喜歡玩樂器的鄰居"
+              },
+              "answer": "A"
+            },
+            {
+              "id": 48,
+              "audio": [
+                "audio/band-a/exam2/4-48.mp3"
+              ],
+              "options": {
+                "A": "她也不想做學期報告",
+                "B": "她可以和大明一起討論",
+                "C": "大明不需要這麼快做決定",
+                "D": "大明應該告訴她發生什麼事"
+              },
+              "answer": "C"
+            },
+            {
+              "id": 49,
+              "audio": [
+                "audio/band-a/exam2/4-49.mp3"
+              ],
+              "options": {
+                "A": "她買新褲子了",
+                "B": "她想買新褲子",
+                "C": "舊褲子可以丟了",
+                "D": "她把褲子洗好了"
+              },
+              "answer": "B"
+            },
+            {
+              "id": 50,
+              "audio": [
+                "audio/band-a/exam2/4-50.mp3"
+              ],
+              "options": {
+                "A": "她想請這位先生喝杯飲料",
+                "B": "她知道這位先生常常遲到",
+                "C": "她相信這位先生工作很忙",
+                "D": "她覺得這位先生應該請客"
+              },
+              "answer": "D"
+            }
+          ]
+        }
+      ]
+    },
+    "exam3": {
+      "title": "TOCFL Band A · Nghe (Đề 3)",
+      "duration": 3600,
+      "parts": [
+        {
+          "id": "part1",
+          "type": "image_choice",
+          "title": "Phần 1: Xem hình, nghe câu hỏi (1–10)",
+          "instruction": "Mỗi câu có một hình ảnh. Nghe câu hỏi và (A)(B)(C) ba lựa chọn, căn cứ vào hình chọn đáp án đúng.",
+          "questions": [
+            {
+              "id": 1,
+              "audio": [
+                "audio/band-a/exam3/1-01.mp3"
+              ],
+              "page_image": "exam-images/listening/band-a/exam3/page-04.png",
+              "options": {
+                "A": "(A)",
+                "B": "(B)",
+                "C": "(C)"
+              },
+              "answer": "B"
+            },
+            {
+              "id": 2,
+              "audio": [
+                "audio/band-a/exam3/1-02.mp3"
+              ],
+              "page_image": "exam-images/listening/band-a/exam3/page-04.png",
+              "options": {
+                "A": "(A)",
+                "B": "(B)",
+                "C": "(C)"
+              },
+              "answer": "C"
+            },
+            {
+              "id": 3,
+              "audio": [
+                "audio/band-a/exam3/1-03.mp3"
+              ],
+              "page_image": "exam-images/listening/band-a/exam3/page-04.png",
+              "options": {
+                "A": "(A)",
+                "B": "(B)",
+                "C": "(C)"
+              },
+              "answer": "C"
+            },
+            {
+              "id": 4,
+              "audio": [
+                "audio/band-a/exam3/1-04.mp3"
+              ],
+              "page_image": "exam-images/listening/band-a/exam3/page-04.png",
+              "options": {
+                "A": "(A)",
+                "B": "(B)",
+                "C": "(C)"
+              },
+              "answer": "A"
+            },
+            {
+              "id": 5,
+              "audio": [
+                "audio/band-a/exam3/1-05.mp3"
+              ],
+              "page_image": "exam-images/listening/band-a/exam3/page-04.png",
+              "options": {
+                "A": "(A)",
+                "B": "(B)",
+                "C": "(C)"
+              },
+              "answer": "A"
+            },
+            {
+              "id": 6,
+              "audio": [
+                "audio/band-a/exam3/1-06.mp3"
+              ],
+              "page_image": "exam-images/listening/band-a/exam3/page-05.png",
+              "options": {
+                "A": "(A)",
+                "B": "(B)",
+                "C": "(C)"
+              },
+              "answer": "B"
+            },
+            {
+              "id": 7,
+              "audio": [
+                "audio/band-a/exam3/1-07.mp3"
+              ],
+              "page_image": "exam-images/listening/band-a/exam3/page-05.png",
+              "options": {
+                "A": "(A)",
+                "B": "(B)",
+                "C": "(C)"
+              },
+              "answer": "B"
+            },
+            {
+              "id": 8,
+              "audio": [
+                "audio/band-a/exam3/1-08.mp3"
+              ],
+              "page_image": "exam-images/listening/band-a/exam3/page-05.png",
+              "options": {
+                "A": "(A)",
+                "B": "(B)",
+                "C": "(C)"
+              },
+              "answer": "C"
+            },
+            {
+              "id": 9,
+              "audio": [
+                "audio/band-a/exam3/1-09.mp3"
+              ],
+              "page_image": "exam-images/listening/band-a/exam3/page-05.png",
+              "options": {
+                "A": "(A)",
+                "B": "(B)",
+                "C": "(C)"
+              },
+              "answer": "A"
+            },
+            {
+              "id": 10,
+              "audio": [
+                "audio/band-a/exam3/1-10.mp3"
+              ],
+              "page_image": "exam-images/listening/band-a/exam3/page-05.png",
+              "options": {
+                "A": "(A)",
+                "B": "(B)",
+                "C": "(C)"
+              },
+              "answer": "C"
+            }
+          ]
+        },
+        {
+          "id": "part2",
+          "type": "image_choice",
+          "title": "Phần 2: Nghe đối thoại, chọn hình (11–25)",
+          "instruction": "Nghe đoạn hội thoại, chọn hình ảnh phù hợp nhất.",
+          "questions": [
+            {
+              "id": 11,
+              "audio": [
+                "audio/band-a/exam3/2-11.mp3"
+              ],
+              "page_image": "exam-images/listening/band-a/exam3/page-08.png",
+              "options": {
+                "A": "(A)",
+                "B": "(B)",
+                "C": "(C)"
+              },
+              "answer": "A"
+            },
+            {
+              "id": 12,
+              "audio": [
+                "audio/band-a/exam3/2-12.mp3"
+              ],
+              "page_image": "exam-images/listening/band-a/exam3/page-08.png",
+              "options": {
+                "A": "(A)",
+                "B": "(B)",
+                "C": "(C)"
+              },
+              "answer": "B"
+            },
+            {
+              "id": 13,
+              "audio": [
+                "audio/band-a/exam3/2-13.mp3"
+              ],
+              "page_image": "exam-images/listening/band-a/exam3/page-08.png",
+              "options": {
+                "A": "(A)",
+                "B": "(B)",
+                "C": "(C)"
+              },
+              "answer": "A"
+            },
+            {
+              "id": 14,
+              "audio": [
+                "audio/band-a/exam3/2-14.mp3"
+              ],
+              "page_image": "exam-images/listening/band-a/exam3/page-08.png",
+              "options": {
+                "A": "(A)",
+                "B": "(B)",
+                "C": "(C)"
+              },
+              "answer": "B"
+            },
+            {
+              "id": 15,
+              "audio": [
+                "audio/band-a/exam3/2-15.mp3"
+              ],
+              "page_image": "exam-images/listening/band-a/exam3/page-08.png",
+              "options": {
+                "A": "(A)",
+                "B": "(B)",
+                "C": "(C)"
+              },
+              "answer": "A"
+            },
+            {
+              "id": 16,
+              "audio": [
+                "audio/band-a/exam3/2-16.mp3"
+              ],
+              "page_image": "exam-images/listening/band-a/exam3/page-09.png",
+              "options": {
+                "A": "(A)",
+                "B": "(B)",
+                "C": "(C)"
+              },
+              "answer": "C"
+            },
+            {
+              "id": 17,
+              "audio": [
+                "audio/band-a/exam3/2-17.mp3"
+              ],
+              "page_image": "exam-images/listening/band-a/exam3/page-09.png",
+              "options": {
+                "A": "(A)",
+                "B": "(B)",
+                "C": "(C)"
+              },
+              "answer": "C"
+            },
+            {
+              "id": 18,
+              "audio": [
+                "audio/band-a/exam3/2-18.mp3"
+              ],
+              "page_image": "exam-images/listening/band-a/exam3/page-09.png",
+              "options": {
+                "A": "(A)",
+                "B": "(B)",
+                "C": "(C)"
+              },
+              "answer": "B"
+            },
+            {
+              "id": 19,
+              "audio": [
+                "audio/band-a/exam3/2-19.mp3"
+              ],
+              "page_image": "exam-images/listening/band-a/exam3/page-09.png",
+              "options": {
+                "A": "(A)",
+                "B": "(B)",
+                "C": "(C)"
+              },
+              "answer": "A"
+            },
+            {
+              "id": 20,
+              "audio": [
+                "audio/band-a/exam3/2-20.mp3"
+              ],
+              "page_image": "exam-images/listening/band-a/exam3/page-09.png",
+              "options": {
+                "A": "(A)",
+                "B": "(B)",
+                "C": "(C)"
+              },
+              "answer": "C"
+            },
+            {
+              "id": 21,
+              "audio": [
+                "audio/band-a/exam3/2-21.mp3"
+              ],
+              "page_image": "exam-images/listening/band-a/exam3/page-10.png",
+              "options": {
+                "A": "(A)",
+                "B": "(B)",
+                "C": "(C)"
+              },
+              "answer": "C"
+            },
+            {
+              "id": 22,
+              "audio": [
+                "audio/band-a/exam3/2-22.mp3"
+              ],
+              "page_image": "exam-images/listening/band-a/exam3/page-10.png",
+              "options": {
+                "A": "(A)",
+                "B": "(B)",
+                "C": "(C)"
+              },
+              "answer": "B"
+            },
+            {
+              "id": 23,
+              "audio": [
+                "audio/band-a/exam3/2-23.mp3"
+              ],
+              "page_image": "exam-images/listening/band-a/exam3/page-10.png",
+              "options": {
+                "A": "(A)",
+                "B": "(B)",
+                "C": "(C)"
+              },
+              "answer": "B"
+            },
+            {
+              "id": 24,
+              "audio": [
+                "audio/band-a/exam3/2-24.mp3"
+              ],
+              "page_image": "exam-images/listening/band-a/exam3/page-10.png",
+              "options": {
+                "A": "(A)",
+                "B": "(B)",
+                "C": "(C)"
+              },
+              "answer": "A"
+            },
+            {
+              "id": 25,
+              "audio": [
+                "audio/band-a/exam3/2-25.mp3"
+              ],
+              "page_image": "exam-images/listening/band-a/exam3/page-10.png",
+              "options": {
+                "A": "(A)",
+                "B": "(B)",
+                "C": "(C)"
+              },
+              "answer": "A"
+            }
+          ]
+        },
+        {
+          "id": "part3",
+          "type": "image_choice",
+          "title": "Phần 3: Nghe đối thoại dài, chọn hình (26–40)",
+          "instruction": "Nghe đoạn hội thoại 4 câu, chọn hình ảnh trả lời câu hỏi.",
+          "questions": [
+            {
+              "id": 26,
+              "audio": [
+                "audio/band-a/exam3/3-26.mp3"
+              ],
+              "page_image": "exam-images/listening/band-a/exam3/page-12.png",
+              "options": {
+                "A": "(A)",
+                "B": "(B)",
+                "C": "(C)"
+              },
+              "answer": "A"
+            },
+            {
+              "id": 27,
+              "audio": [
+                "audio/band-a/exam3/3-27.mp3"
+              ],
+              "page_image": "exam-images/listening/band-a/exam3/page-12.png",
+              "options": {
+                "A": "(A)",
+                "B": "(B)",
+                "C": "(C)"
+              },
+              "answer": "B"
+            },
+            {
+              "id": 28,
+              "audio": [
+                "audio/band-a/exam3/3-28.mp3"
+              ],
+              "page_image": "exam-images/listening/band-a/exam3/page-12.png",
+              "options": {
+                "A": "(A)",
+                "B": "(B)",
+                "C": "(C)"
+              },
+              "answer": "B"
+            },
+            {
+              "id": 29,
+              "audio": [
+                "audio/band-a/exam3/3-29.mp3"
+              ],
+              "page_image": "exam-images/listening/band-a/exam3/page-12.png",
+              "options": {
+                "A": "(A)",
+                "B": "(B)",
+                "C": "(C)"
+              },
+              "answer": "B"
+            },
+            {
+              "id": 30,
+              "audio": [
+                "audio/band-a/exam3/3-30.mp3"
+              ],
+              "page_image": "exam-images/listening/band-a/exam3/page-12.png",
+              "options": {
+                "A": "(A)",
+                "B": "(B)",
+                "C": "(C)"
+              },
+              "answer": "C"
+            },
+            {
+              "id": 31,
+              "audio": [
+                "audio/band-a/exam3/3-31.mp3"
+              ],
+              "page_image": "exam-images/listening/band-a/exam3/page-13.png",
+              "options": {
+                "A": "(A)",
+                "B": "(B)",
+                "C": "(C)"
+              },
+              "answer": "C"
+            },
+            {
+              "id": 32,
+              "audio": [
+                "audio/band-a/exam3/3-32.mp3"
+              ],
+              "page_image": "exam-images/listening/band-a/exam3/page-13.png",
+              "options": {
+                "A": "(A)",
+                "B": "(B)",
+                "C": "(C)"
+              },
+              "answer": "A"
+            },
+            {
+              "id": 33,
+              "audio": [
+                "audio/band-a/exam3/3-33.mp3"
+              ],
+              "page_image": "exam-images/listening/band-a/exam3/page-13.png",
+              "options": {
+                "A": "(A)",
+                "B": "(B)",
+                "C": "(C)"
+              },
+              "answer": "B"
+            },
+            {
+              "id": 34,
+              "audio": [
+                "audio/band-a/exam3/3-34.mp3"
+              ],
+              "page_image": "exam-images/listening/band-a/exam3/page-13.png",
+              "options": {
+                "A": "(A)",
+                "B": "(B)",
+                "C": "(C)"
+              },
+              "answer": "B"
+            },
+            {
+              "id": 35,
+              "audio": [
+                "audio/band-a/exam3/3-35.mp3"
+              ],
+              "page_image": "exam-images/listening/band-a/exam3/page-13.png",
+              "options": {
+                "A": "(A)",
+                "B": "(B)",
+                "C": "(C)"
+              },
+              "answer": "A"
+            },
+            {
+              "id": 36,
+              "audio": [
+                "audio/band-a/exam3/3-36.mp3"
+              ],
+              "page_image": "exam-images/listening/band-a/exam3/page-14.png",
+              "options": {
+                "A": "(A)",
+                "B": "(B)",
+                "C": "(C)"
+              },
+              "answer": "A"
+            },
+            {
+              "id": 37,
+              "audio": [
+                "audio/band-a/exam3/3-37.mp3"
+              ],
+              "page_image": "exam-images/listening/band-a/exam3/page-14.png",
+              "options": {
+                "A": "(A)",
+                "B": "(B)",
+                "C": "(C)"
+              },
+              "answer": "B"
+            },
+            {
+              "id": 38,
+              "audio": [
+                "audio/band-a/exam3/3-38.mp3"
+              ],
+              "page_image": "exam-images/listening/band-a/exam3/page-14.png",
+              "options": {
+                "A": "(A)",
+                "B": "(B)",
+                "C": "(C)"
+              },
+              "answer": "B"
+            },
+            {
+              "id": 39,
+              "audio": [
+                "audio/band-a/exam3/3-39.mp3"
+              ],
+              "page_image": "exam-images/listening/band-a/exam3/page-14.png",
+              "options": {
+                "A": "(A)",
+                "B": "(B)",
+                "C": "(C)"
+              },
+              "answer": "A"
+            },
+            {
+              "id": 40,
+              "audio": [
+                "audio/band-a/exam3/3-40.mp3"
+              ],
+              "page_image": "exam-images/listening/band-a/exam3/page-14.png",
+              "options": {
+                "A": "(A)",
+                "B": "(B)",
+                "C": "(C)"
+              },
+              "answer": "B"
+            }
+          ]
+        },
+        {
+          "id": "part4",
+          "type": "text_choice",
+          "title": "Phần 4: Nghe đối thoại, chọn đáp án (41–50)",
+          "instruction": "Nghe đoạn hội thoại và câu hỏi, chọn đáp án đúng từ (A)(B)(C)(D).",
+          "questions": [
+            {
+              "id": 41,
+              "audio": [
+                "audio/band-a/exam3/4-41.mp3"
+              ],
+              "options": {
+                "A": "晚上可以去哪兒玩",
+                "B": "有名的大樓在哪裡",
+                "C": "這位小姐要去哪兒玩",
+                "D": "這附近有什麼好吃的東西"
+              },
+              "answer": "A"
+            },
+            {
+              "id": 42,
+              "audio": [
+                "audio/band-a/exam3/4-42.mp3"
+              ],
+              "options": {
+                "A": "因為那裡的服務很不錯",
+                "B": "因為那裡的菜天天不同",
+                "C": "因為小朋友想吃中國菜",
+                "D": "因為想讓客人吃中國菜"
+              },
+              "answer": "D"
+            },
+            {
+              "id": 43,
+              "audio": [
+                "audio/band-a/exam3/4-43.mp3"
+              ],
+              "options": {
+                "A": "要這位先生先排隊",
+                "B": "要這位先生快去看病",
+                "C": "告訴這位先生其他掛號方式",
+                "D": "告訴這位先生怎麼上網掛號"
+              },
+              "answer": "C"
+            },
+            {
+              "id": 44,
+              "audio": [
+                "audio/band-a/exam3/4-44.mp3"
+              ],
+              "options": {
+                "A": "她要搬到附近的郊區",
+                "B": "她來幫林太太買東西",
+                "C": "她要送禮物給林太太",
+                "D": "林太太請她送東西到郊區"
+              },
+              "answer": "C"
+            },
+            {
+              "id": 45,
+              "audio": [
+                "audio/band-a/exam3/4-45.mp3"
+              ],
+              "options": {
+                "A": "因為這支手機不貴",
+                "B": "因為她想和哥哥一樣",
+                "C": "因為她喜歡手機裡的音樂",
+                "D": "因為她哥哥要送她黑色手機"
+              },
+              "answer": "C"
+            },
+            {
+              "id": 46,
+              "audio": [
+                "audio/band-a/exam3/4-46.mp3"
+              ],
+              "options": {
+                "A": "要回美國去了",
+                "B": "三天前來美國玩兒",
+                "C": "想請何小姐跟他一起回去",
+                "D": "這三天帶著何小姐到處走走"
+              },
+              "answer": "A"
+            },
+            {
+              "id": 47,
+              "audio": [
+                "audio/band-a/exam3/4-47.mp3"
+              ],
+              "options": {
+                "A": "她不想送東西給朋友",
+                "B": "她不想答應對方的要求",
+                "C": "她不想讓朋友覺得麻煩",
+                "D": "她想知道要幫對方帶多少東西"
+              },
+              "answer": "B"
+            },
+            {
+              "id": 48,
+              "audio": [
+                "audio/band-a/exam3/4-48.mp3"
+              ],
+              "options": {
+                "A": "這位小姐曾經教過張強",
+                "B": "這位小姐很高興看見張強",
+                "C": "張強對這位小姐印象深刻",
+                "D": "張強希望能和這位小姐一起上課"
+              },
+              "answer": "A"
+            },
+            {
+              "id": 49,
+              "audio": [
+                "audio/band-a/exam3/4-49.mp3"
+              ],
+              "options": {
+                "A": "早點出門比較安全",
+                "B": "晚上去爬山很危險",
+                "C": "等到星期六再決定",
+                "D": "這種季節最好別爬山"
+              },
+              "answer": "A"
+            },
+            {
+              "id": 50,
+              "audio": [
+                "audio/band-a/exam3/4-50.mp3"
+              ],
+              "options": {
+                "A": "她的生日快到了",
+                "B": "她快要四十歲了",
+                "C": "老師的年紀比她大",
+                "D": "老師已經四十歲了"
+              },
+              "answer": "C"
+            }
+          ]
+        }
+      ]
+    }
+  },
+  "bandB": {
+    "exam1": {
+      "title": "TOCFL Band B · Nghe (Đề 1)",
+      "duration": 3600,
+      "parts": [
+        {
+          "id": "part1",
+          "type": "text_choice",
+          "title": "Phần 1: Nghe hội thoại (1–30)",
+          "instruction": "Nghe hội thoại và chọn câu trả lời đúng từ (A)(B)(C)(D).",
+          "questions": [
+            {
+              "id": 1,
+              "audio": [
+                "audio/band-b/exam1/1-01.mp3"
+              ],
+              "options": {
+                "A": "上午",
+                "B": "中午",
+                "C": "下午",
+                "D": "晚上"
+              },
+              "answer": "C"
+            },
+            {
+              "id": 2,
+              "audio": [
+                "audio/band-b/exam1/1-02.mp3"
+              ],
+              "options": {
+                "A": "他買了新房子",
+                "B": "他把房子賣了",
+                "C": "他找到更好的房子",
+                "D": "他的房東要賣房子"
+              },
+              "answer": "D"
+            },
+            {
+              "id": 3,
+              "audio": [
+                "audio/band-b/exam1/1-03.mp3"
+              ],
+              "options": {
+                "A": "她很快就找到停車的位子",
+                "B": "她花了不少時間找地方停車",
+                "C": "她把車子停在比較近的地方",
+                "D": "她沒辦法找到停車的地方"
+              },
+              "answer": "B"
+            },
+            {
+              "id": 4,
+              "audio": [
+                "audio/band-b/exam1/1-04.mp3"
+              ],
+              "options": {
+                "A": "她不太認識這座城市",
+                "B": "她想搭公車去那裡",
+                "C": "她要開車去那裡",
+                "D": "她知道去那裡的方法"
+              },
+              "answer": "A"
+            },
+            {
+              "id": 5,
+              "audio": [
+                "audio/band-b/exam1/1-05.mp3"
+              ],
+              "options": {
+                "A": "好的，我馬上過來",
+                "B": "對不起，我等一下才能去",
+                "C": "好的，我三點前一定到",
+                "D": "對不起，今天我不能去了"
+              },
+              "answer": "C"
+            },
+            {
+              "id": 6,
+              "audio": [
+                "audio/band-b/exam1/1-06.mp3"
+              ],
+              "options": {
+                "A": "她不想寫作業",
+                "B": "她想不出來要寫什麼",
+                "C": "她不知道有什麼作業",
+                "D": "她記不得老師給的作業"
+              },
+              "answer": "B"
+            },
+            {
+              "id": 7,
+              "audio": [
+                "audio/band-b/exam1/1-07.mp3"
+              ],
+              "options": {
+                "A": "他們沒錢買車子",
+                "B": "她不喜歡出去玩",
+                "C": "這位先生常常開玩笑",
+                "D": "她不知道哪裡借得到錢"
+              },
+              "answer": "A"
+            },
+            {
+              "id": 8,
+              "audio": [
+                "audio/band-b/exam1/1-08.mp3"
+              ],
+              "options": {
+                "A": "她做菜做得不好",
+                "B": "她喜歡吃她媽媽做的菜",
+                "C": "她媽媽做的菜都很好吃",
+                "D": "她媽媽很少做飯"
+              },
+              "answer": "B"
+            },
+            {
+              "id": 9,
+              "audio": [
+                "audio/band-b/exam1/1-09.mp3"
+              ],
+              "options": {
+                "A": "他很高興",
+                "B": "他很不滿意",
+                "C": "他覺得奇怪",
+                "D": "他覺得很傷心"
+              },
+              "answer": "B"
+            },
+            {
+              "id": 10,
+              "audio": [
+                "audio/band-b/exam1/1-10.mp3"
+              ],
+              "options": {
+                "A": "她打算換一份工作",
+                "B": "她不想繼續讀書",
+                "C": "她希望他繼續讀書",
+                "D": "她希望他努力工作"
+              },
+              "answer": "C"
+            },
+            {
+              "id": 11,
+              "audio": [
+                "audio/band-b/exam1/1-11.mp3"
+              ],
+              "options": {
+                "A": "老師還沒教語法",
+                "B": "老師教了十個漢字",
+                "C": "他覺得語法很簡單",
+                "D": "他認為學漢字很有意思"
+              },
+              "answer": "D"
+            },
+            {
+              "id": 12,
+              "audio": [
+                "audio/band-b/exam1/1-12.mp3"
+              ],
+              "options": {
+                "A": "她快看完了",
+                "B": "她還沒開始看",
+                "C": "她要再看一個星期",
+                "D": "她已經全部看完了"
+              },
+              "answer": "A"
+            },
+            {
+              "id": 13,
+              "audio": [
+                "audio/band-b/exam1/1-13.mp3"
+              ],
+              "options": {
+                "A": "她還有點兒餓",
+                "B": "蛋糕有點兒甜",
+                "C": "她吃飽了",
+                "D": "蛋糕很好吃"
+              },
+              "answer": "C"
+            },
+            {
+              "id": 14,
+              "audio": [
+                "audio/band-b/exam1/1-14.mp3"
+              ],
+              "options": {
+                "A": "電影不好看",
+                "B": "電影要開始了",
+                "C": "電影票很貴",
+                "D": "電影要結束了"
+              },
+              "answer": "D"
+            },
+            {
+              "id": 15,
+              "audio": [
+                "audio/band-b/exam1/1-15.mp3"
+              ],
+              "options": {
+                "A": "下午三點",
+                "B": "下午五點",
+                "C": "下午六點",
+                "D": "下午七點"
+              },
+              "answer": "A"
+            },
+            {
+              "id": 16,
+              "audio": [
+                "audio/band-b/exam1/1-16.mp3"
+              ],
+              "options": {
+                "A": "對她不好",
+                "B": "午餐不用錢",
+                "C": "工作不是太多",
+                "D": "每年辦旅遊活動"
+              },
+              "answer": "D"
+            },
+            {
+              "id": 17,
+              "audio": [
+                "audio/band-b/exam1/1-17.mp3"
+              ],
+              "options": {
+                "A": "不要搭公車",
+                "B": "到醫院看病",
+                "C": "多吃蔬菜水果",
+                "D": "養成運動的習慣"
+              },
+              "answer": "B"
+            },
+            {
+              "id": 18,
+              "audio": [
+                "audio/band-b/exam1/1-18.mp3"
+              ],
+              "options": {
+                "A": "繼續工作",
+                "B": "組織一個家庭",
+                "C": "去世界各國旅行",
+                "D": "做自己有興趣的事"
+              },
+              "answer": "D"
+            },
+            {
+              "id": 19,
+              "audio": [
+                "audio/band-b/exam1/1-19.mp3"
+              ],
+              "options": {
+                "A": "她覺得很奇怪",
+                "B": "她覺得很有意思",
+                "C": "她覺得很無聊",
+                "D": "她不想繼續聊天"
+              },
+              "answer": "B"
+            },
+            {
+              "id": 20,
+              "audio": [
+                "audio/band-b/exam1/1-20.mp3"
+              ],
+              "options": {
+                "A": "他喜歡學習中文",
+                "B": "他不需要中文",
+                "C": "他想去中國旅行",
+                "D": "他想多學一種語言"
+              },
+              "answer": "A"
+            },
+            {
+              "id": 21,
+              "audio": [
+                "audio/band-b/exam1/1-21-0.mp3",
+                "audio/band-b/exam1/1-21-1.mp3"
+              ],
+              "options": {
+                "A": "送他一份禮物",
+                "B": "陪他去逛街購物",
+                "C": "給他買他喜歡的書",
+                "D": "幫他安排旅遊計畫"
+              },
+              "answer": "D"
+            },
+            {
+              "id": 22,
+              "audio": [
+                "audio/band-b/exam1/1-22.mp3"
+              ],
+              "options": {
+                "A": "買新書",
+                "B": "賣舊書",
+                "C": "賣衣服",
+                "D": "買衣服"
+              },
+              "answer": "B"
+            },
+            {
+              "id": 23,
+              "audio": [
+                "audio/band-b/exam1/1-23-0.mp3",
+                "audio/band-b/exam1/1-23-1.mp3"
+              ],
+              "options": {
+                "A": "送飛機票",
+                "B": "陪爸爸出差",
+                "C": "送運動器材",
+                "D": "給爸爸錢買東西"
+              },
+              "answer": "C"
+            },
+            {
+              "id": 24,
+              "audio": [
+                "audio/band-b/exam1/1-24.mp3"
+              ],
+              "options": {
+                "A": "她喜歡去旅行",
+                "B": "她沒去過海邊",
+                "C": "她去了海邊很多次",
+                "D": "她去過很多地方"
+              },
+              "answer": "D"
+            },
+            {
+              "id": 25,
+              "audio": [
+                "audio/band-b/exam1/1-25-0.mp3",
+                "audio/band-b/exam1/1-25-1.mp3"
+              ],
+              "options": {
+                "A": "她不想再當業務人員",
+                "B": "她被原本的公司開除了",
+                "C": "她覺得在這家公司比較有前途",
+                "D": "這家公司主動請這位小姐來工作"
+              },
+              "answer": "C"
+            },
+            {
+              "id": 26,
+              "audio": [
+                "audio/band-b/exam1/1-26.mp3"
+              ],
+              "options": {
+                "A": "語言溝通",
+                "B": "問題解決",
+                "C": "領導員工",
+                "D": "開發新客戶"
+              },
+              "answer": "D"
+            },
+            {
+              "id": 27,
+              "audio": [
+                "audio/band-b/exam1/1-27.mp3"
+              ],
+              "options": {
+                "A": "談生意",
+                "B": "業務工作",
+                "C": "帶領員工",
+                "D": "接待客戶"
+              },
+              "answer": "D"
+            },
+            {
+              "id": 28,
+              "audio": [
+                "audio/band-b/exam1/1-28-0.mp3",
+                "audio/band-b/exam1/1-28-1.mp3"
+              ],
+              "options": {
+                "A": "參加人數每次大約十個人",
+                "B": "不是單身的人也能夠參加",
+                "C": "讓人可以在幾分鐘以內認識新朋友",
+                "D": "一個女生能同時和兩、三個男生談話"
+              },
+              "answer": "C"
+            },
+            {
+              "id": 29,
+              "audio": [
+                "audio/band-b/exam1/1-29.mp3"
+              ],
+              "options": {
+                "A": "參加的費用太高",
+                "B": "能夠認識的人很少",
+                "C": "很難真正了解一個人",
+                "D": "認識新朋友的機會很少"
+              },
+              "answer": "C"
+            },
+            {
+              "id": 30,
+              "audio": [
+                "audio/band-b/exam1/1-30.mp3"
+              ],
+              "options": {
+                "A": "很值得參加",
+                "B": "沒有參加的必要",
+                "C": "可以試試看",
+                "D": "很浪費時間"
+              },
+              "answer": "B"
+            }
+          ]
+        },
+        {
+          "id": "part2",
+          "type": "text_choice",
+          "title": "Phần 2: Nghe đoạn văn (31–50)",
+          "instruction": "Nghe đoạn văn/bài phát biểu và chọn câu trả lời đúng.",
+          "questions": [
+            {
+              "id": 31,
+              "audio": [
+                "audio/band-b/exam1/2-31.mp3"
+              ],
+              "options": {
+                "A": "不開了",
+                "B": "要離開了",
+                "C": "晚一個小時到",
+                "D": "晚三十分鐘到"
+              },
+              "answer": "D"
+            },
+            {
+              "id": 32,
+              "audio": [
+                "audio/band-b/exam1/2-32.mp3"
+              ],
+              "options": {
+                "A": "1000元",
+                "B": "1500元",
+                "C": "2000元",
+                "D": "2500元"
+              },
+              "answer": "A"
+            },
+            {
+              "id": 33,
+              "audio": [
+                "audio/band-b/exam1/2-33.mp3"
+              ],
+              "options": {
+                "A": "有小鳥表演",
+                "B": "有日本歌表演",
+                "C": "有老師教唱歌",
+                "D": "有各國舞蹈表演"
+              },
+              "answer": "C"
+            },
+            {
+              "id": 34,
+              "audio": [
+                "audio/band-b/exam1/2-34.mp3"
+              ],
+              "options": {
+                "A": "節目免費",
+                "B": "晚上六點開始",
+                "C": "節目在室外舉行",
+                "D": "提早一個小時結束"
+              },
+              "answer": "A"
+            },
+            {
+              "id": 35,
+              "audio": [
+                "audio/band-b/exam1/2-35-0.mp3",
+                "audio/band-b/exam1/2-35-1.mp3"
+              ],
+              "options": {
+                "A": "天氣不好",
+                "B": "複習第六課",
+                "C": "預習第七課",
+                "D": "考學生第七課"
+              },
+              "answer": "A"
+            },
+            {
+              "id": 36,
+              "audio": [
+                "audio/band-b/exam1/2-35-0.mp3",
+                "audio/band-b/exam1/2-35-1.mp3"
+              ],
+              "options": {
+                "A": "教第八課",
+                "B": "複習第六課",
+                "C": "預習第七課",
+                "D": "考學生第七課"
+              },
+              "answer": "D"
+            },
+            {
+              "id": 37,
+              "audio": [
+                "audio/band-b/exam1/2-37-0.mp3",
+                "audio/band-b/exam1/2-37-1.mp3"
+              ],
+              "options": {
+                "A": "天氣變暖和",
+                "B": "白天時間變長",
+                "C": "白天和晚上都變涼了",
+                "D": "一天裡面的天氣變化很大"
+              },
+              "answer": "D"
+            },
+            {
+              "id": 38,
+              "audio": [
+                "audio/band-b/exam1/2-37-0.mp3",
+                "audio/band-b/exam1/2-37-1.mp3"
+              ],
+              "options": {
+                "A": "晴天",
+                "B": "雨天",
+                "C": "陰天",
+                "D": "沒有風"
+              },
+              "answer": "A"
+            },
+            {
+              "id": 39,
+              "audio": [
+                "audio/band-b/exam1/2-39-0.mp3",
+                "audio/band-b/exam1/2-39-1.mp3"
+              ],
+              "options": {
+                "A": "穿短袖",
+                "B": "帶雨傘",
+                "C": "穿厚衣服",
+                "D": "穿防風夾克"
+              },
+              "answer": "B"
+            },
+            {
+              "id": 40,
+              "audio": [
+                "audio/band-b/exam1/2-39-0.mp3",
+                "audio/band-b/exam1/2-39-1.mp3"
+              ],
+              "options": {
+                "A": "一個月",
+                "B": "三個月",
+                "C": "六個月",
+                "D": "一年"
+              },
+              "answer": "B"
+            },
+            {
+              "id": 41,
+              "audio": [
+                "audio/band-b/exam1/2-41-0.mp3",
+                "audio/band-b/exam1/2-41-1.mp3"
+              ],
+              "options": {
+                "A": "太胖了",
+                "B": "太瘦了",
+                "C": "感冒了",
+                "D": "很健康"
+              },
+              "answer": "A"
+            },
+            {
+              "id": 42,
+              "audio": [
+                "audio/band-b/exam1/2-41-0.mp3",
+                "audio/band-b/exam1/2-41-1.mp3"
+              ],
+              "options": {
+                "A": "只能吃豬肉",
+                "B": "少吃酸的東西",
+                "C": "青菜多吃一點兒",
+                "D": "每天運動半小時"
+              },
+              "answer": "C"
+            },
+            {
+              "id": 43,
+              "audio": [
+                "audio/band-b/exam1/2-43-0.mp3",
+                "audio/band-b/exam1/2-43-1.mp3"
+              ],
+              "options": {
+                "A": "會說英語的人",
+                "B": "會讀英國文學的人",
+                "C": "會寫英文文章的人",
+                "D": "會做英語翻譯的人"
+              },
+              "answer": "C"
+            },
+            {
+              "id": 44,
+              "audio": [
+                "audio/band-b/exam1/2-43-0.mp3",
+                "audio/band-b/exam1/2-43-1.mp3"
+              ],
+              "options": {
+                "A": "英文說得很流利",
+                "B": "英文說得很標準",
+                "C": "英文寫得很好",
+                "D": "英文翻譯能力強"
+              },
+              "answer": "D"
+            },
+            {
+              "id": 45,
+              "audio": [
+                "audio/band-b/exam1/2-45-0.mp3",
+                "audio/band-b/exam1/2-45-1.mp3"
+              ],
+              "options": {
+                "A": "每天睡覺八小時",
+                "B": "早上早點兒起床",
+                "C": "在晚上十一點以前睡覺",
+                "D": "能滿足身體的睡眠需求"
+              },
+              "answer": "D"
+            },
+            {
+              "id": 46,
+              "audio": [
+                "audio/band-b/exam1/2-45-0.mp3",
+                "audio/band-b/exam1/2-45-1.mp3"
+              ],
+              "options": {
+                "A": "白天的精神狀況",
+                "B": "白天活動的時間",
+                "C": "晚上是否需要工作",
+                "D": "晚上幾點上床睡覺"
+              },
+              "answer": "A"
+            },
+            {
+              "id": 47,
+              "audio": [
+                "audio/band-b/exam1/2-45-0.mp3",
+                "audio/band-b/exam1/2-45-1.mp3"
+              ],
+              "options": {
+                "A": "睡得多就是睡得飽",
+                "B": "人的睡眠需求都相同",
+                "C": "沒有標準的睡眠時數",
+                "D": "做夢代表睡眠不夠"
+              },
+              "answer": "C"
+            },
+            {
+              "id": 48,
+              "audio": [
+                "audio/band-b/exam1/2-48-0.mp3",
+                "audio/band-b/exam1/2-48-1.mp3"
+              ],
+              "options": {
+                "A": "性別和自行車的關係",
+                "B": "自行車專用道路的必要性",
+                "C": "自行車作為交通工具的比例",
+                "D": "自行車被視為環保工具的原因"
+              },
+              "answer": "A"
+            },
+            {
+              "id": 49,
+              "audio": [
+                "audio/band-b/exam1/2-48-0.mp3",
+                "audio/band-b/exam1/2-48-1.mp3"
+              ],
+              "options": {
+                "A": "私人汽車的數量",
+                "B": "購買自行車的人數",
+                "C": "騎自行車的女性人口",
+                "D": "專為自行車設計的道路數量"
+              },
+              "answer": "C"
+            },
+            {
+              "id": 50,
+              "audio": [
+                "audio/band-b/exam1/2-48-0.mp3",
+                "audio/band-b/exam1/2-48-1.mp3"
+              ],
+              "options": {
+                "A": "降低汽車的數量",
+                "B": "增加自行車的道路",
+                "C": "增加對自行車騎士的補助",
+                "D": "推動自行車的環保觀念"
+              },
+              "answer": "D"
+            }
+          ]
+        }
+      ]
+    }
+  }
+}
