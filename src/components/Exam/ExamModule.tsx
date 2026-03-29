@@ -1,9 +1,15 @@
-import React, { useMemo, useState, useEffect } from 'react';
+import React, { useMemo, useState, useEffect, useRef, useCallback } from 'react';
 import type { ExamData, ExamKey, FlatQuestion, OptionKey, ExamRecord, ExamAttempt, AttemptQuestion } from '../../types';
+import type { AIExplanationData } from '../../utils/aiExplanation';
 import { useTimer } from '../../hooks/useTimer';
 import { useLang } from '../../i18n/LangContext';
 import { IconCamera } from '../UI/Icons';
 import { loadAttempts, saveAttempt, deleteAttempt, fmtDuration, fmtDate } from '../../utils/historyStorage';
+import { useApiKey } from '../../contexts/ApiKeyContext';
+import {
+  buildCacheKey, loadExplanation, saveExplanation,
+  generateReadingExplanation,
+} from '../../utils/aiExplanation';
 
 interface Props {
   examData: ExamData;
@@ -118,6 +124,7 @@ function buildExamQuestions(band: 'A' | 'B', examKey: ExamKey, data: ExamData): 
 
 export const ExamModule: React.FC<Props> = ({ examData, addExam, pastExams }) => {
   const { t } = useLang();
+  const { apiKey, hasKey } = useApiKey();
   const [phase,         setPhase        ] = useState<Phase>('select');
   const [band,          setBand         ] = useState<'A' | 'B'>('B');
   const [examKey,       setExamKey      ] = useState<ExamKey>('exam1');
@@ -368,6 +375,21 @@ export const ExamModule: React.FC<Props> = ({ examData, addExam, pastExams }) =>
             </button>
           ))}
         </div>
+
+        {/* AI Explanation Drawer */}
+        <AIDrawer
+          apiKey={apiKey}
+          hasKey={hasKey}
+          cacheKey={buildCacheKey('exam', band, examKey, q.id)}
+          questionId={q.id}
+          question={q.question}
+          sentence={q.sentence}
+          options={q.options}
+          answer={q.answer}
+          context={q.context}
+          passage={q.passage}
+          pageImageUrl={q.pageImage ? `${base}${q.pageImage}` : undefined}
+        />
 
         {/* Prev / Next — full width on mobile for easy thumb tap */}
         <div style={{ display: 'flex', gap: 8, marginTop: 16 }}>
@@ -714,6 +736,202 @@ const HistoryPhase: React.FC<{
             </div>
           );
         })
+      )}
+    </div>
+  );
+};
+
+// ── AI Drawer component ────────────────────────────────────────────────────────
+
+interface AIDrawerProps {
+  apiKey:        string;
+  hasKey:        boolean;
+  cacheKey:      string;
+  questionId:    number;
+  question?:     string;
+  sentence?:     string;
+  options:       Partial<Record<OptionKey, string>>;
+  answer:        OptionKey;
+  context?:      string;
+  passage?:      string;
+  pageImageUrl?: string;
+}
+
+const AIDrawer: React.FC<AIDrawerProps> = ({
+  apiKey, hasKey, cacheKey,
+  questionId, question, sentence, options, answer,
+  context, passage, pageImageUrl,
+}) => {
+  const [status,      setStatus     ] = useState<'idle' | 'loading' | 'done'>('idle');
+  const [expanded,    setExpanded   ] = useState(false);
+  const [streamText,  setStreamText ] = useState('');
+  const [data,        setData       ] = useState<AIExplanationData | null>(() => loadExplanation(cacheKey));
+  const prevCacheKey = useRef(cacheKey);
+
+  // When question changes, reload cache for new question
+  useEffect(() => {
+    if (prevCacheKey.current !== cacheKey) {
+      prevCacheKey.current = cacheKey;
+      const cached = loadExplanation(cacheKey);
+      setData(cached);
+      setStatus(cached ? 'done' : 'idle');
+      setExpanded(false);
+      setStreamText('');
+    }
+  }, [cacheKey]);
+
+  const handleAsk = useCallback(async () => {
+    if (!hasKey || status === 'loading') return;
+    setStatus('loading');
+    setStreamText('');
+    setExpanded(true);
+
+    try {
+      const result = await generateReadingExplanation({
+        apiKey,
+        questionId,
+        question,
+        sentence,
+        options,
+        answer,
+        context,
+        passage,
+        pageImageUrl,
+        onToken: (token) => setStreamText(prev => prev + token),
+      });
+      saveExplanation(cacheKey, result);
+      setData(result);
+      setStatus('done');
+      setStreamText('');
+    } catch (err) {
+      console.error('[AIDrawer]', err);
+      setStatus('idle');
+      setExpanded(false);
+    }
+  }, [apiKey, hasKey, status, cacheKey, questionId, question, sentence, options, answer, context, passage, pageImageUrl]);
+
+  // ── No API key ──────────────────────────────────────────────────────────────
+  if (!hasKey) {
+    return (
+      <div style={{
+        marginTop: 12, padding: '8px 12px', borderRadius: 8,
+        background: 'var(--bg)', border: '1px dashed var(--border)',
+        fontSize: '.78rem', color: 'var(--text-muted)', textAlign: 'center',
+      }}>
+        🤖 Nhập OpenAI API key để dùng AI giải thích câu này
+      </div>
+    );
+  }
+
+  // ── Badge row ───────────────────────────────────────────────────────────────
+  const hasCached = !!data;
+
+  return (
+    <div style={{ marginTop: 12 }}>
+      {/* Trigger / badge */}
+      <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+        {status === 'idle' && !hasCached && (
+          <button
+            className="btn btn-ghost btn-sm"
+            style={{
+              border: '1px solid var(--accent)', color: 'var(--accent)',
+              fontSize: '.78rem', padding: '4px 12px', borderRadius: 20,
+            }}
+            onClick={handleAsk}
+          >
+            🤖 Hỏi AI giải thích
+          </button>
+        )}
+
+        {status === 'loading' && (
+          <div style={{
+            display: 'flex', alignItems: 'center', gap: 6,
+            fontSize: '.78rem', color: 'var(--accent)',
+          }}>
+            <span className="iv-typing-dots"><span/><span/><span/></span>
+            Đang phân tích...
+          </div>
+        )}
+
+        {(status === 'done' || (hasCached && status === 'idle')) && (
+          <button
+            className="btn btn-ghost btn-sm"
+            style={{
+              border: '1px solid var(--success)', color: 'var(--success)',
+              fontSize: '.78rem', padding: '4px 12px', borderRadius: 20,
+            }}
+            onClick={() => setExpanded(e => !e)}
+          >
+            ✓ AI đã giải {expanded ? '▲' : '▼'}
+          </button>
+        )}
+
+        {/* Regenerate button when cached */}
+        {hasCached && status !== 'loading' && (
+          <button
+            className="btn btn-ghost btn-sm"
+            style={{ fontSize: '.72rem', color: 'var(--text-muted)', padding: '3px 8px' }}
+            onClick={handleAsk}
+            title="Tạo lại giải thích"
+          >
+            ↻ Tạo lại
+          </button>
+        )}
+      </div>
+
+      {/* Expanded content */}
+      {expanded && (
+        <div style={{
+          marginTop: 8, padding: '12px 14px',
+          background: 'var(--bg)', borderRadius: 8,
+          border: '1px solid var(--border)',
+          fontSize: '.83rem', lineHeight: 1.65,
+        }}>
+          {/* Streaming text while loading */}
+          {status === 'loading' && (
+            <div style={{ color: 'var(--text-secondary)', whiteSpace: 'pre-wrap' }}>
+              {streamText}
+              <span className="iv-typing-cursor">▍</span>
+            </div>
+          )}
+
+          {/* Final cached content */}
+          {status !== 'loading' && data && (
+            <>
+              <div style={{ whiteSpace: 'pre-wrap', color: 'var(--text)', marginBottom: data.vocabulary.length > 0 ? 12 : 0 }}>
+                {data.explanation}
+              </div>
+
+              {data.vocabulary.length > 0 && (
+                <div style={{ borderTop: '1px solid var(--border)', paddingTop: 10 }}>
+                  <div style={{ fontWeight: 700, fontSize: '.75rem', color: 'var(--text-secondary)', textTransform: 'uppercase', letterSpacing: '.04em', marginBottom: 6 }}>
+                    Từ vựng cần học
+                  </div>
+                  <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(200px, 1fr))', gap: 6 }}>
+                    {data.vocabulary.map((v, i) => (
+                      <div key={i} style={{
+                        background: 'var(--surface)', borderRadius: 6,
+                        padding: '6px 10px', border: '1px solid var(--border)',
+                      }}>
+                        <div style={{ display: 'flex', gap: 6, alignItems: 'baseline' }}>
+                          <span style={{ fontSize: '1rem', fontWeight: 700 }}>{v.word}</span>
+                          <span style={{ fontSize: '.75rem', color: 'var(--text-muted)' }}>{v.pinyin}</span>
+                        </div>
+                        <div style={{ fontSize: '.78rem', color: 'var(--text-secondary)' }}>{v.meaning}</div>
+                        {v.example && (
+                          <div style={{ fontSize: '.73rem', color: 'var(--text-muted)', marginTop: 2, fontStyle: 'italic' }}>{v.example}</div>
+                        )}
+                      </div>
+                    ))}
+                  </div>
+                  <div style={{ fontSize: '.7rem', color: 'var(--text-muted)', marginTop: 6 }}>
+                    Lưu lúc {new Date(data.cachedAt).toLocaleString('vi-VN')}
+                  </div>
+                </div>
+              )}
+            </>
+          )}
+        </div>
       )}
     </div>
   );

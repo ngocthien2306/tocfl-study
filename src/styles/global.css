@@ -2032,3 +2032,18 @@ button { cursor: pointer; font-family: inherit; }
 .auto-gen-go:hover:not(:disabled) { background: var(--primary-dark, #1d4ed8); }
 .auto-gen-go:active:not(:disabled) { transform: scale(.97); }
 .auto-gen-go:disabled { background: var(--border); color: var(--text-muted); cursor: not-allowed; }
+
+/* ── AI Typing cursor (blinking block) ─────────────────────────────────────── */
+.iv-typing-cursor {
+  display: inline-block;
+  width: 2px;
+  height: 1em;
+  background: currentColor;
+  margin-left: 2px;
+  vertical-align: text-bottom;
+  animation: cursorBlink 0.9s step-end infinite;
+}
+@keyframes cursorBlink {
+  0%, 100% { opacity: 1; }
+  50%       { opacity: 0; }
+}
