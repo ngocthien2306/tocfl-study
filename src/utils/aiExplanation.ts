@@ -121,11 +121,41 @@ async function streamCompletion(
   return fullText;
 }
 
+/**
+ * Strip the trailing JSON vocabulary block from a streaming text so the user
+ * never sees raw JSON while the model is still generating.
+ */
+export function stripJsonSuffix(text: string): string {
+  // Cut at the first `{"vocabulary":` marker (model may start emitting it mid-stream)
+  const marker = text.indexOf('{"vocabulary":');
+  if (marker !== -1) return text.slice(0, marker).trimEnd();
+  // Also cut at a bare `{` that looks like it starts a JSON object at the tail
+  // (conservative: only strip if it appears after a newline or at end of text)
+  const lastBrace = text.lastIndexOf('\n{');
+  if (lastBrace !== -1) return text.slice(0, lastBrace).trimEnd();
+  return text;
+}
+
 function parseExplanationResponse(raw: string): { explanation: string; vocabulary: AIVocabItem[] } {
   const trimmed = raw.trim();
-  const lastBrace = trimmed.lastIndexOf('\n{');
+
+  // Strategy 1: look for {"vocabulary": anywhere in the string (model may or may not newline before it)
+  const vocabMarker = trimmed.lastIndexOf('{"vocabulary":');
+  if (vocabMarker !== -1) {
+    const jsonPart = trimmed.slice(vocabMarker);
+    const textPart = trimmed.slice(0, vocabMarker).trim();
+    try {
+      const meta = JSON.parse(jsonPart) as { vocabulary?: AIVocabItem[] };
+      if (Array.isArray(meta.vocabulary)) {
+        return { explanation: textPart, vocabulary: meta.vocabulary };
+      }
+    } catch { /* fall through to next strategy */ }
+  }
+
+  // Strategy 2: scan backwards from the end for any JSON object
+  const lastBrace = trimmed.lastIndexOf('{');
   if (lastBrace !== -1) {
-    const jsonPart = trimmed.slice(lastBrace).trim();
+    const jsonPart = trimmed.slice(lastBrace);
     const textPart = trimmed.slice(0, lastBrace).trim();
     try {
       const meta = JSON.parse(jsonPart) as { vocabulary?: AIVocabItem[] };
@@ -134,6 +164,7 @@ function parseExplanationResponse(raw: string): { explanation: string; vocabular
       }
     } catch { /* fall through */ }
   }
+
   return { explanation: trimmed, vocabulary: [] };
 }
 

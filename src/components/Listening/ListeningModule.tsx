@@ -6,7 +6,7 @@ import { loadAttempts, saveAttempt, deleteAttempt, fmtDuration, fmtDate } from '
 import { useApiKey } from '../../contexts/ApiKeyContext';
 import {
   buildCacheKey, loadExplanation, saveExplanation,
-  generateListeningExplanation,
+  generateListeningExplanation, stripJsonSuffix,
 } from '../../utils/aiExplanation';
 
 interface Props {
@@ -871,7 +871,7 @@ const ListeningAIDrawer: React.FC<ListeningAIDrawerProps> = ({
         }}>
           {status === 'loading' && (
             <div style={{ color: 'var(--text-secondary)', whiteSpace: 'pre-wrap' }}>
-              {streamText || <span style={{ color: 'var(--text-muted)', fontStyle: 'italic' }}>{stepLabel}</span>}
+              {stripJsonSuffix(streamText) || <span style={{ color: 'var(--text-muted)', fontStyle: 'italic' }}>{stepLabel}</span>}
               {streamText && <span className="iv-typing-cursor">▍</span>}
             </div>
           )}

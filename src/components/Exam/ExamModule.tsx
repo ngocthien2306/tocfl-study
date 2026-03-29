@@ -8,7 +8,7 @@ import { loadAttempts, saveAttempt, deleteAttempt, fmtDuration, fmtDate } from '
 import { useApiKey } from '../../contexts/ApiKeyContext';
 import {
   buildCacheKey, loadExplanation, saveExplanation,
-  generateReadingExplanation,
+  generateReadingExplanation, stripJsonSuffix,
 } from '../../utils/aiExplanation';
 
 interface Props {
@@ -887,10 +887,10 @@ const AIDrawer: React.FC<AIDrawerProps> = ({
           border: '1px solid var(--border)',
           fontSize: '.83rem', lineHeight: 1.65,
         }}>
-          {/* Streaming text while loading */}
+          {/* Streaming text while loading — strip trailing JSON before displaying */}
           {status === 'loading' && (
             <div style={{ color: 'var(--text-secondary)', whiteSpace: 'pre-wrap' }}>
-              {streamText}
+              {stripJsonSuffix(streamText)}
               <span className="iv-typing-cursor">▍</span>
             </div>
           )}
