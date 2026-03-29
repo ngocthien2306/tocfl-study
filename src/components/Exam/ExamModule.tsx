@@ -881,56 +881,99 @@ const AIDrawer: React.FC<AIDrawerProps> = ({
 
       {/* Expanded content */}
       {expanded && (
-        <div style={{
-          marginTop: 8, padding: '12px 14px',
-          background: 'var(--bg)', borderRadius: 8,
-          border: '1px solid var(--border)',
-          fontSize: '.83rem', lineHeight: 1.65,
-        }}>
-          {/* Streaming text while loading — strip trailing JSON before displaying */}
-          {status === 'loading' && (
-            <div style={{ color: 'var(--text-secondary)', whiteSpace: 'pre-wrap' }}>
-              {stripJsonSuffix(streamText)}
-              <span className="iv-typing-cursor">▍</span>
+        <div style={{ marginTop: 8, display: 'flex', flexDirection: 'column', gap: 8 }}>
+
+          {/* ── Explanation box ── */}
+          <div style={{
+            padding: '12px 14px',
+            background: 'var(--bg)', borderRadius: 8,
+            border: '1px solid var(--border)',
+            fontSize: '.83rem', lineHeight: 1.75,
+          }}>
+            {status === 'loading' && (
+              <div style={{ color: 'var(--text-secondary)', whiteSpace: 'pre-wrap' }}>
+                {stripJsonSuffix(streamText)}
+                <span className="iv-typing-cursor">▍</span>
+              </div>
+            )}
+            {status !== 'loading' && data && (
+              <div style={{ whiteSpace: 'pre-wrap', color: 'var(--text)' }}>
+                {data.explanation}
+              </div>
+            )}
+          </div>
+
+          {/* ── Vocabulary card — separate section ── */}
+          {status !== 'loading' && data && data.vocabulary.length > 0 && (
+            <div style={{
+              borderRadius: 8,
+              border: '1.5px solid var(--accent)',
+              overflow: 'hidden',
+            }}>
+              {/* Header bar */}
+              <div style={{
+                background: 'var(--accent)', color: '#fff',
+                padding: '7px 14px',
+                display: 'flex', alignItems: 'center', justifyContent: 'space-between',
+              }}>
+                <span style={{ fontWeight: 700, fontSize: '.78rem', letterSpacing: '.05em' }}>
+                  📚 TỪ VỰNG CẦN HỌC
+                </span>
+                <span style={{ fontSize: '.7rem', opacity: 0.85 }}>
+                  {data.vocabulary.length} từ
+                </span>
+              </div>
+              {/* Cards grid */}
+              <div style={{
+                background: 'var(--accent-light)',
+                padding: '10px 12px',
+                display: 'grid',
+                gridTemplateColumns: 'repeat(auto-fill, minmax(160px, 1fr))',
+                gap: 8,
+              }}>
+                {data.vocabulary.map((v, i) => (
+                  <div key={i} style={{
+                    background: 'var(--surface)',
+                    borderRadius: 8,
+                    padding: '10px 12px',
+                    border: '1px solid var(--border)',
+                    boxShadow: '0 1px 4px rgba(0,0,0,.06)',
+                  }}>
+                    <div style={{ display: 'flex', alignItems: 'baseline', gap: 6, marginBottom: 4 }}>
+                      <span style={{ fontSize: '1.35rem', fontWeight: 800, color: 'var(--accent)', lineHeight: 1 }}>
+                        {v.word}
+                      </span>
+                      <span style={{ fontSize: '.72rem', color: 'var(--text-muted)', fontStyle: 'italic' }}>
+                        {v.pinyin}
+                      </span>
+                    </div>
+                    <div style={{ fontSize: '.8rem', fontWeight: 600, color: 'var(--text)', marginBottom: v.example ? 6 : 0 }}>
+                      {v.meaning}
+                    </div>
+                    {v.example && (
+                      <div style={{
+                        fontSize: '.73rem', color: 'var(--text-secondary)',
+                        borderTop: '1px dashed var(--border)', paddingTop: 5,
+                        lineHeight: 1.5,
+                      }}>
+                        {v.example}
+                      </div>
+                    )}
+                  </div>
+                ))}
+              </div>
+              {/* Footer */}
+              <div style={{
+                background: 'var(--accent-light)',
+                borderTop: '1px solid rgba(0,0,0,.07)',
+                padding: '4px 14px',
+                fontSize: '.68rem', color: 'var(--text-muted)', textAlign: 'right',
+              }}>
+                Lưu lúc {new Date(data.cachedAt).toLocaleString('vi-VN')}
+              </div>
             </div>
           )}
 
-          {/* Final cached content */}
-          {status !== 'loading' && data && (
-            <>
-              <div style={{ whiteSpace: 'pre-wrap', color: 'var(--text)', marginBottom: data.vocabulary.length > 0 ? 12 : 0 }}>
-                {data.explanation}
-              </div>
-
-              {data.vocabulary.length > 0 && (
-                <div style={{ borderTop: '1px solid var(--border)', paddingTop: 10 }}>
-                  <div style={{ fontWeight: 700, fontSize: '.75rem', color: 'var(--text-secondary)', textTransform: 'uppercase', letterSpacing: '.04em', marginBottom: 6 }}>
-                    Từ vựng cần học
-                  </div>
-                  <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(200px, 1fr))', gap: 6 }}>
-                    {data.vocabulary.map((v, i) => (
-                      <div key={i} style={{
-                        background: 'var(--surface)', borderRadius: 6,
-                        padding: '6px 10px', border: '1px solid var(--border)',
-                      }}>
-                        <div style={{ display: 'flex', gap: 6, alignItems: 'baseline' }}>
-                          <span style={{ fontSize: '1rem', fontWeight: 700 }}>{v.word}</span>
-                          <span style={{ fontSize: '.75rem', color: 'var(--text-muted)' }}>{v.pinyin}</span>
-                        </div>
-                        <div style={{ fontSize: '.78rem', color: 'var(--text-secondary)' }}>{v.meaning}</div>
-                        {v.example && (
-                          <div style={{ fontSize: '.73rem', color: 'var(--text-muted)', marginTop: 2, fontStyle: 'italic' }}>{v.example}</div>
-                        )}
-                      </div>
-                    ))}
-                  </div>
-                  <div style={{ fontSize: '.7rem', color: 'var(--text-muted)', marginTop: 6 }}>
-                    Lưu lúc {new Date(data.cachedAt).toLocaleString('vi-VN')}
-                  </div>
-                </div>
-              )}
-            </>
-          )}
         </div>
       )}
     </div>
