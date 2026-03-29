@@ -1,15 +1,19 @@
 import React, { useMemo, useState } from 'react';
 import type { ExamData, FlatQuestion, Progress, OptionKey } from '../../types';
 import { ClozeQuestion } from './ClozeQuestion';
+import { AIReadingGenerator } from './AIReadingGenerator';
 import { useLang } from '../../i18n/LangContext';
 import type { Lang } from '../../i18n/translations';
 import { t } from '../../i18n/translations';
+import { IconBookOpen } from '../UI/Icons';
 
 interface Props {
   examData: ExamData;
   progress?: Progress;
   markReading: (key: string, correct: boolean) => void;
 }
+
+type ReadingMode = 'practice' | 'ai';
 
 type Band    = 'A' | 'B';
 type PartKey = 'part3' | 'part4' | 'part5' | 'part1' | 'part2';
@@ -28,33 +32,57 @@ function getPartLabel(key: PartKey, lang: Lang): string {
 const BAND_A_PARTS: PartKey[] = ['part3', 'part4', 'part5'];
 const BAND_B_PARTS: PartKey[] = ['part1', 'part2'];
 
+const ALL_BAND_A_EXAMS = ['exam1', 'exam2', 'exam3'] as const;
+
 function buildQuestions(band: Band, part: PartKey, data: ExamData): FlatQuestion[] {
   const out: FlatQuestion[] = [];
+  let uid = 1; // sequential unique ID across all exams
+
   if (band === 'A') {
     if (part === 'part3') {
-      data.bandA.exam1.reading.part3.groups.forEach(g =>
-        g.questions.forEach(q =>
-          out.push({ ...q, type: 'gap', part, context: g.context })
-        )
-      );
+      // Combine Part 3 from all available exams, including images
+      ALL_BAND_A_EXAMS.forEach(examKey => {
+        const exam = data.bandA[examKey];
+        if (!exam) return;
+        const p3 = exam.reading.part3;
+        p3.groups.forEach(g => {
+          const pageImage = g.page_image && p3.image_dir
+            ? `${p3.image_dir}/${g.page_image}` : undefined;
+          g.questions.forEach(q => {
+            out.push({
+              ...q,
+              id: uid++,
+              type: 'gap',
+              part,
+              context: g.context,
+              pageImage,
+            });
+          });
+        });
+      });
     } else if (part === 'part5') {
-      data.bandA.exam1.reading.part5.passages.forEach(p =>
-        p.questions.forEach(q =>
-          out.push({ ...q, type: 'mc', part, passage: p.text, passageId: p.id })
-        )
-      );
+      // Combine Part 5 from all available exams
+      ALL_BAND_A_EXAMS.forEach(examKey => {
+        const exam = data.bandA[examKey];
+        if (!exam) return;
+        exam.reading.part5.passages.forEach(p =>
+          p.questions.forEach(q =>
+            out.push({ ...q, id: uid++, type: 'mc', part, passage: p.text, passageId: p.id })
+          )
+        );
+      });
     }
   } else {
     if (part === 'part1') {
       data.bandB.exam1.reading.part1.passages.forEach(p =>
         p.questions.forEach(q =>
-          out.push({ ...q, type: 'mc', part, passage: p.passage_raw, passageId: p.id })
+          out.push({ ...q, id: uid++, type: 'mc', part, passage: p.passage_raw, passageId: p.id })
         )
       );
     } else if (part === 'part2') {
       data.bandB.exam1.reading.part2.passages.forEach(p =>
         p.questions.forEach(q =>
-          out.push({ ...q, type: 'mc', part, passage: p.text, passageId: p.id })
+          out.push({ ...q, id: uid++, type: 'mc', part, passage: p.text, passageId: p.id })
         )
       );
     }
@@ -66,6 +94,7 @@ interface SessionStat { correct: number; total: number }
 
 export const ReadingModule: React.FC<Props> = ({ examData, markReading }) => {
   const { lang } = useLang();
+  const [mode,     setMode]     = useState<ReadingMode>('practice');
   const [band,     setBand]     = useState<Band>('B');
   const [part,     setPart]     = useState<PartKey>('part2');
   const [qIdx,     setQIdx]     = useState(0);
@@ -78,9 +107,42 @@ export const ReadingModule: React.FC<Props> = ({ examData, markReading }) => {
     [band, part, examData]
   );
 
+  // ── Mode switcher ─────────────────────────────────────────────────────────
+  const modeSwitcher = (
+    <div className="reading-mode-bar">
+      <button
+        className={`reading-mode-btn${mode === 'practice' ? ' active' : ''}`}
+        onClick={() => setMode('practice')}
+      >
+        <IconBookOpen size={15} style={{ display: 'inline', verticalAlign: 'middle', marginRight: 4 }} />
+        {lang === 'zh' ? '練習題目' : lang === 'en' ? 'Practice' : 'Luyện tập'}
+      </button>
+      <button
+        className={`reading-mode-btn${mode === 'ai' ? ' active' : ''}`}
+        onClick={() => setMode('ai')}
+      >
+        {t('ai_read_tab', lang)}
+      </button>
+    </div>
+  );
+
+  if (mode === 'ai') {
+    return (
+      <div>
+        {modeSwitcher}
+        <AIReadingGenerator examData={examData} />
+      </div>
+    );
+  }
+
   const isCloze = band === 'A' && part === 'part4';
   if (isCloze) {
-    return <ClozeSection examData={examData} markReading={markReading} />;
+    return (
+      <div>
+        {modeSwitcher}
+        <ClozeSection examData={examData} markReading={markReading} />
+      </div>
+    );
   }
 
   const q = questions[qIdx];
@@ -142,6 +204,7 @@ export const ReadingModule: React.FC<Props> = ({ examData, markReading }) => {
 
   return (
     <div>
+      {modeSwitcher}
       {/* Filters */}
       <div className="card card--compact mb-12">
         <div className="filter-group mb-8">
@@ -191,6 +254,24 @@ export const ReadingModule: React.FC<Props> = ({ examData, markReading }) => {
         {q.context && (
           <div style={{ background: 'var(--warn-light)', border: '1px solid #fde68a', borderRadius: 'var(--radius)', padding: '8px 12px', marginBottom: 12, fontSize: '.83rem', color: 'var(--warn)' }}>
             {q.context}
+          </div>
+        )}
+
+        {/* Context image (Part 3) */}
+        {q.pageImage && (
+          <div style={{
+            border: '1px solid var(--border)',
+            borderRadius: 'var(--radius)',
+            overflow: 'hidden',
+            background: '#f8f9fa',
+            marginBottom: 14,
+            textAlign: 'center',
+          }}>
+            <img
+              src={`${import.meta.env.BASE_URL}${q.pageImage}`}
+              alt={q.context ?? `Hình câu ${q.id}`}
+              style={{ maxWidth: '100%', maxHeight: 480, objectFit: 'contain', display: 'block', margin: '0 auto' }}
+            />
           </div>
         )}
 

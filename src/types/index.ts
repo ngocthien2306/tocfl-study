@@ -229,6 +229,13 @@ export interface AISentenceResult {
   createdAt: string;
 }
 
+export interface AIVocabItem {
+  word: string;
+  pinyin: string;
+  meaning: string;
+  example?: string;
+}
+
 export interface AIReadingResult {
   type: 'reading';
   topic: string;
@@ -237,7 +244,72 @@ export interface AIReadingResult {
   passage_pinyin: string;
   passage_vietnamese: string;
   questions: AIQuestion[];
+  vocabulary?: AIVocabItem[];
   createdAt: string;
 }
 
 export type AIResult = AISentenceResult | AIReadingResult;
+
+// ─── Interview types ──────────────────────────────────────────────────────────
+
+export interface InterviewDocument {
+  id:            number;
+  filename:      string;
+  file_type:     'pdf' | 'docx' | 'txt';
+  raw_text:      string | null;
+  profile_json:  string | null;   // JSON string → InterviewProfile
+  analysis_json: string | null;   // JSON string → InterviewAnalysis
+  analyzed:      boolean;
+  created_at:    string;
+}
+
+export interface InterviewProfile {
+  name?:             string;
+  current_role?:     string;
+  years_experience?: number;
+  skills:            string[];
+  education:         string[];
+  achievements:      string[];
+  languages:         string[];
+  doc_type:          'cv' | 'cover_letter' | 'portfolio' | 'other';
+}
+
+export interface InterviewAnalysis {
+  strengths:     string[];
+  gaps:          string[];
+  ats_keywords:  string[];
+  highlight:     string;   // câu chuyện/achievement nổi bật nhất
+}
+
+export type InterviewMode = 'mock' | 'coach';
+
+export interface InterviewSession {
+  id:         number;
+  title:      string;
+  job_title:  string | null;
+  company:    string | null;
+  mode:       InterviewMode;
+  doc_ids:    number[];
+  msg_count:  number;
+  created_at: string;
+  updated_at: string;
+  messages?:  SessionMessage[];
+}
+
+export interface SessionMessage {
+  id:            number;
+  role:          'user' | 'assistant';
+  content:       string;
+  score:         number | null;
+  feedback_json: string | null;   // JSON → MessageFeedback
+  created_at:    string;
+}
+
+export interface MessageFeedback {
+  situation: number;  // STAR scores 1-10
+  task:      number;
+  action:    number;
+  result:    number;
+  overall:   number;
+  tips:      string[];
+}

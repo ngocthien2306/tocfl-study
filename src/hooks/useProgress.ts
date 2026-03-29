@@ -49,5 +49,34 @@ export function useProgress() {
     setProgress(empty);
   }, []);
 
-  return { progress, markWord, markReading, addExam, resetAll };
+  /** Merge server progress into local state (called after login) */
+  const mergeFromServer = useCallback((
+    serverWords: Record<string, boolean>,
+    serverReading: Record<string, boolean>,
+  ) => {
+    setProgress(prev => {
+      // Strip "word_" / "read_" prefixes that the server uses
+      const knownFromServer: Record<string, boolean> = {};
+      Object.entries(serverWords).forEach(([k, v]) => {
+        const key = k.startsWith('word_') ? k.slice(5) : k;
+        knownFromServer[key] = v;
+      });
+      const readingFromServer: Record<string, boolean> = {};
+      Object.entries(serverReading).forEach(([k, v]) => {
+        const key = k.startsWith('read_') ? k.slice(5) : k;
+        readingFromServer[key] = v;
+      });
+
+      // Merge: server wins on conflict (server is source of truth)
+      const next: Progress = {
+        ...prev,
+        known:   { ...prev.known,   ...knownFromServer   },
+        reading: { ...prev.reading, ...readingFromServer },
+      };
+      save(next);
+      return next;
+    });
+  }, []);
+
+  return { progress, markWord, markReading, addExam, resetAll, mergeFromServer };
 }

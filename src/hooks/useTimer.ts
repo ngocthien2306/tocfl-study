@@ -7,6 +7,10 @@ export function useTimer(initialSeconds: number, onExpire?: () => void) {
   const onExpireRef = useRef(onExpire);
   onExpireRef.current = onExpire;
 
+  const setTo = useCallback((s: number) => {
+    setTimeLeft(s);
+  }, []);
+
   const start = useCallback(() => {
     setRunning(true);
   }, []);
@@ -41,5 +45,5 @@ export function useTimer(initialSeconds: number, onExpire?: () => void) {
   const fmt = (s: number) =>
     `${String(Math.floor(s / 60)).padStart(2, '0')}:${String(s % 60).padStart(2, '0')}`;
 
-  return { timeLeft, running, formatted: fmt(timeLeft), start, stop, reset };
+  return { timeLeft, running, formatted: fmt(timeLeft), start, stop, reset, setTo };
 }

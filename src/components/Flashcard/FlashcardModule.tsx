@@ -1,6 +1,8 @@
 import React, { useMemo, useState } from 'react';
 import type { Word, Progress } from '../../types';
 import { useLang } from '../../i18n/LangContext';
+import { SpeakButton } from '../UI/SpeakButton';
+import { IconCheck, IconShuffle } from '../UI/Icons';
 
 interface Props {
   vocabulary: Word[];
@@ -119,7 +121,7 @@ export const FlashcardModule: React.FC<Props> = ({ vocabulary, progress, markWor
       {/* Card or empty state */}
       {!word ? (
         <div className="card empty-state">
-          <p style={{ fontSize: '2rem' }}>✓</p>
+          <IconCheck size={36} style={{ opacity: .4, marginBottom: 8 }} />
           <p>Không còn từ nào trong bộ lọc này.<br />Thử thay đổi bộ lọc hoặc bật "Hiện từ đã biết".</p>
         </div>
       ) : (
@@ -131,6 +133,7 @@ export const FlashcardModule: React.FC<Props> = ({ vocabulary, progress, markWor
                 <span className={`badge badge-${word.level} fc-level`}>{word.level}</span>
                 <div className="fc-hanzi">{word.hanzi}</div>
                 <div className="fc-pinyin">{word.pinyin}</div>
+                <SpeakButton text={word.hanzi} size="lg" className="fc-speak" />
                 <span className="fc-hint">Nhấn để xem nghĩa</span>
               </div>
               {/* Back */}
@@ -138,6 +141,7 @@ export const FlashcardModule: React.FC<Props> = ({ vocabulary, progress, markWor
                 <span className={`badge badge-${word.band} fc-level`}>Band {word.band}</span>
                 <div className="fc-hanzi" style={{ fontSize: '2.2rem' }}>{word.hanzi}</div>
                 <div className="fc-pinyin">{word.pinyin}</div>
+                <SpeakButton text={word.hanzi} size="lg" className="fc-speak" />
                 <div className="divider" style={{ width: '50%' }} />
                 <div className="fc-meaning">{word.meaning}</div>
                 {word.pos && <div className="fc-pos">{word.pos}</div>}
@@ -160,7 +164,7 @@ export const FlashcardModule: React.FC<Props> = ({ vocabulary, progress, markWor
           </div>
           <div style={{ display: 'flex', gap: 8, justifyContent: 'center' }}>
             <button className="btn btn-outline btn-sm" onClick={() => go(-1)} disabled={idx === 0}>{t('btn_prev')}</button>
-            <button className="btn btn-ghost btn-sm" onClick={shuffle}>{t('fc_shuffle')}</button>
+            <button className="btn btn-ghost btn-sm" onClick={shuffle} style={{ display:'flex', alignItems:'center', gap:5 }}><IconShuffle size={13}/>{t('fc_shuffle')}</button>
             <button className="btn btn-outline btn-sm" onClick={() => go(1)} disabled={idx === total - 1}>{t('btn_next')}</button>
           </div>
         </>

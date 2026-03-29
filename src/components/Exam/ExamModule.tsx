@@ -1,7 +1,8 @@
-import React, { useMemo, useState } from 'react';
+import React, { useMemo, useState, useEffect } from 'react';
 import type { ExamData, ExamKey, FlatQuestion, OptionKey, ExamRecord } from '../../types';
 import { useTimer } from '../../hooks/useTimer';
 import { useLang } from '../../i18n/LangContext';
+import { IconCamera } from '../UI/Icons';
 
 interface Props {
   examData: ExamData;
@@ -12,6 +13,32 @@ interface Props {
 type Phase = 'select' | 'exam' | 'result';
 
 const EXAM_DURATION = 60 * 60; // 60 min
+const DRAFT_KEY = 'tocfl_exam_draft';
+
+interface ExamDraft {
+  band: 'A' | 'B';
+  examKey: ExamKey;
+  answers: Record<number, OptionKey>;
+  qIdx: number;
+  timeLeft: number;
+  savedAt: number; // Date.now() timestamp
+}
+
+function loadDraft(): ExamDraft | null {
+  try {
+    const raw = localStorage.getItem(DRAFT_KEY);
+    return raw ? (JSON.parse(raw) as ExamDraft) : null;
+  } catch { return null; }
+}
+function saveDraft(d: ExamDraft) {
+  try { localStorage.setItem(DRAFT_KEY, JSON.stringify(d)); } catch { /* silent */ }
+}
+function clearDraft() {
+  try { localStorage.removeItem(DRAFT_KEY); } catch { /* silent */ }
+}
+function fmtSeconds(s: number) {
+  return `${String(Math.floor(s / 60)).padStart(2, '0')}:${String(s % 60).padStart(2, '0')}`;
+}
 
 function buildExamQuestions(band: 'A' | 'B', examKey: ExamKey, data: ExamData): FlatQuestion[] {
   const out: FlatQuestion[] = [];
@@ -90,17 +117,34 @@ function buildExamQuestions(band: 'A' | 'B', examKey: ExamKey, data: ExamData): 
 
 export const ExamModule: React.FC<Props> = ({ examData, addExam, pastExams }) => {
   const { t } = useLang();
-  const [phase, setPhase] = useState<Phase>('select');
-  const [band,  setBand]  = useState<'A' | 'B'>('B');
+  const [phase,   setPhase  ] = useState<Phase>('select');
+  const [band,    setBand   ] = useState<'A' | 'B'>('B');
   const [examKey, setExamKey] = useState<ExamKey>('exam1');
   const [answers, setAnswers] = useState<Record<number, OptionKey>>({});
-  const [qIdx,  setQIdx]  = useState(0);
+  const [qIdx,    setQIdx   ] = useState(0);
+  const [draft,   setDraft  ] = useState<ExamDraft | null>(() => loadDraft());
 
   const questions = useMemo(() => buildExamQuestions(band, examKey, examData), [band, examKey, examData]);
 
   const timer = useTimer(EXAM_DURATION, () => finishExam());
 
+  // Auto-save draft every 5 s while exam is in progress
+  useEffect(() => {
+    if (phase !== 'exam') return;
+    const save = () => saveDraft({
+      band, examKey, answers, qIdx,
+      timeLeft: timer.timeLeft,
+      savedAt: Date.now(),
+    });
+    save(); // immediate save on any change
+    const id = setInterval(save, 5000);
+    return () => clearInterval(id);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [phase, answers, qIdx]);
+
   function startExam(b: 'A' | 'B', ek: ExamKey) {
+    clearDraft();
+    setDraft(null);
     setBand(b);
     setExamKey(ek);
     setAnswers({});
@@ -110,14 +154,35 @@ export const ExamModule: React.FC<Props> = ({ examData, addExam, pastExams }) =>
     setTimeout(() => timer.start(), 50);
   }
 
+  function resumeExam() {
+    if (!draft) return;
+    const elapsed = Math.floor((Date.now() - draft.savedAt) / 1000);
+    const remaining = Math.max(0, draft.timeLeft - elapsed);
+    setBand(draft.band);
+    setExamKey(draft.examKey);
+    setAnswers(draft.answers);
+    setQIdx(draft.qIdx);
+    setDraft(null);
+    setPhase('exam');
+    timer.setTo(remaining);
+    setTimeout(() => timer.start(), 50);
+  }
+
+  function discardDraft() {
+    clearDraft();
+    setDraft(null);
+  }
+
   function finishExam() {
     timer.stop();
+    clearDraft();
+    setDraft(null);
     const score = questions.filter(q => answers[q.id] === q.answer).length;
     addExam({ band, score, total: questions.length, date: new Date().toLocaleDateString('vi-VN') });
     setPhase('result');
   }
 
-  if (phase === 'select') return <SelectPhase onStart={startExam} pastExams={pastExams} examData={examData} selectedBand={band} selectedExam={examKey} onBandChange={setBand} onExamChange={setExamKey} />;
+  if (phase === 'select') return <SelectPhase onStart={startExam} onResume={resumeExam} onDiscardDraft={discardDraft} draft={draft} pastExams={pastExams} examData={examData} selectedBand={band} selectedExam={examKey} onBandChange={setBand} onExamChange={setExamKey} />;
   if (phase === 'result') return (
     <ResultPhase
       questions={questions}
@@ -267,13 +332,16 @@ export const ExamModule: React.FC<Props> = ({ examData, addExam, pastExams }) =>
 // ── Select phase ───────────────────────────────────────────────────────────────
 const SelectPhase: React.FC<{
   onStart: (b: 'A' | 'B', ek: ExamKey) => void;
+  onResume: () => void;
+  onDiscardDraft: () => void;
+  draft: ExamDraft | null;
   pastExams: ExamRecord[];
   examData: ExamData;
   selectedBand: 'A' | 'B';
   selectedExam: ExamKey;
   onBandChange: (b: 'A' | 'B') => void;
   onExamChange: (ek: ExamKey) => void;
-}> = ({ onStart, pastExams, examData, selectedBand, selectedExam, onBandChange, onExamChange }) => {
+}> = ({ onStart, onResume, onDiscardDraft, draft, pastExams, examData, selectedBand, selectedExam, onBandChange, onExamChange }) => {
   const { t, lang } = useLang();
 
   const countB = (() => {
@@ -294,6 +362,35 @@ const SelectPhase: React.FC<{
 
   return (
     <div>
+      {/* ── Resume banner ─────────────────────────────────────────────────── */}
+      {draft && (() => {
+        const elapsed = Math.floor((Date.now() - draft.savedAt) / 1000);
+        const remaining = Math.max(0, draft.timeLeft - elapsed);
+        const answeredCount = Object.keys(draft.answers).length;
+        return (
+          <div style={{
+            background: 'var(--accent-light)', border: '1px solid var(--accent)',
+            borderRadius: 'var(--radius-lg)', padding: '14px 16px', marginBottom: 14,
+            display: 'flex', alignItems: 'center', gap: 12, flexWrap: 'wrap',
+          }}>
+            <div style={{ flex: 1, minWidth: 180 }}>
+              <div style={{ fontWeight: 700, fontSize: '.95rem', color: 'var(--accent)', marginBottom: 3 }}>
+                ⏸ Bài thi đang tạm dừng
+              </div>
+              <div style={{ fontSize: '.82rem', color: 'var(--text-secondary)', display: 'flex', gap: 12, flexWrap: 'wrap' }}>
+                <span>Band {draft.band} · {draft.examKey.replace('exam', 'Đề ')}</span>
+                <span>{answeredCount} câu đã trả lời</span>
+                <span>⏱ Còn {fmtSeconds(remaining)}</span>
+              </div>
+            </div>
+            <div style={{ display: 'flex', gap: 8, flexShrink: 0 }}>
+              <button className="btn btn-primary btn-sm" onClick={onResume}>▶ Tiếp tục</button>
+              <button className="btn btn-ghost btn-sm" style={{ color: 'var(--error)' }} onClick={onDiscardDraft}>Huỷ bài</button>
+            </div>
+          </div>
+        );
+      })()}
+
       <div className="card">
         <h2 style={{ marginBottom: 6 }}>{t('exam_title')}</h2>
         <p className="text-sm text-muted" style={{ marginBottom: 16 }}>{t('exam_subtitle')}</p>
@@ -457,7 +554,7 @@ const ResultPhase: React.FC<{
                 {!correct && chosen && <span style={{ color: 'var(--error)' }}> · {t('you_chose')} {chosen}</span>}
                 {!correct && !chosen && <span style={{ color: 'var(--text-muted)' }}> · {t('not_answered')}</span>}
                 {(q.type === 'image_choice' || q.type === 'picture_description' || q.type === 'image_material') && (
-                  <span style={{ color: 'var(--text-secondary)', marginLeft: 4 }}>📸</span>
+                  <IconCamera size={13} style={{ color: 'var(--text-secondary)', marginLeft: 4, display: 'inline', verticalAlign: 'middle' }} />
                 )}
               </span>
             </div>

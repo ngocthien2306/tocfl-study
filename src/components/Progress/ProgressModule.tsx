@@ -1,5 +1,6 @@
 import React from 'react';
 import type { Progress, Word } from '../../types';
+import { IconBook, IconBookOpen, IconSave } from '../UI/Icons';
 
 interface Props {
   progress: Progress;
@@ -96,9 +97,9 @@ export const ProgressModule: React.FC<Props> = ({ progress, vocabulary, onReset 
       {/* Info */}
       <div className="card">
         <h2 style={{ marginBottom: 10 }}>Thông tin hệ thống</h2>
-        <p className="text-sm" style={{ marginBottom: 6 }}>📚 Tổng từ vựng: <strong>{totalVocab.toLocaleString()}</strong> từ — Band A: {totalA}, Band B: {totalB}</p>
-        <p className="text-sm" style={{ marginBottom: 6 }}>📖 Đề thi: Đề 1 Band A (phần 3–5) + Đề 1 Band B (phần 1–2)</p>
-        <p className="text-sm" style={{ marginBottom: 16 }}>💾 Tiến độ lưu tự động trong trình duyệt (localStorage)</p>
+        <p className="text-sm" style={{ marginBottom: 6, display: 'flex', alignItems: 'center', gap: 6 }}><IconBook size={13} /> Tổng từ vựng: <strong>{totalVocab.toLocaleString()}</strong> từ — Band A: {totalA}, Band B: {totalB}</p>
+        <p className="text-sm" style={{ marginBottom: 6, display: 'flex', alignItems: 'center', gap: 6 }}><IconBookOpen size={13} /> Đề thi: Đề 1 Band A (phần 3–5) + Đề 1 Band B (phần 1–2)</p>
+        <p className="text-sm" style={{ marginBottom: 16, display: 'flex', alignItems: 'center', gap: 6 }}><IconSave size={13} /> Tiến độ lưu tự động trong trình duyệt (localStorage)</p>
         <div className="divider" />
         <button className="btn btn-outline btn-sm" style={{ color: 'var(--error)', borderColor: 'var(--error)' }} onClick={confirmReset}>
           Xoá toàn bộ tiến độ
