@@ -110,6 +110,42 @@ export interface Progress {
   exams: ExamRecord[];
 }
 
+// ─── Detailed attempt records (for history + review) ──────────────────────────
+
+/**
+ * Snapshot of a single question as answered during an attempt.
+ * Stored so the user can review wrong answers later.
+ */
+export interface AttemptQuestion {
+  id:        number;
+  part:      string;                           // 'part1', 'part2', …
+  type:      string;                           // QuestionType or 'listening'
+  question?: string;
+  sentence?: string;
+  options:   Partial<Record<OptionKey, string>>;
+  answer:    OptionKey;                        // correct answer
+  chosen:    OptionKey | null;                 // user's answer (null = skipped)
+  context?:  string;                           // gap-fill context text
+  passage?:  string;                           // reading passage excerpt
+  pageImage?: string;                          // relative image path (if any)
+}
+
+/**
+ * Full record of one completed exam / listening test attempt.
+ * Saved in localStorage for later review.
+ */
+export interface ExamAttempt {
+  id:            string;         // Date.now() string — unique per attempt
+  module:        'exam' | 'listening';
+  band:          'A' | 'B';
+  examKey:       ExamKey;
+  score:         number;
+  total:         number;
+  date:          string;         // ISO timestamp
+  timeTakenSecs: number;         // seconds elapsed (EXAM_DURATION - timeLeft)
+  questions:     AttemptQuestion[];
+}
+
 // ─── Image-based question types ───────────────────────────────────────────────
 export type ImageQuestionType = 'image_choice' | 'picture_description' | 'image_material';
 

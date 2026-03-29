@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useRef, useMemo } from 'react';
-import type { ListeningData, ListeningExam, ListeningQuestion, OptionKey, ExamKey } from '../../types';
+import type { ListeningData, ListeningExam, ListeningQuestion, OptionKey, ExamKey, ExamAttempt, AttemptQuestion } from '../../types';
 import { useLang } from '../../i18n/LangContext';
+import { loadAttempts, saveAttempt, deleteAttempt, fmtDuration, fmtDate } from '../../utils/historyStorage';
 
 interface Props {
   listeningData: ListeningData;
@@ -202,7 +203,7 @@ function buildFlat(exam: ListeningExam): FlatListeningQ[] {
 }
 
 // ── Main component ────────────────────────────────────────────────────────────
-type Phase = 'select' | 'exam' | 'result';
+type Phase = 'select' | 'exam' | 'result' | 'history' | 'review';
 
 export const ListeningModule: React.FC<Props> = ({ listeningData }) => {
   const { lang } = useLang();
@@ -212,6 +213,10 @@ export const ListeningModule: React.FC<Props> = ({ listeningData }) => {
   const [qIdx, setQIdx] = useState(0);
   const [answers, setAnswers] = useState<Record<number, OptionKey>>({});
   const [timerRunning, setTimerRunning] = useState(false);
+  const [reviewAttempt, setReviewAttempt] = useState<ExamAttempt | null>(null);
+  const [attempts, setAttempts] = useState<ExamAttempt[]>(() => loadAttempts('listening'));
+  // Track elapsed time (exam start timestamp)
+  const startTimeRef = useRef<number>(0);
 
   const exam: ListeningExam = band === 'A'
     ? (listeningData.bandA[examKey] ?? listeningData.bandA.exam1)
@@ -240,6 +245,7 @@ export const ListeningModule: React.FC<Props> = ({ listeningData }) => {
     setAnswers({});
     setQIdx(0);
     setTimerRunning(true);
+    startTimeRef.current = Date.now();
     setPhase('exam');
   }
 
@@ -253,7 +259,90 @@ export const ListeningModule: React.FC<Props> = ({ listeningData }) => {
 
   function submit() {
     setTimerRunning(false);
+    const timeTakenSecs = Math.round((Date.now() - startTimeRef.current) / 1000);
+
+    // Build and persist detailed attempt
+    const attemptQs: AttemptQuestion[] = flat.map(fq => ({
+      id:       fq.id,
+      part:     `part${fq.partIdx + 1}`,
+      type:     'listening',
+      question: fq.question,
+      options:  fq.options,
+      answer:   fq.answer,
+      chosen:   answers[fq.id] ?? null,
+      pageImage: fq.page_image ? `${base}${fq.page_image}` : undefined,
+    }));
+    const attempt: ExamAttempt = {
+      id:            String(Date.now()),
+      module:        'listening',
+      band,
+      examKey,
+      score:         flat.filter(fq => answers[fq.id] === fq.answer).length,
+      total:         flat.length,
+      date:          new Date().toISOString(),
+      timeTakenSecs,
+      questions:     attemptQs,
+    };
+    saveAttempt(attempt);
+    setAttempts(loadAttempts('listening'));
+    setReviewAttempt(attempt);
+
     setPhase('result');
+  }
+
+  // ── History phase ────────────────────────────────────────────────────────────
+  if (phase === 'history') {
+    const lbl = {
+      vi: { title: 'Lịch sử thi Nghe', back: '← Quay lại', empty: 'Chưa có lần thi nào được lưu.', delete: 'Xoá', review: '🔍 Xem lại', wrong: 'câu sai', time: 'Thời gian' },
+      zh: { title: '聽力考試紀錄', back: '← 返回', empty: '尚無考試紀錄。', delete: '刪除', review: '🔍 回顧', wrong: '題錯誤', time: '用時' },
+      en: { title: 'Listening Exam History', back: '← Back', empty: 'No attempts saved yet.', delete: 'Delete', review: '🔍 Review', wrong: 'wrong', time: 'Time' },
+    }[lang];
+
+    return (
+      <div>
+        <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 12 }}>
+          <button className="btn btn-ghost btn-sm" onClick={() => setPhase('select')}>{lbl.back}</button>
+          <h2 style={{ margin: 0, fontSize: '1rem' }}>{lbl.title}</h2>
+        </div>
+        {attempts.length === 0 ? (
+          <div className="card text-center" style={{ color: 'var(--text-muted)' }}>{lbl.empty}</div>
+        ) : attempts.map((a) => {
+          const pct = Math.round(a.score / a.total * 100);
+          const wrongCt = a.questions.filter(q => q.chosen !== q.answer).length;
+          return (
+            <div key={a.id} className="card card--compact" style={{ marginBottom: 8, display: 'flex', alignItems: 'center', gap: 12, flexWrap: 'wrap' }}>
+              <div style={{
+                width: 52, height: 52, borderRadius: '50%',
+                border: `3px solid ${pct >= 70 ? 'var(--success)' : 'var(--error)'}`,
+                display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center',
+                flexShrink: 0,
+              }}>
+                <span style={{ fontSize: '.85rem', fontWeight: 700, color: pct >= 70 ? 'var(--success)' : 'var(--error)', lineHeight: 1.1 }}>{pct}%</span>
+                <span style={{ fontSize: '.65rem', color: 'var(--text-muted)' }}>{a.score}/{a.total}</span>
+              </div>
+              <div style={{ flex: 1, minWidth: 140 }}>
+                <div style={{ fontWeight: 600, fontSize: '.88rem' }}>Band {a.band} · {a.examKey.replace('exam', 'Đề ')}</div>
+                <div style={{ fontSize: '.78rem', color: 'var(--text-muted)' }}>
+                  {fmtDate(a.date)} · {lbl.time} {fmtDuration(a.timeTakenSecs)} · <span style={{ color: wrongCt > 0 ? 'var(--error)' : 'var(--success)' }}>{wrongCt} {lbl.wrong}</span>
+                </div>
+              </div>
+              <div style={{ display: 'flex', gap: 6, flexShrink: 0 }}>
+                <button className="btn btn-primary btn-sm" onClick={() => { setReviewAttempt(a); setPhase('review'); }}>{lbl.review}</button>
+                <button className="btn btn-ghost btn-sm" style={{ color: 'var(--error)' }}
+                  onClick={() => { if (confirm('Xoá lần thi này?')) { deleteAttempt('listening', a.id); setAttempts(loadAttempts('listening')); } }}>
+                  {lbl.delete}
+                </button>
+              </div>
+            </div>
+          );
+        })}
+      </div>
+    );
+  }
+
+  // ── Review phase ─────────────────────────────────────────────────────────────
+  if (phase === 'review' && reviewAttempt) {
+    return <ListeningReview attempt={reviewAttempt} onBack={() => setPhase('history')} base={base} />;
   }
 
   // ── Select phase ────────────────────────────────────────────────────────────
@@ -325,6 +414,38 @@ export const ListeningModule: React.FC<Props> = ({ listeningData }) => {
         <button className="btn btn-primary" style={{ width: '100%', minHeight: 52, fontSize: '1rem' }} onClick={startExam}>
           {lbl.start}
         </button>
+
+        {attempts.length > 0 && (
+          <div style={{ marginTop: 16, paddingTop: 14, borderTop: '1px solid var(--border)' }}>
+            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 10 }}>
+              <span style={{ fontWeight: 600, fontSize: '.9rem' }}>
+                {{vi:'Lịch sử gần đây',zh:'近期紀錄',en:'Recent attempts'}[lang]}
+              </span>
+              <button className="btn btn-ghost btn-sm" onClick={() => setPhase('history')}>
+                📋 {{vi:'Xem tất cả',zh:'查看全部',en:'View all'}[lang]} ({attempts.length})
+              </button>
+            </div>
+            {attempts.slice(0, 3).map((a) => {
+              const pct = Math.round(a.score / a.total * 100);
+              const wrongCt = a.questions.filter(q => q.chosen !== q.answer).length;
+              return (
+                <div key={a.id} style={{ display: 'flex', alignItems: 'center', gap: 8, padding: '6px 0', borderBottom: '1px solid var(--bg)', flexWrap: 'wrap' }}>
+                  <div style={{ flex: 1, minWidth: 120 }}>
+                    <div style={{ fontSize: '.82rem' }}>Band {a.band} · {a.examKey.replace('exam', 'Đề ')} · ⏱ {fmtDuration(a.timeTakenSecs)}</div>
+                    <div style={{ fontSize: '.75rem', color: 'var(--text-muted)' }}>{fmtDate(a.date)}</div>
+                  </div>
+                  <div style={{ textAlign: 'right', flexShrink: 0 }}>
+                    <div style={{ fontWeight: 700, color: pct >= 70 ? 'var(--success)' : 'var(--error)' }}>{a.score}/{a.total} ({pct}%)</div>
+                    <div style={{ fontSize: '.75rem', color: 'var(--text-muted)' }}>{wrongCt} {{vi:'câu sai',zh:'題錯',en:'wrong'}[lang]}</div>
+                  </div>
+                  <button className="btn btn-outline btn-sm" onClick={() => { setReviewAttempt(a); setPhase('review'); }}>
+                    🔍 {{vi:'Xem lại',zh:'回顧',en:'Review'}[lang]}
+                  </button>
+                </div>
+              );
+            })}
+          </div>
+        )}
       </div>
     );
   }
@@ -390,9 +511,16 @@ export const ListeningModule: React.FC<Props> = ({ listeningData }) => {
           )}
         </div>
 
-        <button className="btn btn-outline" style={{ width: '100%', minHeight: 48 }} onClick={() => { setPhase('select'); }}>
-          {lbl.back}
-        </button>
+        <div style={{ display: 'flex', gap: 8 }}>
+          <button className="btn btn-outline" style={{ flex: 1, minHeight: 48 }} onClick={() => { setPhase('select'); }}>
+            {lbl.back}
+          </button>
+          {reviewAttempt && (
+            <button className="btn btn-primary" style={{ flex: 1, minHeight: 48 }} onClick={() => setPhase('review')}>
+              🔍 {{vi:'Xem lại chi tiết',zh:'回顧詳情',en:'Review details'}[lang]}
+            </button>
+          )}
+        </div>
       </div>
     );
   }
@@ -570,6 +698,139 @@ export const ListeningModule: React.FC<Props> = ({ listeningData }) => {
           disabled={qIdx === total - 1}
         >{lbl.next}</button>
       </div>
+    </div>
+  );
+};
+
+// ── ListeningReview — drill-down review of a saved listening attempt ───────────
+const ListeningReview: React.FC<{
+  attempt: ExamAttempt;
+  onBack: () => void;
+  base: string;
+}> = ({ attempt, onBack, base }) => {
+  const { lang } = useLang();
+  const [filter,     setFilter    ] = useState<'all' | 'wrong' | 'correct'>('all');
+  const [expandedId, setExpandedId] = useState<number | null>(null);
+
+  const lbl = {
+    vi: { back: '← Lịch sử', filterAll: 'Tất cả', filterWrong: '✗ Sai', filterCorrect: '✓ Đúng', correct: 'Đáp án đúng', yours: 'Bạn chọn', skipped: 'Bỏ qua', noQ: 'Không có câu nào.' },
+    zh: { back: '← 紀錄', filterAll: '全部', filterWrong: '✗ 錯誤', filterCorrect: '✓ 正確', correct: '正確答案', yours: '你選擇', skipped: '未作答', noQ: '沒有題目。' },
+    en: { back: '← History', filterAll: 'All', filterWrong: '✗ Wrong', filterCorrect: '✓ Correct', correct: 'Correct', yours: 'You chose', skipped: 'Skipped', noQ: 'No questions.' },
+  }[lang];
+
+  const pct     = Math.round(attempt.score / attempt.total * 100);
+  const wrongCt = attempt.questions.filter(q => q.chosen !== q.answer).length;
+
+  const displayed = attempt.questions.filter(q => {
+    if (filter === 'wrong')   return q.chosen !== q.answer;
+    if (filter === 'correct') return q.chosen === q.answer;
+    return true;
+  });
+
+  return (
+    <div>
+      <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 12, flexWrap: 'wrap' }}>
+        <button className="btn btn-ghost btn-sm" onClick={onBack}>{lbl.back}</button>
+        <span style={{ fontSize: '.85rem', color: 'var(--text-muted)' }}>
+          🎧 Band {attempt.band} · {attempt.examKey.replace('exam', 'Đề ')} · {fmtDate(attempt.date)} · ⏱ {fmtDuration(attempt.timeTakenSecs)}
+        </span>
+      </div>
+
+      {/* Score summary */}
+      <div className="card card--compact" style={{ display: 'flex', alignItems: 'center', gap: 14, marginBottom: 10, flexWrap: 'wrap' }}>
+        <div style={{
+          width: 60, height: 60, borderRadius: '50%', flexShrink: 0,
+          border: `4px solid ${pct >= 70 ? 'var(--success)' : 'var(--error)'}`,
+          display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center',
+        }}>
+          <span style={{ fontSize: '1rem', fontWeight: 700, color: pct >= 70 ? 'var(--success)' : 'var(--error)' }}>{pct}%</span>
+          <span style={{ fontSize: '.65rem', color: 'var(--text-muted)' }}>{attempt.score}/{attempt.total}</span>
+        </div>
+        <div style={{ flex: 1, fontSize: '.85rem' }}>
+          <div style={{ fontWeight: 600 }}>{attempt.score} câu đúng / {attempt.total} câu</div>
+          <div style={{ color: 'var(--text-muted)' }}>{wrongCt} câu sai · ⏱ {fmtDuration(attempt.timeTakenSecs)}</div>
+        </div>
+      </div>
+
+      {/* Filter */}
+      <div style={{ display: 'flex', gap: 6, marginBottom: 10 }}>
+        {(['all', 'wrong', 'correct'] as const).map(f => (
+          <button key={f} className={`btn btn-sm ${filter === f ? 'btn-primary' : 'btn-outline'}`} onClick={() => setFilter(f)}>
+            {f === 'all' ? lbl.filterAll : f === 'wrong' ? lbl.filterWrong : lbl.filterCorrect}
+            {f === 'wrong'   && wrongCt > 0     && <span style={{ marginLeft: 4, fontSize: '.75rem' }}>{wrongCt}</span>}
+            {f === 'correct' && attempt.score > 0 && <span style={{ marginLeft: 4, fontSize: '.75rem' }}>{attempt.score}</span>}
+          </button>
+        ))}
+      </div>
+
+      {/* Question list */}
+      {displayed.length === 0 ? (
+        <div className="card" style={{ color: 'var(--text-muted)', textAlign: 'center' }}>{lbl.noQ}</div>
+      ) : displayed.map((q) => {
+        const isCorrect  = q.chosen === q.answer;
+        const isExpanded = expandedId === q.id;
+
+        return (
+          <div
+            key={q.id}
+            className="card card--compact"
+            style={{ marginBottom: 6, border: `1.5px solid ${isCorrect ? 'var(--success)' : q.chosen ? 'var(--error)' : 'var(--border)'}`, cursor: 'pointer' }}
+            onClick={() => setExpandedId(isExpanded ? null : q.id)}
+          >
+            <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+              <span style={{ fontWeight: 700, fontSize: '.9rem', color: isCorrect ? 'var(--success)' : q.chosen ? 'var(--error)' : 'var(--text-muted)', minWidth: 16 }}>
+                {isCorrect ? '✓' : '✗'}
+              </span>
+              <span style={{ flex: 1, fontSize: '.85rem', fontWeight: 600 }}>
+                🎧 Câu {q.id}
+              </span>
+              <div style={{ display: 'flex', gap: 6, fontSize: '.8rem', flexShrink: 0 }}>
+                <span style={{ color: 'var(--success)', fontWeight: 700 }}>{q.answer}</span>
+                {!isCorrect && q.chosen && <span style={{ color: 'var(--error)' }}>({q.chosen})</span>}
+                {!isCorrect && !q.chosen && <span style={{ color: 'var(--text-muted)' }}>–</span>}
+              </div>
+              <span style={{ fontSize: '.75rem', color: 'var(--text-muted)' }}>{isExpanded ? '▲' : '▼'}</span>
+            </div>
+
+            {isExpanded && (
+              <div style={{ marginTop: 10, borderTop: '1px solid var(--border)', paddingTop: 10 }}>
+                {/* Page image if stored */}
+                {q.pageImage && (
+                  <div style={{ marginBottom: 8, borderRadius: 6, overflow: 'hidden', border: '1px solid var(--border)', background: '#f8f9fa' }}>
+                    <img
+                      src={q.pageImage.startsWith('http') ? q.pageImage : `${base}${q.pageImage}`}
+                      alt={`Câu ${q.id}`}
+                      style={{ maxWidth: '100%', maxHeight: 280, objectFit: 'contain', display: 'block', margin: '0 auto' }}
+                      onError={e => { (e.target as HTMLImageElement).style.display = 'none'; }}
+                    />
+                  </div>
+                )}
+                {/* Question text */}
+                {q.question && <div style={{ fontSize: '.88rem', marginBottom: 8, fontWeight: 500 }}>{q.question}</div>}
+                {/* Options */}
+                <div style={{ display: 'flex', flexDirection: 'column', gap: 4 }}>
+                  {(Object.entries(q.options) as [OptionKey, string][]).map(([key, text]) => {
+                    const isAns    = key === q.answer;
+                    const isChosen = key === q.chosen;
+                    let bg = 'var(--bg)'; let color = 'var(--text)'; let border = '1px solid var(--border)';
+                    if (isAns)    { bg = '#dcfce7'; border = '1px solid var(--success)'; color = '#15803d'; }
+                    if (isChosen && !isAns) { bg = '#fee2e2'; border = '1px solid var(--error)'; color = '#b91c1c'; }
+                    return (
+                      <div key={key} style={{ display: 'flex', gap: 8, padding: '5px 10px', borderRadius: 6, background: bg, border, color, fontSize: '.83rem' }}>
+                        <span style={{ fontWeight: 700, minWidth: 16 }}>{key}</span>
+                        <span>{text || `選項 ${key}`}</span>
+                        {isAns    && <span style={{ marginLeft: 'auto', fontSize: '.75rem' }}>✓ {lbl.correct}</span>}
+                        {isChosen && !isAns && <span style={{ marginLeft: 'auto', fontSize: '.75rem' }}>← {lbl.yours}</span>}
+                      </div>
+                    );
+                  })}
+                  {!q.chosen && <div style={{ fontSize: '.78rem', color: 'var(--text-muted)', fontStyle: 'italic' }}>({lbl.skipped})</div>}
+                </div>
+              </div>
+            )}
+          </div>
+        );
+      })}
     </div>
   );
 };
