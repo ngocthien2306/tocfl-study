@@ -65,13 +65,14 @@ export default function App() {
   const handleAddExam = useCallback((record: import('./types').ExamRecord) => {
     addExam(record);
     if (auth.token) {
-      progressApi.addExam(
-        auth.token,
-        record.band,
-        (record as { exam_key?: string }).exam_key ?? 'exam1',
-        record.score,
-        record.total,
-      ).catch(() => {});
+      progressApi.addExam(auth.token, {
+        module:          record.module          ?? 'exam',
+        band:            record.band,
+        exam_key:        record.examKey         ?? 'exam1',
+        score:           record.score,
+        total:           record.total,
+        time_taken_secs: record.timeTakenSecs   ?? null,
+      }).catch(() => {});
     }
   }, [addExam, auth.token]);
 
@@ -140,7 +141,7 @@ export default function App() {
           )}
 
           {tab === 'listening' && listeningData && (
-            <ListeningModule listeningData={listeningData} />
+            <ListeningModule listeningData={listeningData} token={auth.token} />
           )}
 
           {tab === 'ai' && <AIGeneratorModule vocabulary={vocabulary} progress={progress} />}

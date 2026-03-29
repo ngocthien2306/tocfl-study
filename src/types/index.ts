@@ -92,16 +92,19 @@ export type ExamKey = 'exam1' | 'exam2' | 'exam3';
 
 export interface ExamData {
   bandA: Record<ExamKey, { title: string; reading: BandAReading }>;
-  bandB: { exam1: { title: string; reading: BandBReading } };
+  bandB: Record<ExamKey, { title: string; reading: BandBReading }>;
 }
 
 
 // ─── Progress / storage ───────────────────────────────────────────────────────
 export interface ExamRecord {
-  band: 'A' | 'B';
-  score: number;
-  total: number;
-  date: string;
+  band:           'A' | 'B';
+  examKey?:       ExamKey;
+  score:          number;
+  total:          number;
+  date:           string;
+  module?:        'exam' | 'listening';
+  timeTakenSecs?: number;
 }
 
 export interface Progress {
@@ -223,7 +226,7 @@ export interface ListeningExam {
 
 export interface ListeningData {
   bandA: Record<ExamKey, ListeningExam>;
-  bandB: { exam1: ListeningExam };
+  bandB: Record<ExamKey, ListeningExam>;
 }
 
 // ─── AI Generator types ───────────────────────────────────────────────────────

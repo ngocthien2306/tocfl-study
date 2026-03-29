@@ -1,16 +1,19 @@
 import React, { useState, useEffect, useRef, useMemo, useCallback } from 'react';
 import type { ListeningData, ListeningExam, ListeningQuestion, OptionKey, ExamKey, ExamAttempt, AttemptQuestion } from '../../types';
-import type { AIExplanationData } from '../../utils/aiExplanation';
+import type { AIExplanationData, TranscriptLine } from '../../utils/aiExplanation';
 import { useLang } from '../../i18n/LangContext';
 import { loadAttempts, saveAttempt, deleteAttempt, fmtDuration, fmtDate } from '../../utils/historyStorage';
 import { useApiKey } from '../../contexts/ApiKeyContext';
+import { useAIModel } from '../../hooks/useAIModel';
 import {
   buildCacheKey, loadExplanation, saveExplanation,
   generateListeningExplanation, stripJsonSuffix,
 } from '../../utils/aiExplanation';
+import { progressApi } from '../../api/client';
 
 interface Props {
   listeningData: ListeningData;
+  token?: string | null;
 }
 
 // ── Timer hook ────────────────────────────────────────────────────────────────
@@ -211,9 +214,10 @@ function buildFlat(exam: ListeningExam): FlatListeningQ[] {
 // ── Main component ────────────────────────────────────────────────────────────
 type Phase = 'select' | 'exam' | 'result' | 'history' | 'review';
 
-export const ListeningModule: React.FC<Props> = ({ listeningData }) => {
+export const ListeningModule: React.FC<Props> = ({ listeningData, token }) => {
   const { lang } = useLang();
   const { apiKey, hasKey } = useApiKey();
+  const { model } = useAIModel();
   const [band, setBand] = useState<'A' | 'B'>('A');
   const [examKey, setExamKey] = useState<ExamKey>('exam1');
   const [phase, setPhase] = useState<Phase>('select');
@@ -227,7 +231,7 @@ export const ListeningModule: React.FC<Props> = ({ listeningData }) => {
 
   const exam: ListeningExam = band === 'A'
     ? (listeningData.bandA[examKey] ?? listeningData.bandA.exam1)
-    : listeningData.bandB.exam1;
+    : (listeningData.bandB[examKey] ?? listeningData.bandB.exam1);
 
   const flat = useMemo(() => buildFlat(exam), [exam]);
   const total = flat.length;
@@ -293,6 +297,18 @@ export const ListeningModule: React.FC<Props> = ({ listeningData }) => {
     saveAttempt(attempt);
     setAttempts(loadAttempts('listening'));
     setReviewAttempt(attempt);
+
+    // Sync to backend if user is logged in
+    if (token) {
+      progressApi.addExam(token, {
+        module:          'listening',
+        band,
+        exam_key:        examKey,
+        score:           attempt.score,
+        total:           attempt.total,
+        time_taken_secs: timeTakenSecs,
+      }).catch(() => {});
+    }
 
     setPhase('result');
   }
@@ -366,6 +382,8 @@ export const ListeningModule: React.FC<Props> = ({ listeningData }) => {
       exam3: { vi: 'Đề 3', zh: '第3套', en: 'Exam 3' },
     };
     const availableBandAExams = Object.keys(listeningData.bandA) as ExamKey[];
+    const availableBandBExams = Object.keys(listeningData.bandB) as ExamKey[];
+    const availableExams = band === 'A' ? availableBandAExams : availableBandBExams;
 
     return (
       <div>
@@ -382,17 +400,17 @@ export const ListeningModule: React.FC<Props> = ({ listeningData }) => {
               key={b}
               className={`btn ${band === b ? 'btn-primary' : 'btn-outline'}`}
               style={{ flex: 1, minHeight: 48, fontSize: '.95rem' }}
-              onClick={() => setBand(b)}
+              onClick={() => { setBand(b); setExamKey('exam1'); }}
             >
               Band {b}
             </button>
           ))}
         </div>
 
-        {/* Exam selector (Band A only) */}
-        {band === 'A' && availableBandAExams.length > 1 && (
+        {/* Exam selector */}
+        {availableExams.length > 1 && (
           <div style={{ display: 'flex', gap: 8, marginBottom: 14 }}>
-            {availableBandAExams.map(ek => (
+            {availableExams.map(ek => (
               <button
                 key={ek}
                 className={`btn btn-sm ${examKey === ek ? 'btn-primary' : 'btn-outline'}`}
@@ -550,44 +568,50 @@ export const ListeningModule: React.FC<Props> = ({ listeningData }) => {
 
   return (
     <div>
-      {/* Sticky exam header */}
+      {/* Sticky exam header + audio player */}
       <div style={{
         position: 'sticky',
         top: 52,
         zIndex: 90,
         background: 'var(--surface)',
         borderBottom: '1px solid var(--border)',
-        padding: '8px 12px',
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'space-between',
         marginBottom: 12,
       }}>
-        <div style={{ fontSize: '.78rem', color: 'var(--text-secondary)' }}>
-          {answeredCt}/{total} {lbl.answered}
-        </div>
+        {/* Status bar */}
         <div style={{
-          fontSize: '.85rem',
-          fontWeight: 700,
-          color: timerColor,
-          fontVariantNumeric: 'tabular-nums',
+          padding: '8px 12px',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'space-between',
         }}>
-          ⏱ {timerDisplay}
+          <div style={{ fontSize: '.78rem', color: 'var(--text-secondary)' }}>
+            {answeredCt}/{total} {lbl.answered}
+          </div>
+          <div style={{
+            fontSize: '.85rem',
+            fontWeight: 700,
+            color: timerColor,
+            fontVariantNumeric: 'tabular-nums',
+          }}>
+            ⏱ {timerDisplay}
+          </div>
+          <button
+            className="btn btn-primary btn-sm"
+            style={{ fontSize: '.78rem', padding: '4px 10px' }}
+            onClick={submit}
+          >{lbl.submit}</button>
         </div>
-        <button
-          className="btn btn-primary btn-sm"
-          style={{ fontSize: '.78rem', padding: '4px 10px' }}
-          onClick={submit}
-        >{lbl.submit}</button>
-      </div>
 
-      {/* Part label */}
-      <div style={{ fontSize: '.75rem', color: 'var(--text-secondary)', marginBottom: 6, textAlign: 'center' }}>
-        {q.partTitle}
-      </div>
+        {/* Part label */}
+        <div style={{ fontSize: '.75rem', color: 'var(--text-secondary)', marginBottom: 4, textAlign: 'center' }}>
+          {q.partTitle}
+        </div>
 
-      {/* Audio player */}
-      <AudioPlayer key={q.audio.join('|')} tracks={audioUrls} />
+        {/* Audio player — always visible */}
+        <div style={{ padding: '0 12px 8px' }}>
+          <AudioPlayer key={q.audio.join('|')} tracks={audioUrls} />
+        </div>
+      </div>
 
       {/* Page image (image_choice) */}
       {q.page_image && q.partType === 'image_choice' && (
@@ -662,6 +686,7 @@ export const ListeningModule: React.FC<Props> = ({ listeningData }) => {
       <ListeningAIDrawer
         apiKey={apiKey}
         hasKey={hasKey}
+        model={model}
         cacheKey={buildCacheKey('listening', band, examKey, q.id)}
         questionId={q.id}
         question={q.question}
@@ -723,11 +748,105 @@ export const ListeningModule: React.FC<Props> = ({ listeningData }) => {
   );
 };
 
+// ── Transcript display ─────────────────────────────────────────────────────────
+
+const TranscriptDisplay: React.FC<{ lines: TranscriptLine[] }> = ({ lines }) => {
+  const [showPinyin, setShowPinyin] = useState(true);
+  const [showVietnamese, setShowVietnamese] = useState(true);
+
+  return (
+    <div style={{
+      borderRadius: 8,
+      border: '1.5px solid #0ea5e9',
+      overflow: 'hidden',
+    }}>
+      {/* Header */}
+      <div style={{
+        background: '#0ea5e9',
+        color: '#fff',
+        padding: '7px 14px',
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'space-between',
+        flexWrap: 'wrap',
+        gap: 6,
+      }}>
+        <span style={{ fontWeight: 700, fontSize: '.78rem', letterSpacing: '.05em' }}>
+          🎙 BẢN PHIÊN ÂM · {lines.length} câu
+        </span>
+        <div style={{ display: 'flex', gap: 6 }}>
+          <button
+            onClick={() => setShowPinyin(v => !v)}
+            style={{
+              padding: '2px 10px',
+              borderRadius: 12,
+              border: '1.5px solid rgba(255,255,255,.6)',
+              background: showPinyin ? 'rgba(255,255,255,.25)' : 'transparent',
+              color: '#fff',
+              fontSize: '.68rem',
+              fontWeight: 600,
+              cursor: 'pointer',
+            }}
+          >
+            {showPinyin ? '🙈 Ẩn pinyin' : '👁 Pinyin'}
+          </button>
+          <button
+            onClick={() => setShowVietnamese(v => !v)}
+            style={{
+              padding: '2px 10px',
+              borderRadius: 12,
+              border: '1.5px solid rgba(255,255,255,.6)',
+              background: showVietnamese ? 'rgba(255,255,255,.25)' : 'transparent',
+              color: '#fff',
+              fontSize: '.68rem',
+              fontWeight: 600,
+              cursor: 'pointer',
+            }}
+          >
+            {showVietnamese ? '🙈 Ẩn TV' : '👁 Tiếng Việt'}
+          </button>
+        </div>
+      </div>
+
+      {/* Lines */}
+      <div style={{ background: '#f0f9ff', padding: '10px 14px', display: 'flex', flexDirection: 'column', gap: 10 }}>
+        {lines.map((line, i) => (
+          <div key={i} style={{
+            background: '#fff',
+            borderRadius: 8,
+            padding: '10px 12px',
+            border: '1px solid #bae6fd',
+            boxShadow: '0 1px 3px rgba(14,165,233,.08)',
+          }}>
+            {/* Hanzi */}
+            <div style={{ fontSize: '1.1rem', fontWeight: 700, color: '#0369a1', lineHeight: 1.4, marginBottom: showPinyin || showVietnamese ? 4 : 0 }}>
+              {line.hanzi}
+            </div>
+            {/* Pinyin */}
+            {showPinyin && (
+              <div style={{ fontSize: '.78rem', color: '#0ea5e9', fontStyle: 'italic', marginBottom: showVietnamese ? 3 : 0 }}>
+                {line.pinyin}
+              </div>
+            )}
+            {/* Vietnamese */}
+            {showVietnamese && (
+              <div style={{ fontSize: '.8rem', color: '#475569', borderTop: (showPinyin || (!showPinyin && showVietnamese)) ? '1px dashed #bae6fd' : 'none', paddingTop: 4 }}>
+                {line.vietnamese}
+              </div>
+            )}
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+};
+
 // ── Listening AI Drawer ────────────────────────────────────────────────────────
 
 interface ListeningAIDrawerProps {
   apiKey:        string;
   hasKey:        boolean;
+  model:         string;
   cacheKey:      string;
   questionId:    number;
   question?:     string;
@@ -739,7 +858,7 @@ interface ListeningAIDrawerProps {
 }
 
 const ListeningAIDrawer: React.FC<ListeningAIDrawerProps> = ({
-  apiKey, hasKey, cacheKey,
+  apiKey, hasKey, model, cacheKey,
   questionId, question, options, answer,
   audioPaths, audioBaseUrl, pageImageUrl,
 }) => {
@@ -772,6 +891,7 @@ const ListeningAIDrawer: React.FC<ListeningAIDrawerProps> = ({
     try {
       const result = await generateListeningExplanation({
         apiKey,
+        model,
         questionId,
         audioPaths,
         audioBaseUrl,
@@ -793,7 +913,7 @@ const ListeningAIDrawer: React.FC<ListeningAIDrawerProps> = ({
       setExpanded(false);
       setStep(null);
     }
-  }, [apiKey, hasKey, status, cacheKey, questionId, audioPaths, audioBaseUrl, question, options, answer, pageImageUrl]);
+  }, [apiKey, hasKey, model, status, cacheKey, questionId, audioPaths, audioBaseUrl, question, options, answer, pageImageUrl]);
 
   if (!hasKey) {
     return (
@@ -884,6 +1004,11 @@ const ListeningAIDrawer: React.FC<ListeningAIDrawerProps> = ({
               </div>
             )}
           </div>
+
+          {/* ── Transcript card ── */}
+          {status !== 'loading' && data && data.transcript && data.transcript.length > 0 && (
+            <TranscriptDisplay lines={data.transcript} />
+          )}
 
           {/* ── Vocabulary card — separate section ── */}
           {status !== 'loading' && data && data.vocabulary.length > 0 && (

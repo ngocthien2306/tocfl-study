@@ -2,6 +2,9 @@ import React, { useState, useRef, useEffect } from 'react';
 import { useLang } from '../../i18n/LangContext';
 import type { Lang } from '../../i18n/translations';
 import { useApiKey } from '../../contexts/ApiKeyContext';
+import { useAIModel } from '../../hooks/useAIModel';
+import type { AIModelId } from '../../hooks/useAIModel';
+import { AI_MODELS } from '../../hooks/useAIModel';
 import {
   IconKey, IconLock, IconUnlock, IconEye, IconEyeOff,
   IconClose, IconCheck, IconWarning,
@@ -44,6 +47,7 @@ function initials(name: string) {
 const ApiKeyPanel: React.FC<{ onClose: () => void }> = ({ onClose }) => {
   const { lang } = useLang();
   const { apiKey, hasKey, persisted, setKey, clearKey } = useApiKey();
+  const { model, setModel } = useAIModel();
   const [input,   setInput  ] = useState('');
   const [persist, setPersist] = useState(persisted);
   const [showKey, setShowKey] = useState(false);
@@ -124,6 +128,38 @@ const ApiKeyPanel: React.FC<{ onClose: () => void }> = ({ onClose }) => {
         <span>{TX.apiKeyRemember[lang]}</span>
         {persist && <IconWarning size={13} className="apikey-persist-warn" />}
       </label>
+
+      {/* AI Model selector */}
+      <div style={{ borderTop: '1px solid var(--border)', marginTop: 8, paddingTop: 10 }}>
+        <label style={{ fontSize: '.72rem', fontWeight: 700, color: 'var(--text-secondary)', textTransform: 'uppercase', letterSpacing: '.04em', display: 'block', marginBottom: 6 }}>
+          🤖 Model AI giải thích
+        </label>
+        <select
+          value={model}
+          onChange={e => setModel(e.target.value as AIModelId)}
+          style={{
+            width: '100%',
+            padding: '7px 10px',
+            borderRadius: 6,
+            border: '1.5px solid var(--accent)',
+            background: 'var(--surface)',
+            color: 'var(--text)',
+            fontSize: '.82rem',
+            fontWeight: 600,
+            cursor: 'pointer',
+            outline: 'none',
+          }}
+        >
+          {AI_MODELS.map(m => (
+            <option key={m.id} value={m.id}>
+              {m.label} — {m.desc}
+            </option>
+          ))}
+        </select>
+        <div style={{ fontSize: '.68rem', color: 'var(--text-muted)', marginTop: 4 }}>
+          Model hiện tại: <strong style={{ color: 'var(--accent)' }}>{AI_MODELS.find(m => m.id === model)?.label}</strong>
+        </div>
+      </div>
 
       {/* Security note */}
       <p className="apikey-note">

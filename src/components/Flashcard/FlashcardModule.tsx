@@ -18,6 +18,7 @@ export const FlashcardModule: React.FC<Props> = ({ vocabulary, progress, markWor
   const [band,       setBand]       = useState<Band>('all');
   const [level,      setLevel]      = useState<Level>('all');
   const [hideKnown,  setHideKnown]  = useState(false);
+  const [hidePinyin, setHidePinyin] = useState(false);
   const [idx,        setIdx]        = useState(0);
   const [flipped,    setFlipped]    = useState(false);
 
@@ -102,6 +103,12 @@ export const FlashcardModule: React.FC<Props> = ({ vocabulary, progress, markWor
           >
             {hideKnown ? '● Ẩn từ đã biết' : '○ Hiện từ đã biết'}
           </button>
+          <button
+            className={`chip ${hidePinyin ? 'active' : ''}`}
+            onClick={() => setHidePinyin(v => !v)}
+          >
+            {hidePinyin ? '● Ẩn pinyin' : '○ Hiện pinyin'}
+          </button>
         </div>
       </div>
 
@@ -132,7 +139,10 @@ export const FlashcardModule: React.FC<Props> = ({ vocabulary, progress, markWor
               <div className="fc-face fc-front">
                 <span className={`badge badge-${word.level} fc-level`}>{word.level}</span>
                 <div className="fc-hanzi">{word.hanzi}</div>
-                <div className="fc-pinyin">{word.pinyin}</div>
+                {hidePinyin
+                  ? <div className="fc-pinyin" style={{ color: 'transparent', background: 'var(--text-secondary)', borderRadius: 4, userSelect: 'none', cursor: 'pointer' }} onClick={e => { e.stopPropagation(); setHidePinyin(false); }} title="Nhấn để hiện pinyin">████████</div>
+                  : <div className="fc-pinyin">{word.pinyin}</div>
+                }
                 <SpeakButton text={word.hanzi} size="lg" className="fc-speak" />
                 <span className="fc-hint">Nhấn để xem nghĩa</span>
               </div>
@@ -140,7 +150,10 @@ export const FlashcardModule: React.FC<Props> = ({ vocabulary, progress, markWor
               <div className="fc-face fc-back">
                 <span className={`badge badge-${word.band} fc-level`}>Band {word.band}</span>
                 <div className="fc-hanzi" style={{ fontSize: '2.2rem' }}>{word.hanzi}</div>
-                <div className="fc-pinyin">{word.pinyin}</div>
+                {hidePinyin
+                  ? <div className="fc-pinyin" style={{ color: 'transparent', background: 'var(--text-secondary)', borderRadius: 4, userSelect: 'none', cursor: 'pointer' }} onClick={e => { e.stopPropagation(); setHidePinyin(false); }} title="Nhấn để hiện pinyin">████████</div>
+                  : <div className="fc-pinyin">{word.pinyin}</div>
+                }
                 <SpeakButton text={word.hanzi} size="lg" className="fc-speak" />
                 <div className="divider" style={{ width: '50%' }} />
                 <div className="fc-meaning">{word.meaning}</div>

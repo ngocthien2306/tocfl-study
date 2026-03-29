@@ -10,9 +10,16 @@ import type { AIVocabItem, OptionKey } from '../types';
 
 // ─── Cache types ───────────────────────────────────────────────────────────────
 
+export interface TranscriptLine {
+  hanzi:      string;
+  pinyin:     string;
+  vietnamese: string;
+}
+
 export interface AIExplanationData {
   explanation: string;
   vocabulary:  AIVocabItem[];
+  transcript?: TranscriptLine[];  // listening only
   cachedAt:    string;        // ISO timestamp
 }
 
@@ -174,7 +181,7 @@ function extractArray(str: string): string | null {
   return null;
 }
 
-function parseExplanationResponse(raw: string): { explanation: string; vocabulary: AIVocabItem[] } {
+function parseExplanationResponse(raw: string): { explanation: string; vocabulary: AIVocabItem[]; transcript?: TranscriptLine[] } {
   const trimmed = raw.trim();
 
   const jsonStart = findJsonStart(trimmed);
@@ -185,13 +192,13 @@ function parseExplanationResponse(raw: string): { explanation: string; vocabular
   if (jsonChunk) {
     // Attempt 1: direct JSON.parse on the whole chunk
     try {
-      const meta = JSON.parse(jsonChunk) as { vocabulary?: AIVocabItem[] };
-      if (Array.isArray(meta.vocabulary)) {
-        return { explanation, vocabulary: meta.vocabulary };
-      }
+      const meta = JSON.parse(jsonChunk) as { vocabulary?: AIVocabItem[]; transcript?: TranscriptLine[] };
+      const vocabulary = Array.isArray(meta.vocabulary) ? meta.vocabulary : [];
+      const transcript = Array.isArray(meta.transcript) ? meta.transcript : undefined;
+      return { explanation, vocabulary, transcript };
     } catch { /* try repair */ }
 
-    // Attempt 2: pull out the raw array and parse that directly
+    // Attempt 2: pull out vocabulary array and parse that directly
     const arrStr = extractArray(jsonChunk);
     if (arrStr) {
       try {
@@ -219,24 +226,58 @@ async function imageToBase64(url: string): Promise<string> {
   });
 }
 
-// ─── System prompt (shared for reading + listening) ───────────────────────────
+// ─── System prompts ────────────────────────────────────────────────────────────
 
-const SYSTEM_PROMPT = `Bạn là gia sư tiếng Trung chuyên luyện thi TOCFL. Phân tích câu hỏi và giải thích rõ ràng bằng tiếng Việt.
+const FORMAT_RULES = `QUY TẮC ĐỊNH DẠNG — bắt buộc tuân theo:
+- KHÔNG dùng markdown: không có **bold**, không có *italic*, không có # heading, không có --- separator
+- Dùng số thứ tự (1. 2. 3.) và dấu gạch đầu dòng (-) thông thường
+- Viết văn xuôi tự nhiên, dễ đọc`;
 
-Định dạng bắt buộc:
-1. Giải thích tại sao đáp án đúng là đúng (trích dẫn từ ngữ liệu nếu có)
-2. Giải thích ngắn gọn tại sao từng đáp án sai bị loại
-3. (Tuỳ chọn) Ghi chú ngữ pháp hoặc ngữ cảnh văn hóa nếu hữu ích
+const SYSTEM_PROMPT = `Bạn là gia sư tiếng Trung phồn thể (Traditional Chinese / 繁體中文) chuyên luyện thi TOCFL. Phân tích câu hỏi và giải thích rõ ràng bằng tiếng Việt.
+QUAN TRỌNG: Tất cả chữ Hán trong phản hồi (từ vựng, ví dụ, trích dẫn) PHẢI dùng phồn thể (繁體字). Tuyệt đối KHÔNG dùng giản thể (簡體字).
 
-Ở cuối (trên một DÒNG RIÊNG biệt, không có khoảng trắng hoặc dòng trống trước đó), thêm JSON từ vựng:
-{"vocabulary":[{"word":"漢字","pinyin":"hànzì","meaning":"chữ Hán","example":"我學漢字。"},...]}
+${FORMAT_RULES}
 
-Chỉ liệt kê 3-6 từ vựng quan trọng nhất. Nếu không có, dùng mảng rỗng [].`;
+Cấu trúc phản hồi:
+1. Giải thích tại sao đáp án đúng là đúng (trích dẫn từ ngữ liệu hoặc hình ảnh nếu có)
+2. Giải thích ngắn gọn tại sao từng đáp án sai bị loại (mỗi đáp án sai một dòng)
+3. Ghi chú ngữ pháp hoặc văn hóa nếu hữu ích (có thể bỏ qua nếu không cần)
+
+SAU KHI VIẾT XONG PHẦN GIẢI THÍCH, xuống dòng và thêm JSON từ vựng (phải là JSON hợp lệ):
+{"vocabulary":[{"word":"漢字","pinyin":"hànzì","meaning":"chữ Hán","example":"我學漢字。"},{"word":"學習","pinyin":"xuéxí","meaning":"học tập","example":"我學習中文。"}]}
+
+Yêu cầu JSON:
+- Phải là JSON hợp lệ, đầy đủ dấu ngoặc kép cho tất cả key và value
+- Tất cả chữ Hán trong JSON PHẢI là phồn thể (繁體字)
+- Liệt kê 3-6 từ vựng quan trọng nhất trong câu hỏi
+- Nếu không có từ nào đáng chú ý, dùng: {"vocabulary":[]}
+- KHÔNG thêm bất kỳ text nào sau JSON`;
+
+const LISTENING_SYSTEM_PROMPT = `Bạn là gia sư tiếng Trung phồn thể (Traditional Chinese / 繁體中文) chuyên luyện thi TOCFL phần Nghe. Phân tích câu hỏi và giải thích rõ ràng bằng tiếng Việt.
+QUAN TRỌNG: Tất cả chữ Hán trong phản hồi (từ vựng, ví dụ, bản ghi âm) PHẢI dùng phồn thể (繁體字). Tuyệt đối KHÔNG dùng giản thể (簡體字).
+
+${FORMAT_RULES}
+
+Cấu trúc phản hồi:
+1. Giải thích tại sao đáp án đúng là đúng (dựa vào bản ghi âm)
+2. Giải thích ngắn gọn tại sao từng đáp án sai bị loại (mỗi đáp án sai một dòng)
+3. Ghi chú ngữ pháp hoặc từ ngữ quan trọng nếu hữu ích (có thể bỏ qua nếu không cần)
+
+SAU KHI VIẾT XONG PHẦN GIẢI THÍCH, xuống dòng và thêm JSON (phải là JSON hợp lệ):
+{"vocabulary":[{"word":"漢字","pinyin":"hànzì","meaning":"chữ Hán","example":"我學漢字。"}],"transcript":[{"hanzi":"你好嗎？","pinyin":"Nǐ hǎo ma?","vietnamese":"Bạn có khỏe không?"},{"hanzi":"我很好。","pinyin":"Wǒ hěn hǎo.","vietnamese":"Tôi rất khỏe."}]}
+
+Yêu cầu JSON:
+- Phải là JSON hợp lệ, đầy đủ dấu ngoặc kép cho tất cả key và value
+- Tất cả chữ Hán trong JSON PHẢI là phồn thể (繁體字)
+- vocabulary: liệt kê 3-6 từ vựng quan trọng nhất trong bản ghi âm; nếu không có thì dùng []
+- transcript: chia bản ghi âm thành từng câu/cụm có nghĩa, mỗi phần tử gồm hanzi phồn thể + pinyin có dấu thanh + bản dịch tiếng Việt tự nhiên
+- KHÔNG thêm bất kỳ text nào sau JSON`;
 
 // ─── Reading explanation ───────────────────────────────────────────────────────
 
 export interface ExplainReadingOpts {
   apiKey:         string;
+  model:          string;       // caller-specified model (from user preference)
   questionId:     number;
   question?:      string;
   sentence?:      string;
@@ -249,17 +290,14 @@ export interface ExplainReadingOpts {
 }
 
 export async function generateReadingExplanation(opts: ExplainReadingOpts): Promise<AIExplanationData> {
-  const { apiKey, questionId, question, sentence, options, answer, context, passage, pageImageUrl, onToken } = opts;
-
-  const isImage = !!pageImageUrl;
-  const model   = isImage ? 'gpt-4o' : 'gpt-4o-mini';
+  const { apiKey, model, questionId, question, sentence, options, answer, context, passage, pageImageUrl, onToken } = opts;
 
   const qText       = question ?? sentence ?? `Câu ${questionId}`;
   const optionsText = Object.entries(options).map(([k, v]) => `${k}. ${v}`).join('\n');
 
   let userContent: string | ContentPart[];
 
-  if (isImage) {
+  if (pageImageUrl) {
     let imgData: string;
     try {
       imgData = await imageToBase64(pageImageUrl);
@@ -290,10 +328,11 @@ export async function generateReadingExplanation(opts: ExplainReadingOpts): Prom
   return { explanation, vocabulary, cachedAt: new Date().toISOString() };
 }
 
-// ─── Listening explanation ─────────────────────────────────────────────────────
+// ─── Listening explanation ──────────────────────────────────────────────────────
 
 export interface ExplainListeningOpts {
   apiKey:          string;
+  model:           string;      // caller-specified model (from user preference)
   questionId:      number;
   audioPaths:      string[];    // relative paths (relative to public/)
   audioBaseUrl:    string;      // BASE_URL prefix for absolute URL
@@ -306,7 +345,7 @@ export interface ExplainListeningOpts {
 }
 
 export async function generateListeningExplanation(opts: ExplainListeningOpts): Promise<AIExplanationData> {
-  const { apiKey, questionId, audioPaths, audioBaseUrl, question, options, answer, pageImageUrl, onToken, onProgress } = opts;
+  const { apiKey, model, questionId, audioPaths, audioBaseUrl, question, options, answer, pageImageUrl, onToken, onProgress } = opts;
 
   // ── Step 1: Whisper transcription (one per audio clip, cached) ─────────────
   onProgress?.('transcribing');
@@ -351,7 +390,6 @@ export async function generateListeningExplanation(opts: ExplainListeningOpts): 
   onProgress?.('analyzing');
 
   const isImage = !!pageImageUrl;
-  const model   = isImage ? 'gpt-4o' : 'gpt-4o-mini';
   const qText   = question ?? `Câu ${questionId}`;
   const optText = Object.entries(options).map(([k, v]) => `${k}. ${v}`).join('\n');
 
@@ -376,11 +414,11 @@ export async function generateListeningExplanation(opts: ExplainListeningOpts): 
   }
 
   const messages: ChatMessage[] = [
-    { role: 'system', content: SYSTEM_PROMPT },
-    { role: 'user',   content: userContent   },
+    { role: 'system', content: LISTENING_SYSTEM_PROMPT },
+    { role: 'user',   content: userContent             },
   ];
 
   const raw = await streamCompletion(apiKey, messages, model, onToken);
-  const { explanation, vocabulary } = parseExplanationResponse(raw);
-  return { explanation, vocabulary, cachedAt: new Date().toISOString() };
+  const { explanation, vocabulary, transcript } = parseExplanationResponse(raw);
+  return { explanation, vocabulary, transcript, cachedAt: new Date().toISOString() };
 }

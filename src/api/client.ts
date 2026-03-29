@@ -22,12 +22,14 @@ export interface ProgressData {
 }
 
 export interface ExamRecord {
-  id:       number;
-  band:     string;
-  exam_key: string;
-  score:    number;
-  total:    number;
-  taken_at: string;
+  id:              number;
+  module:          string;          // 'exam' | 'listening'
+  band:            string;
+  exam_key:        string;
+  score:           number;
+  total:           number;
+  time_taken_secs: number | null;
+  taken_at:        string;
 }
 
 // ── Fetch helper ──────────────────────────────────────────────────────────────
@@ -94,10 +96,17 @@ export const progressApi = {
   getExams: (token: string) =>
     apiFetch<ExamRecord[]>("/progress/exams", {}, token),
 
-  addExam: (token: string, band: string, exam_key: string, score: number, total: number) =>
+  addExam: (token: string, payload: {
+    module: string;
+    band: string;
+    exam_key: string;
+    score: number;
+    total: number;
+    time_taken_secs?: number | null;
+  }) =>
     apiFetch<ExamRecord>("/progress/exams", {
       method: "POST",
-      body: JSON.stringify({ band, exam_key, score, total }),
+      body: JSON.stringify(payload),
     }, token),
 };
 

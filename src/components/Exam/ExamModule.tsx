@@ -6,6 +6,7 @@ import { useLang } from '../../i18n/LangContext';
 import { IconCamera } from '../UI/Icons';
 import { loadAttempts, saveAttempt, deleteAttempt, fmtDuration, fmtDate } from '../../utils/historyStorage';
 import { useApiKey } from '../../contexts/ApiKeyContext';
+import { useAIModel } from '../../hooks/useAIModel';
 import {
   buildCacheKey, loadExplanation, saveExplanation,
   generateReadingExplanation, stripJsonSuffix,
@@ -96,7 +97,7 @@ function buildExamQuestions(band: 'A' | 'B', examKey: ExamKey, data: ExamData): 
       p.questions.forEach(q => out.push({ ...q, type: 'mc', part: 'part5', passage: p.text, passageId: p.id }))
     );
   } else {
-    const r = data.bandB.exam1.reading;
+    const r = (data.bandB[examKey] ?? data.bandB.exam1).reading;
     // Part 1
     r.part1.passages.forEach(p =>
       p.questions.forEach(q => out.push({ ...q, type: 'mc', part: 'part1', passage: p.passage_raw, passageId: p.id }))
@@ -125,6 +126,7 @@ function buildExamQuestions(band: 'A' | 'B', examKey: ExamKey, data: ExamData): 
 export const ExamModule: React.FC<Props> = ({ examData, addExam, pastExams }) => {
   const { t } = useLang();
   const { apiKey, hasKey } = useApiKey();
+  const { model } = useAIModel();
   const [phase,         setPhase        ] = useState<Phase>('select');
   const [band,          setBand         ] = useState<'A' | 'B'>('B');
   const [examKey,       setExamKey      ] = useState<ExamKey>('exam1');
@@ -220,7 +222,15 @@ export const ExamModule: React.FC<Props> = ({ examData, addExam, pastExams }) =>
     setAttempts(loadAttempts('exam'));   // refresh cached list
     setReviewAttempt(attempt);           // pre-load for the result → review link
 
-    addExam({ band, score, total: questions.length, date: new Date().toLocaleDateString('vi-VN') });
+    addExam({
+      band,
+      examKey,
+      score,
+      total:          questions.length,
+      date:           new Date().toISOString(),
+      module:         'exam',
+      timeTakenSecs:  timeTakenSecs,
+    });
     setPhase('result');
   }
 
@@ -229,7 +239,7 @@ export const ExamModule: React.FC<Props> = ({ examData, addExam, pastExams }) =>
       onStart={startExam} onResume={resumeExam} onDiscardDraft={discardDraft}
       draft={draft} pastExams={pastExams} examData={examData}
       selectedBand={band} selectedExam={examKey}
-      onBandChange={setBand} onExamChange={setExamKey}
+      onBandChange={(b) => { setBand(b); setExamKey('exam1'); }} onExamChange={setExamKey}
       onViewHistory={() => setPhase('history')}
       attempts={attempts}
       onReview={(a) => { setReviewAttempt(a); setPhase('review'); }}
@@ -380,6 +390,7 @@ export const ExamModule: React.FC<Props> = ({ examData, addExam, pastExams }) =>
         <AIDrawer
           apiKey={apiKey}
           hasKey={hasKey}
+          model={model}
           cacheKey={buildCacheKey('exam', band, examKey, q.id)}
           questionId={q.id}
           question={q.question}
@@ -433,8 +444,11 @@ const SelectPhase: React.FC<{
 }> = ({ onStart, onResume, onDiscardDraft, draft, examData, selectedBand, selectedExam, onBandChange, onExamChange, onViewHistory, attempts, onReview }) => {
   const { t, lang } = useLang();
 
+  const availableBandAExams = Object.keys(examData.bandA) as ExamKey[];
+  const availableBandBExams = Object.keys(examData.bandB) as ExamKey[];
+
   const countB = (() => {
-    const r = examData.bandB.exam1.reading;
+    const r = (examData.bandB[selectedExam] ?? examData.bandB.exam1).reading;
     const imgCount = r.part2.image_passages?.reduce((s, ip) => s + ip.questions.length, 0) ?? 0;
     return r.part1.passages.reduce((s, p) => s + p.questions.length, 0)
          + r.part2.passages.reduce((s, p) => s + p.questions.length, 0)
@@ -446,8 +460,6 @@ const SelectPhase: React.FC<{
     exam2: { vi: 'Đề 2', zh: '第2套', en: 'Exam 2' },
     exam3: { vi: 'Đề 3', zh: '第3套', en: 'Exam 3' },
   };
-
-  const availableBandAExams = Object.keys(examData.bandA) as ExamKey[];
 
   return (
     <div>
@@ -498,10 +510,24 @@ const SelectPhase: React.FC<{
           ))}
         </div>
 
-        {/* Exam selector (only for Band A with multiple exams) */}
+        {/* Exam selector (Band A and Band B) */}
         {selectedBand === 'A' && availableBandAExams.length > 1 && (
           <div style={{ display: 'flex', gap: 8, marginBottom: 16 }}>
             {availableBandAExams.map(ek => (
+              <button
+                key={ek}
+                onClick={() => onExamChange(ek)}
+                className={`btn btn-sm ${selectedExam === ek ? 'btn-primary' : 'btn-outline'}`}
+                style={{ flex: 1, minHeight: 40 }}
+              >
+                {examLabels[ek][lang]}
+              </button>
+            ))}
+          </div>
+        )}
+        {selectedBand === 'B' && availableBandBExams.length > 1 && (
+          <div style={{ display: 'flex', gap: 8, marginBottom: 16 }}>
+            {availableBandBExams.map(ek => (
               <button
                 key={ek}
                 onClick={() => onExamChange(ek)}
@@ -517,7 +543,7 @@ const SelectPhase: React.FC<{
         <button
           className="btn btn-primary"
           style={{ width: '100%', minHeight: 52, fontSize: '1rem' }}
-          onClick={() => onStart(selectedBand, selectedBand === 'A' ? selectedExam : 'exam1')}
+          onClick={() => onStart(selectedBand, selectedExam)}
         >
           {t('exam_start')}
         </button>
@@ -526,7 +552,7 @@ const SelectPhase: React.FC<{
           {selectedBand === 'A' ? (
             <ExamCard band="A" count={50} parts="Phần 1 · 2 · 3 · 4 · 5" onClick={() => onStart('A', selectedExam)} />
           ) : (
-            <ExamCard band="B" count={countB} parts="Phần 1 · 2" onClick={() => onStart('B', 'exam1')} />
+            <ExamCard band="B" count={countB} parts="Phần 1 · 2" onClick={() => onStart('B', selectedExam)} />
           )}
         </div>
       </div>
@@ -746,6 +772,7 @@ const HistoryPhase: React.FC<{
 interface AIDrawerProps {
   apiKey:        string;
   hasKey:        boolean;
+  model:         string;
   cacheKey:      string;
   questionId:    number;
   question?:     string;
@@ -758,7 +785,7 @@ interface AIDrawerProps {
 }
 
 const AIDrawer: React.FC<AIDrawerProps> = ({
-  apiKey, hasKey, cacheKey,
+  apiKey, hasKey, model, cacheKey,
   questionId, question, sentence, options, answer,
   context, passage, pageImageUrl,
 }) => {
@@ -789,6 +816,7 @@ const AIDrawer: React.FC<AIDrawerProps> = ({
     try {
       const result = await generateReadingExplanation({
         apiKey,
+        model,
         questionId,
         question,
         sentence,
@@ -808,7 +836,7 @@ const AIDrawer: React.FC<AIDrawerProps> = ({
       setStatus('idle');
       setExpanded(false);
     }
-  }, [apiKey, hasKey, status, cacheKey, questionId, question, sentence, options, answer, context, passage, pageImageUrl]);
+  }, [apiKey, hasKey, model, status, cacheKey, questionId, question, sentence, options, answer, context, passage, pageImageUrl]);
 
   // ── No API key ──────────────────────────────────────────────────────────────
   if (!hasKey) {
