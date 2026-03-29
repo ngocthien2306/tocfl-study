@@ -122,50 +122,89 @@ async function streamCompletion(
 }
 
 /**
+ * Find the position in `text` where the JSON vocabulary block starts.
+ * Returns -1 if not found. Handles multiple model output variants:
+ *   {"vocabulary":[...]}
+ *   vocabulary":[...]
+ *   \n{...}
+ */
+function findJsonStart(text: string): number {
+  // Pattern 1: clean {"vocabulary":
+  const p1 = text.search(/\{"vocabulary"\s*:/);
+  if (p1 !== -1) return p1;
+
+  // Pattern 2: model skipped opening brace — "vocabulary":
+  const p2 = text.search(/"?vocabulary"?\s*"?\s*:\s*\[/);
+  if (p2 !== -1) {
+    // walk back to find the nearest { (or start of the token)
+    const before = text.slice(0, p2);
+    const brace = before.lastIndexOf('{');
+    return brace !== -1 ? brace : p2;
+  }
+
+  // Pattern 3: last bare { on its own line
+  const p3 = text.lastIndexOf('\n{');
+  if (p3 !== -1) return p3 + 1; // +1 to skip the \n
+
+  return -1;
+}
+
+/**
  * Strip the trailing JSON vocabulary block from a streaming text so the user
  * never sees raw JSON while the model is still generating.
  */
 export function stripJsonSuffix(text: string): string {
-  // Cut at the first `{"vocabulary":` marker (model may start emitting it mid-stream)
-  const marker = text.indexOf('{"vocabulary":');
-  if (marker !== -1) return text.slice(0, marker).trimEnd();
-  // Also cut at a bare `{` that looks like it starts a JSON object at the tail
-  // (conservative: only strip if it appears after a newline or at end of text)
-  const lastBrace = text.lastIndexOf('\n{');
-  if (lastBrace !== -1) return text.slice(0, lastBrace).trimEnd();
+  const pos = findJsonStart(text);
+  if (pos !== -1) return text.slice(0, pos).trimEnd();
   return text;
+}
+
+/**
+ * Try to extract a balanced JSON array string starting from `str`.
+ * Returns the matched array string or null.
+ */
+function extractArray(str: string): string | null {
+  const start = str.indexOf('[');
+  if (start === -1) return null;
+  let depth = 0;
+  for (let i = start; i < str.length; i++) {
+    if (str[i] === '[') depth++;
+    else if (str[i] === ']') { depth--; if (depth === 0) return str.slice(start, i + 1); }
+  }
+  return null;
 }
 
 function parseExplanationResponse(raw: string): { explanation: string; vocabulary: AIVocabItem[] } {
   const trimmed = raw.trim();
 
-  // Strategy 1: look for {"vocabulary": anywhere in the string (model may or may not newline before it)
-  const vocabMarker = trimmed.lastIndexOf('{"vocabulary":');
-  if (vocabMarker !== -1) {
-    const jsonPart = trimmed.slice(vocabMarker);
-    const textPart = trimmed.slice(0, vocabMarker).trim();
+  const jsonStart = findJsonStart(trimmed);
+  // Always split text here — even if JSON is malformed we still hide it from explanation
+  const explanation = jsonStart !== -1 ? trimmed.slice(0, jsonStart).trim() : trimmed;
+  const jsonChunk   = jsonStart !== -1 ? trimmed.slice(jsonStart) : '';
+
+  if (jsonChunk) {
+    // Attempt 1: direct JSON.parse on the whole chunk
     try {
-      const meta = JSON.parse(jsonPart) as { vocabulary?: AIVocabItem[] };
+      const meta = JSON.parse(jsonChunk) as { vocabulary?: AIVocabItem[] };
       if (Array.isArray(meta.vocabulary)) {
-        return { explanation: textPart, vocabulary: meta.vocabulary };
+        return { explanation, vocabulary: meta.vocabulary };
       }
-    } catch { /* fall through to next strategy */ }
+    } catch { /* try repair */ }
+
+    // Attempt 2: pull out the raw array and parse that directly
+    const arrStr = extractArray(jsonChunk);
+    if (arrStr) {
+      try {
+        const vocab = JSON.parse(arrStr) as AIVocabItem[];
+        if (Array.isArray(vocab)) {
+          return { explanation, vocabulary: vocab };
+        }
+      } catch { /* give up */ }
+    }
   }
 
-  // Strategy 2: scan backwards from the end for any JSON object
-  const lastBrace = trimmed.lastIndexOf('{');
-  if (lastBrace !== -1) {
-    const jsonPart = trimmed.slice(lastBrace);
-    const textPart = trimmed.slice(0, lastBrace).trim();
-    try {
-      const meta = JSON.parse(jsonPart) as { vocabulary?: AIVocabItem[] };
-      if (Array.isArray(meta.vocabulary)) {
-        return { explanation: textPart, vocabulary: meta.vocabulary };
-      }
-    } catch { /* fall through */ }
-  }
-
-  return { explanation: trimmed, vocabulary: [] };
+  // No vocabulary parsed — at least return clean explanation (JSON stripped)
+  return { explanation, vocabulary: [] };
 }
 
 /** Fetch an image and return a data-URL (base64) for vision API */
