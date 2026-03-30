@@ -552,7 +552,6 @@ export const ListeningModule: React.FC<Props> = ({ listeningData, token }) => {
   }
 
   // ── Exam phase ──────────────────────────────────────────────────────────────
-  const answeredCt = Object.keys(answers).length;
   const chosen = answers[q.id];
   const optKeys = Object.keys(q.options) as OptionKey[];
 
@@ -567,183 +566,206 @@ export const ListeningModule: React.FC<Props> = ({ listeningData, token }) => {
   // Full audio URL
   const audioUrls = q.audio.map(a => `${base}${a}`);
 
+  const doneCt      = Object.keys(answers).length;
+  const pct         = total > 0 ? Math.round((doneCt / total) * 100) : 0;
+
   return (
     <div>
-      {/* Sticky exam header + audio player */}
-      <div style={{
-        position: 'sticky',
-        top: 52,
-        zIndex: 90,
-        background: 'var(--surface)',
-        borderBottom: '1px solid var(--border)',
-        marginBottom: 12,
+      {/* ── Sticky exam header (full-width) ──────────────────────────────────── */}
+      <div className="card card--compact mb-12" style={{
+        position: 'sticky', top: 52, zIndex: 90,
+        display: 'flex', flexDirection: 'column', gap: 0, padding: 0,
       }}>
         {/* Status bar */}
         <div style={{
-          padding: '8px 12px',
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'space-between',
+          padding: '7px 14px',
+          display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 8,
         }}>
-          <div style={{ fontSize: '.78rem', color: 'var(--text-secondary)' }}>
-            {answeredCt}/{total} {lbl.answered}
-          </div>
-          <div style={{
-            fontSize: '.85rem',
-            fontWeight: 700,
-            color: timerColor,
-            fontVariantNumeric: 'tabular-nums',
+          <span style={{ fontSize: '.78rem', color: 'var(--text-secondary)', fontWeight: 600 }}>
+            Band {band}
+          </span>
+          <span style={{
+            fontSize: '.85rem', fontWeight: 700,
+            color: timerColor, fontVariantNumeric: 'tabular-nums',
           }}>
             ⏱ {timerDisplay}
-          </div>
+          </span>
           <button
-            className="btn btn-primary btn-sm"
-            style={{ fontSize: '.78rem', padding: '4px 10px' }}
+            className="btn btn-danger btn-sm"
             onClick={submit}
           >{lbl.submit}</button>
         </div>
 
         {/* Part label */}
-        <div style={{ fontSize: '.75rem', color: 'var(--text-secondary)', marginBottom: 4, textAlign: 'center' }}>
+        <div style={{
+          fontSize: '.7rem', fontWeight: 700, color: 'var(--text-secondary)',
+          textTransform: 'uppercase', letterSpacing: '.05em',
+          textAlign: 'center', paddingBottom: 4,
+        }}>
           {q.partTitle}
         </div>
 
-        {/* Audio player — always visible */}
-        <div style={{ padding: '0 12px 8px' }}>
+        {/* Audio player */}
+        <div style={{ padding: '0 12px 10px' }}>
           <AudioPlayer key={q.audio.join('|')} tracks={audioUrls} />
         </div>
       </div>
 
-      {/* Page image (image_choice) */}
-      {q.page_image && q.partType === 'image_choice' && (
-        <div style={{ marginBottom: 14, textAlign: 'center' }}>
-          <img
-            src={`${base}${q.page_image}`}
-            alt={`Câu ${q.id}`}
-            style={{ maxWidth: '100%', borderRadius: 8, border: '1px solid var(--border)' }}
-            loading="lazy"
-          />
-        </div>
-      )}
+      {/* ── 80 / 20 layout ───────────────────────────────────────────────────── */}
+      <div className="exam-layout">
 
-      {/* Question number + text */}
-      <div style={{ marginBottom: 12 }}>
-        <div style={{ display: 'flex', alignItems: 'baseline', gap: 8, marginBottom: 6 }}>
-          <span className={`badge badge-${band === 'A' ? 'A1' : band === 'B' ? 'B1' : 'B2'}`} style={{ fontSize: '.72rem', flexShrink: 0 }}>
-            {lbl.question} {q.id}
-          </span>
-          {q.question && (
-            <span style={{ fontSize: '.92rem', lineHeight: 1.5 }}>{q.question}</span>
-          )}
-          {!q.question && q.partType === 'text_choice' && (
-            <span style={{ fontSize: '.85rem', color: 'var(--text-secondary)' }}>請聽錄音選出正確答案</span>
-          )}
-        </div>
-      </div>
+        {/* ── Left 80%: question content ─────────────────────────────────────── */}
+        <div className="exam-content">
+          <div className="card">
 
-      {/* Options */}
-      <div style={{ display: 'flex', flexDirection: 'column', gap: 8, marginBottom: 16 }}>
-        {optKeys.map(key => {
-          const val = q.options[key] ?? '';
-          const isChosen = chosen === key;
-          const isImageLabel = q.partType === 'image_choice' && (val === `(${key})` || val === key || val === '');
+            {/* Page image (image_choice) */}
+            {q.page_image && q.partType === 'image_choice' && (
+              <div style={{ marginBottom: 14, textAlign: 'center' }}>
+                <img
+                  src={`${base}${q.page_image}`}
+                  alt={`Câu ${q.id}`}
+                  style={{ maxWidth: '100%', borderRadius: 8, border: '1px solid var(--border)' }}
+                  loading="lazy"
+                />
+              </div>
+            )}
 
-          return (
-            <button
-              key={key}
-              onClick={() => pick(key)}
-              className={`option-btn ${isChosen ? 'selected' : ''}`}
-              style={{
-                minHeight: q.partType === 'image_choice' ? 48 : 52,
-                justifyContent: 'flex-start',
-                fontSize: q.partType === 'image_choice' ? '1rem' : '.9rem',
-                fontWeight: isChosen ? 700 : 500,
-                background: isChosen ? 'var(--accent-light)' : 'var(--surface)',
-                borderColor: isChosen ? 'var(--accent)' : 'var(--border)',
-                color: isChosen ? 'var(--accent)' : 'var(--text)',
-                transition: 'all .15s',
-              }}
-            >
-              <span style={{
-                display: 'inline-flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                width: 28, height: 28,
-                borderRadius: '50%',
-                background: isChosen ? 'var(--accent)' : 'var(--border)',
-                color: isChosen ? '#fff' : 'var(--text)',
-                fontWeight: 700,
-                fontSize: '.8rem',
-                flexShrink: 0,
-                marginRight: 10,
-              }}>{key}</span>
-              {isImageLabel ? `選項 ${key}` : val}
-            </button>
-          );
-        })}
-      </div>
-
-      {/* AI Drawer */}
-      <ListeningAIDrawer
-        apiKey={apiKey}
-        hasKey={hasKey}
-        model={model}
-        cacheKey={buildCacheKey('listening', band, examKey, q.id)}
-        questionId={q.id}
-        question={q.question}
-        options={q.options}
-        answer={q.answer}
-        audioPaths={q.audio}
-        audioBaseUrl={base}
-        pageImageUrl={q.page_image && q.partType === 'image_choice' ? `${base}${q.page_image}` : undefined}
-      />
-
-      {/* Q-grid */}
-      <div style={{ marginBottom: 4 }}>
-        <div className="q-grid">
-          {flat.map((fq, i) => (
-            <div
-              key={fq.id}
-              className={`q-dot${fq.id in answers ? ' done' : ''}${i === qIdx ? ' current' : ''}`}
-              onClick={() => setQIdx(i)}
-              title={`${lbl!.question} ${fq.id}`}
-            >
-              {fq.id}
+            {/* Question number + text */}
+            <div style={{ marginBottom: 12 }}>
+              <div style={{ display: 'flex', alignItems: 'baseline', gap: 8, marginBottom: 6 }}>
+                <span className={`badge badge-${band === 'A' ? 'A1' : band === 'B' ? 'B1' : 'B2'}`}
+                  style={{ fontSize: '.72rem', flexShrink: 0 }}>
+                  {lbl.question} {q.id}
+                </span>
+                {q.question && (
+                  <span style={{ fontSize: '.92rem', lineHeight: 1.5 }}>{q.question}</span>
+                )}
+                {!q.question && q.partType === 'text_choice' && (
+                  <span style={{ fontSize: '.85rem', color: 'var(--text-secondary)' }}>請聽錄音選出正確答案</span>
+                )}
+              </div>
             </div>
-          ))}
-        </div>
-        {/* Legend */}
-        <div style={{ display: 'flex', gap: 14, marginTop: 8, paddingBottom: 10, borderBottom: '1px solid var(--border)' }}>
-          <div className="q-legend-row">
-            <div className="q-legend-dot" style={{ background: 'transparent', border: '1px solid var(--border)' }} />
-            <span>{lbl!.unanswered}</span>
-          </div>
-          <div className="q-legend-row">
-            <div className="q-legend-dot" style={{ background: 'var(--accent-light)', border: '1px solid var(--accent)' }} />
-            <span>{lbl!.answered_lbl}</span>
-          </div>
-          <div className="q-legend-row">
-            <div className="q-legend-dot" style={{ background: 'var(--accent)', border: '1px solid var(--accent)' }} />
-            <span>{lbl!.current}</span>
-          </div>
-        </div>
-      </div>
 
-      {/* Prev / Next */}
-      <div style={{ display: 'flex', gap: 8 }}>
-        <button
-          className="btn btn-outline"
-          style={{ flex: 1, minHeight: 48 }}
-          onClick={() => go(-1)}
-          disabled={qIdx === 0}
-        >{lbl.prev}</button>
-        <button
-          className="btn btn-outline"
-          style={{ flex: 1, minHeight: 48 }}
-          onClick={() => go(1)}
-          disabled={qIdx === total - 1}
-        >{lbl.next}</button>
-      </div>
+            {/* Options */}
+            <div style={{ display: 'flex', flexDirection: 'column', gap: 8, marginBottom: 16 }}>
+              {optKeys.map(key => {
+                const val        = q.options[key] ?? '';
+                const isChosen   = chosen === key;
+                const isImgLabel = q.partType === 'image_choice' && (val === `(${key})` || val === key || val === '');
+                return (
+                  <button
+                    key={key}
+                    onClick={() => pick(key)}
+                    className={`option-btn ${isChosen ? 'selected' : ''}`}
+                    style={{
+                      minHeight:   q.partType === 'image_choice' ? 48 : 52,
+                      justifyContent: 'flex-start',
+                      fontSize:    q.partType === 'image_choice' ? '1rem' : '.9rem',
+                      fontWeight:  isChosen ? 700 : 500,
+                      background:  isChosen ? 'var(--accent-light)' : 'var(--surface)',
+                      borderColor: isChosen ? 'var(--accent)' : 'var(--border)',
+                      color:       isChosen ? 'var(--accent)' : 'var(--text)',
+                      transition: 'all .15s',
+                    }}
+                  >
+                    <span style={{
+                      display: 'inline-flex', alignItems: 'center', justifyContent: 'center',
+                      width: 28, height: 28, borderRadius: '50%',
+                      background: isChosen ? 'var(--accent)' : 'var(--border)',
+                      color: isChosen ? '#fff' : 'var(--text)',
+                      fontWeight: 700, fontSize: '.8rem', flexShrink: 0, marginRight: 10,
+                    }}>{key}</span>
+                    {isImgLabel ? `選項 ${key}` : val}
+                  </button>
+                );
+              })}
+            </div>
+
+            {/* AI Drawer */}
+            <ListeningAIDrawer
+              apiKey={apiKey}
+              hasKey={hasKey}
+              model={model}
+              cacheKey={buildCacheKey('listening', band, examKey, q.id)}
+              questionId={q.id}
+              question={q.question}
+              options={q.options}
+              answer={q.answer}
+              audioPaths={q.audio}
+              audioBaseUrl={base}
+              pageImageUrl={q.page_image && q.partType === 'image_choice' ? `${base}${q.page_image}` : undefined}
+            />
+          </div>
+        </div>
+
+        {/* ── Right 20%: navigator sidebar ───────────────────────────────────── */}
+        <div className="exam-sidebar">
+          <div className="card" style={{ padding: '12px 10px' }}>
+            {/* Title */}
+            <div style={{
+              fontSize: '.68rem', fontWeight: 700, color: 'var(--text-secondary)',
+              textTransform: 'uppercase', letterSpacing: '.06em', marginBottom: 6,
+            }}>
+              {lang === 'vi' ? 'Điều hướng' : lang === 'zh' ? '題目導覽' : 'Navigator'}
+            </div>
+
+            {/* Progress bar */}
+            <div className="q-progress-bar">
+              <div className="q-progress-fill" style={{ width: `${pct}%` }} />
+            </div>
+            <div style={{ fontSize: '.68rem', color: 'var(--text-muted)', marginBottom: 8 }}>
+              {doneCt}/{total} · {pct}%
+            </div>
+
+            {/* Q-grid */}
+            <div className="q-grid q-grid--sidebar">
+              {flat.map((fq, i) => (
+                <div
+                  key={fq.id}
+                  className={`q-dot${fq.id in answers ? ' done' : ''}${i === qIdx ? ' current' : ''}`}
+                  onClick={() => setQIdx(i)}
+                  title={`${lbl!.question} ${fq.id}`}
+                >
+                  {fq.id}
+                </div>
+              ))}
+            </div>
+
+            {/* Legend */}
+            <div className="q-legend">
+              <div className="q-legend-row">
+                <div className="q-legend-dot" style={{ background: 'transparent', border: '1px solid var(--border)' }} />
+                <span>{lbl!.unanswered}</span>
+              </div>
+              <div className="q-legend-row">
+                <div className="q-legend-dot" style={{ background: 'var(--accent-light)', border: '1px solid var(--accent)' }} />
+                <span>{lbl!.answered_lbl}</span>
+              </div>
+              <div className="q-legend-row">
+                <div className="q-legend-dot" style={{ background: 'var(--accent)', border: '1px solid var(--accent)' }} />
+                <span>{lbl!.current}</span>
+              </div>
+            </div>
+
+            {/* Prev / Next */}
+            <div style={{ display: 'flex', gap: 6, marginTop: 12 }}>
+              <button
+                className="btn btn-outline btn-sm"
+                style={{ flex: 1 }}
+                onClick={() => go(-1)}
+                disabled={qIdx === 0}
+              >{lbl.prev}</button>
+              <button
+                className="btn btn-outline btn-sm"
+                style={{ flex: 1 }}
+                onClick={() => go(1)}
+                disabled={qIdx === total - 1}
+              >{lbl.next}</button>
+            </div>
+          </div>
+        </div>
+
+      </div>{/* end exam-layout */}
     </div>
   );
 };

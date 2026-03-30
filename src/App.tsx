@@ -1,6 +1,7 @@
 import { useState, useCallback, useEffect } from 'react';
 import './styles/global.css';
-import { ApiKeyProvider } from './contexts/ApiKeyContext';
+import { ApiKeyProvider }      from './contexts/ApiKeyContext';
+import { HighlightsProvider }  from './contexts/HighlightsContext';
 
 import { useData }     from './hooks/useData';
 import { useProgress } from './hooks/useProgress';
@@ -19,6 +20,7 @@ import { ProgressModule }    from './components/Progress/ProgressModule';
 import { AIGeneratorModule } from './components/AIGenerator/AIGeneratorModule';
 import { InterviewModule }   from './components/Interview/InterviewModule';
 import { AuthModal }         from './components/Auth/AuthModal';
+import { WordLookupTooltip } from './components/WordLookupTooltip';
 
 export default function App() {
   const [tab,      setTab     ] = useState<TabId>('flashcard');
@@ -101,6 +103,9 @@ export default function App() {
 
   return (
     <ApiKeyProvider>
+    <HighlightsProvider token={auth.token}>
+    {/* Global word-lookup tooltip — triggers on any CJK text selection */}
+    <WordLookupTooltip />
     <div className="app-layout">
       {/* ── Header ── */}
       <AppHeader
@@ -173,6 +178,7 @@ export default function App() {
         />
       )}
     </div>
+    </HighlightsProvider>
     </ApiKeyProvider>
   );
 }

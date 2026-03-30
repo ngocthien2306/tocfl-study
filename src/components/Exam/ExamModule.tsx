@@ -7,6 +7,7 @@ import { IconCamera } from '../UI/Icons';
 import { loadAttempts, saveAttempt, deleteAttempt, fmtDuration, fmtDate } from '../../utils/historyStorage';
 import { useApiKey } from '../../contexts/ApiKeyContext';
 import { useAIModel } from '../../hooks/useAIModel';
+import { HighlightableText } from '../HighlightableText';
 import {
   buildCacheKey, loadExplanation, saveExplanation,
   generateReadingExplanation, stripJsonSuffix,
@@ -315,7 +316,10 @@ export const ExamModule: React.FC<Props> = ({ examData, addExam, pastExams }) =>
       <div className="exam-layout">
 
         {/* ── Left 80%: question content ─────────────────────────────────── */}
-        <div className="exam-content">
+        <div
+          className="exam-content"
+          data-page-key={`exam_${band}_${examKey}_p${q.passageId ?? q.id}`}
+        >
           <div className="card">
             {/* Part label */}
             <div style={{ fontSize: '.75rem', fontWeight: 700, color: 'var(--text-secondary)', textTransform: 'uppercase', letterSpacing: '.05em', marginBottom: 8 }}>
@@ -349,8 +353,14 @@ export const ExamModule: React.FC<Props> = ({ examData, addExam, pastExams }) =>
                   </span>
                 </button>
                 {!passageCollapsed && (
-                  <div style={{ padding: '0 14px 12px', lineHeight: 1.85 }}>
-                    {q.passage}
+                  <div
+                    style={{ padding: '0 14px 12px', lineHeight: 1.85 }}
+                    data-page-key={`exam_${band}_${examKey}_p${q.passageId ?? q.id}`}
+                  >
+                    <HighlightableText
+                      text={q.passage}
+                      page_key={`exam_${band}_${examKey}_p${q.passageId ?? q.id}`}
+                    />
                   </div>
                 )}
               </div>

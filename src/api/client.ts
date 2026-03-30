@@ -153,6 +153,52 @@ export const aiContentApi = {
       },
     }),
 };
+// ── Highlights ────────────────────────────────────────────────────────────────
+export interface HighlightRecord {
+  id:         number;
+  page_key:   string;
+  text:       string;
+  ctx_before: string | null;
+  ctx_after:  string | null;
+  color:      string;
+  pinyin:     string | null;
+  meaning:    string | null;
+  note:       string | null;
+  created_at: string;
+}
+
+export const highlightsApi = {
+  /** Lấy tất cả highlights; tuỳ chọn filter theo page_key */
+  list: (token: string, page_key?: string) => {
+    const qs = page_key ? `?page_key=${encodeURIComponent(page_key)}` : "";
+    return apiFetch<HighlightRecord[]>(`/highlights${qs}`, {}, token);
+  },
+
+  create: (token: string, payload: {
+    page_key:   string;
+    text:       string;
+    ctx_before?: string;
+    ctx_after?:  string;
+    color?:      string;
+    pinyin?:     string;
+    meaning?:    string;
+    note?:       string;
+  }) =>
+    apiFetch<HighlightRecord>("/highlights", {
+      method: "POST",
+      body: JSON.stringify(payload),
+    }, token),
+
+  delete: (token: string, id: number) =>
+    fetch(`${API_BASE}/highlights/${id}`, {
+      method: "DELETE",
+      headers: {
+        Authorization: `Bearer ${token}`,
+        "ngrok-skip-browser-warning": "true",
+      },
+    }),
+};
+
 // ── Interview ──────────────────────────────────────────────────────────────────
 import type {
   InterviewDocument, InterviewSession, SessionMessage,
