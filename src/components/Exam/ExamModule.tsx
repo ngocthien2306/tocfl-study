@@ -1,6 +1,6 @@
 import React, { useMemo, useState, useEffect, useRef, useCallback } from 'react';
 import type { ExamData, ExamKey, FlatQuestion, OptionKey, ExamRecord, ExamAttempt, AttemptQuestion } from '../../types';
-import type { AIExplanationData } from '../../utils/aiExplanation';
+import type { AIExplanationData, TranscriptLine } from '../../utils/aiExplanation';
 import { useTimer } from '../../hooks/useTimer';
 import { useLang } from '../../i18n/LangContext';
 import { IconCamera } from '../UI/Icons';
@@ -124,15 +124,16 @@ function buildExamQuestions(band: 'A' | 'B', examKey: ExamKey, data: ExamData): 
 }
 
 export const ExamModule: React.FC<Props> = ({ examData, addExam, pastExams }) => {
-  const { t } = useLang();
+  const { t, lang } = useLang();
   const { apiKey, hasKey } = useApiKey();
   const { model } = useAIModel();
   const [phase,         setPhase        ] = useState<Phase>('select');
   const [band,          setBand         ] = useState<'A' | 'B'>('B');
   const [examKey,       setExamKey      ] = useState<ExamKey>('exam1');
-  const [answers,       setAnswers      ] = useState<Record<number, OptionKey>>({});
-  const [qIdx,          setQIdx         ] = useState(0);
-  const [draft,         setDraft        ] = useState<ExamDraft | null>(() => loadDraft());
+  const [answers,          setAnswers         ] = useState<Record<number, OptionKey>>({});
+  const [qIdx,             setQIdx            ] = useState(0);
+  const [passageCollapsed, setPassageCollapsed] = useState(false);
+  const [draft,            setDraft           ] = useState<ExamDraft | null>(() => loadDraft());
   const [reviewAttempt, setReviewAttempt] = useState<ExamAttempt | null>(null);
   // Cached attempts list so it refreshes when we save a new one
   const [attempts,      setAttempts     ] = useState<ExamAttempt[]>(() => loadAttempts('exam'));
@@ -154,6 +155,16 @@ export const ExamModule: React.FC<Props> = ({ examData, addExam, pastExams }) =>
     return () => clearInterval(id);
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [phase, answers, qIdx]);
+
+  // Auto-expand passage when navigating to a new passage group
+  const prevPassageId = useRef<string | number | undefined>(undefined);
+  useEffect(() => {
+    const currentPassageId = questions[qIdx]?.passageId;
+    if (currentPassageId !== undefined && currentPassageId !== prevPassageId.current) {
+      setPassageCollapsed(false);
+      prevPassageId.current = currentPassageId;
+    }
+  }, [questions, qIdx]);
 
   function startExam(b: 'A' | 'B', ek: ExamKey) {
     clearDraft();
@@ -273,11 +284,9 @@ export const ExamModule: React.FC<Props> = ({ examData, addExam, pastExams }) =>
   );
 
   // ── Exam phase ─────────────────────────────────────────────────────────────
-  const base    = import.meta.env.BASE_URL;
-  const q       = questions[qIdx];
-  const doneCt  = Object.keys(answers).length;
-  const prevQ   = qIdx > 0 ? questions[qIdx - 1] : null;
-  const showPassage = !!q.passage && q.passage !== prevQ?.passage;
+  const base   = import.meta.env.BASE_URL;
+  const q      = questions[qIdx];
+  const doneCt = Object.keys(answers).length;
 
   // Part label map
   const partLabel: Record<string, string> = {
@@ -288,9 +297,11 @@ export const ExamModule: React.FC<Props> = ({ examData, addExam, pastExams }) =>
     part5: t('part5_label'),
   };
 
+  const navLbl = { vi: { nav: 'Điều hướng', unanswered: 'Chưa làm', answered: 'Đã làm', current: 'Đang xem' }, zh: { nav: '題目導覽', unanswered: '未作答', answered: '已作答', current: '目前題目' }, en: { nav: 'Navigator', unanswered: 'Unanswered', answered: 'Answered', current: 'Current' } }[lang as 'vi' | 'zh' | 'en'] ?? { nav: 'Navigator', unanswered: 'Unanswered', answered: 'Answered', current: 'Current' };
+
   return (
     <div>
-      {/* Exam header — sticky on mobile */}
+      {/* Sticky exam header */}
       <div className="card card--compact mb-12" style={{ position: 'sticky', top: 52, zIndex: 90, display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 8, flexWrap: 'wrap' }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: 6, flexWrap: 'wrap' }}>
           <span style={{ fontWeight: 700, fontSize: '.9rem' }}>Band {band}</span>
@@ -300,127 +311,179 @@ export const ExamModule: React.FC<Props> = ({ examData, addExam, pastExams }) =>
         <button className="btn btn-danger btn-sm" onClick={finishExam}>{t('btn_submit')}</button>
       </div>
 
-      {/* Q-grid */}
-      <div className="card card--compact mb-12">
-        <div className="q-grid">
-          {questions.map((qq, i) => (
-            <div
-              key={qq.id}
-              className={`q-dot${answers[qq.id] ? ' done' : ''}${i === qIdx ? ' current' : ''}`}
-              onClick={() => setQIdx(i)}
-              title={`${t('question_prefix')} ${qq.id}`}
-            >
-              {qq.id}
+      {/* 80 / 20 layout */}
+      <div className="exam-layout">
+
+        {/* ── Left 80%: question content ─────────────────────────────────── */}
+        <div className="exam-content">
+          <div className="card">
+            {/* Part label */}
+            <div style={{ fontSize: '.75rem', fontWeight: 700, color: 'var(--text-secondary)', textTransform: 'uppercase', letterSpacing: '.05em', marginBottom: 8 }}>
+              {partLabel[q.part] ?? q.part}
             </div>
-          ))}
-        </div>
-      </div>
 
-      {/* Current question */}
-      <div className="card">
-        {/* Part label */}
-        <div style={{ fontSize: '.75rem', fontWeight: 700, color: 'var(--text-secondary)', textTransform: 'uppercase', letterSpacing: '.05em', marginBottom: 8 }}>
-          {partLabel[q.part] ?? q.part}
-        </div>
+            {/* Context box (Part 3) */}
+            {q.context && (
+              <div style={{ background: 'var(--warn-light)', border: '1px solid #fde68a', borderRadius: 'var(--radius)', padding: '8px 12px', marginBottom: 12, fontSize: '.83rem', color: 'var(--warn)' }}>
+                {q.context}
+              </div>
+            )}
 
-        {/* Context box (Part 3) */}
-        {q.context && (
-          <div style={{ background: 'var(--warn-light)', border: '1px solid #fde68a', borderRadius: 'var(--radius)', padding: '8px 12px', marginBottom: 12, fontSize: '.83rem', color: 'var(--warn)' }}>
-            {q.context}
-          </div>
-        )}
+            {/* Text passage (Part 4/5) — always shown, collapsible */}
+            {q.passage && (
+              <div className="passage-box" style={{ padding: 0, overflow: 'hidden' }}>
+                {/* Passage header — click to collapse/expand */}
+                <button
+                  onClick={() => setPassageCollapsed(c => !c)}
+                  style={{
+                    width: '100%', display: 'flex', alignItems: 'center', justifyContent: 'space-between',
+                    padding: '8px 14px', background: 'none', border: 'none', cursor: 'pointer',
+                    fontFamily: 'inherit',
+                  }}
+                >
+                  <span className="passage-label" style={{ margin: 0, pointerEvents: 'none' }}>
+                    {t('passage_label')}
+                  </span>
+                  <span style={{ fontSize: '.72rem', color: 'var(--accent)', fontWeight: 600, flexShrink: 0, marginLeft: 8 }}>
+                    {passageCollapsed ? '▶ Hiện đoạn văn' : '▼ Thu gọn'}
+                  </span>
+                </button>
+                {!passageCollapsed && (
+                  <div style={{ padding: '0 14px 12px', lineHeight: 1.85 }}>
+                    {q.passage}
+                  </div>
+                )}
+              </div>
+            )}
 
-        {/* Text passage (Part 4/5) */}
-        {showPassage && q.passage && (
-          <div className="passage-box">
-            <div className="passage-label">{t('passage_label')}</div>
-            {q.passage}
-          </div>
-        )}
+            {/* Page image */}
+            {q.pageImage && (
+              <div style={{ border: '1px solid var(--border)', borderRadius: 'var(--radius)', overflow: 'hidden', background: '#f8f9fa', marginBottom: 14 }}>
+                <img
+                  src={`${base}${q.pageImage}`}
+                  alt={`${t('question_prefix')} ${q.id}`}
+                  style={{ width: '100%', display: 'block', maxHeight: 560, objectFit: 'contain' }}
+                />
+              </div>
+            )}
 
-        {/* Page image — always shown when present, for every question on that page */}
-        {q.pageImage && (
-          <div style={{
-            border: '1px solid var(--border)',
-            borderRadius: 'var(--radius)',
-            overflow: 'hidden',
-            background: '#f8f9fa',
-            marginBottom: 14,
-          }}>
-            <img
-              src={`${base}${q.pageImage}`}
-              alt={`${t('question_prefix')} ${q.id}`}
-              style={{ width: '100%', display: 'block', maxHeight: 560, objectFit: 'contain' }}
+            {/* Question text */}
+            <div className="question-header">
+              <span className="question-num">{t('question_prefix')} {q.id}.</span>
+              {q.type === 'image_choice' && q.sentence && (
+                <span style={{ fontSize: '1.1rem', fontWeight: 600 }}>{q.sentence}</span>
+              )}
+              {(q.type === 'picture_description' || q.type === 'image_material') && q.question && (
+                <span>{q.question}</span>
+              )}
+              {(q.type === 'mc' || q.type === 'gap' || q.type === 'cloze') && (
+                <span>{q.question ?? q.sentence}</span>
+              )}
+            </div>
+
+            {/* Options */}
+            <div className="option-list">
+              {(Object.entries(q.options) as [OptionKey, string][]).map(([key, text]) => (
+                <button
+                  key={key}
+                  className={`option-btn${answers[q.id] === key ? ' selected' : ''}`}
+                  onClick={() => setAnswers(a => ({ ...a, [q.id]: key }))}
+                >
+                  <span className="option-key">{key}</span>
+                  {q.type === 'image_choice'
+                    ? <span style={{ color: 'var(--text-secondary)', fontSize: '.85rem' }}>{t('pick_image')} {key}</span>
+                    : <span>{text}</span>
+                  }
+                </button>
+              ))}
+            </div>
+
+            {/* AI Explanation Drawer */}
+            <AIDrawer
+              apiKey={apiKey}
+              hasKey={hasKey}
+              model={model}
+              cacheKey={buildCacheKey('exam', band, examKey, q.id)}
+              questionId={q.id}
+              question={q.question}
+              sentence={q.sentence}
+              options={q.options}
+              answer={q.answer}
+              context={q.context}
+              passage={q.passage}
+              pageImageUrl={q.pageImage ? `${base}${q.pageImage}` : undefined}
             />
+
+            {/* Prev / Next */}
+            <div style={{ display: 'flex', gap: 8, marginTop: 16 }}>
+              <button
+                className="btn btn-outline"
+                style={{ flex: 1, justifyContent: 'center', minHeight: 48 }}
+                onClick={() => setQIdx(i => Math.max(0, i - 1))}
+                disabled={qIdx === 0}
+              >
+                {t('btn_prev')}
+              </button>
+              <button
+                className="btn btn-primary"
+                style={{ flex: 1, justifyContent: 'center', minHeight: 48 }}
+                onClick={() => setQIdx(i => Math.min(questions.length - 1, i + 1))}
+                disabled={qIdx === questions.length - 1}
+              >
+                {t('btn_next')}
+              </button>
+            </div>
           </div>
-        )}
-
-        {/* Question text */}
-        <div className="question-header">
-          <span className="question-num">{t('question_prefix')} {q.id}.</span>
-          {q.type === 'image_choice' && q.sentence && (
-            <span style={{ fontSize: '1.1rem', fontWeight: 600 }}>{q.sentence}</span>
-          )}
-          {(q.type === 'picture_description' || q.type === 'image_material') && q.question && (
-            <span>{q.question}</span>
-          )}
-          {(q.type === 'mc' || q.type === 'gap' || q.type === 'cloze') && (
-            <span>{q.question ?? q.sentence}</span>
-          )}
         </div>
 
-        {/* Options */}
-        <div className="option-list">
-          {(Object.entries(q.options) as [OptionKey, string][]).map(([key, text]) => (
-            <button
-              key={key}
-              className={`option-btn${answers[q.id] === key ? ' selected' : ''}`}
-              onClick={() => setAnswers(a => ({ ...a, [q.id]: key }))}
-            >
-              <span className="option-key">{key}</span>
-              {q.type === 'image_choice'
-                ? <span style={{ color: 'var(--text-secondary)', fontSize: '.85rem' }}>{t('pick_image')} {key}</span>
-                : <span>{text}</span>
-              }
-            </button>
-          ))}
+        {/* ── Right 20%: question navigator sidebar ──────────────────────── */}
+        <div className="card card--compact exam-sidebar">
+          {/* Header */}
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'baseline', marginBottom: 2 }}>
+            <span style={{ fontWeight: 600, fontSize: '.78rem', color: 'var(--text-secondary)', textTransform: 'uppercase', letterSpacing: '.04em' }}>
+              {navLbl.nav}
+            </span>
+            <span style={{ fontSize: '.82rem', fontWeight: 700, color: doneCt === questions.length ? 'var(--success)' : 'var(--text-primary)' }}>
+              {doneCt}/{questions.length}
+            </span>
+          </div>
+
+          {/* Progress bar */}
+          <div className="q-progress-bar">
+            <div className="q-progress-fill" style={{ width: `${(doneCt / questions.length) * 100}%` }} />
+          </div>
+
+          {/* Dot grid */}
+          <div className="q-grid q-grid--sidebar">
+            {questions.map((qq, i) => (
+              <div
+                key={qq.id}
+                className={`q-dot${answers[qq.id] ? ' done' : ''}${i === qIdx ? ' current' : ''}`}
+                onClick={() => setQIdx(i)}
+                title={`${t('question_prefix')} ${qq.id}`}
+              >
+                {qq.id}
+              </div>
+            ))}
+          </div>
+
+          {/* Legend */}
+          <div className="q-legend">
+            <div className="q-legend-row">
+              <div className="q-legend-dot" style={{ background: 'transparent', border: '1px solid var(--border)' }} />
+              <span>{navLbl.unanswered} ({questions.length - doneCt})</span>
+            </div>
+            <div className="q-legend-row">
+              <div className="q-legend-dot" style={{ background: 'var(--accent-light)', border: '1px solid var(--accent)' }} />
+              <span>{navLbl.answered} ({doneCt})</span>
+            </div>
+            <div className="q-legend-row">
+              <div className="q-legend-dot" style={{ background: 'var(--accent)', border: '1px solid var(--accent)' }} />
+              <span>{navLbl.current}</span>
+            </div>
+          </div>
         </div>
 
-        {/* AI Explanation Drawer */}
-        <AIDrawer
-          apiKey={apiKey}
-          hasKey={hasKey}
-          model={model}
-          cacheKey={buildCacheKey('exam', band, examKey, q.id)}
-          questionId={q.id}
-          question={q.question}
-          sentence={q.sentence}
-          options={q.options}
-          answer={q.answer}
-          context={q.context}
-          passage={q.passage}
-          pageImageUrl={q.pageImage ? `${base}${q.pageImage}` : undefined}
-        />
-
-        {/* Prev / Next — full width on mobile for easy thumb tap */}
-        <div style={{ display: 'flex', gap: 8, marginTop: 16 }}>
-          <button
-            className="btn btn-outline"
-            style={{ flex: 1, justifyContent: 'center', minHeight: 48 }}
-            onClick={() => setQIdx(i => Math.max(0, i - 1))}
-            disabled={qIdx === 0}
-          >
-            {t('btn_prev')}
-          </button>
-          <button
-            className="btn btn-primary"
-            style={{ flex: 1, justifyContent: 'center', minHeight: 48 }}
-            onClick={() => setQIdx(i => Math.min(questions.length - 1, i + 1))}
-            disabled={qIdx === questions.length - 1}
-          >
-            {t('btn_next')}
-          </button>
-        </div>
       </div>
     </div>
   );
@@ -497,13 +560,12 @@ const SelectPhase: React.FC<{
         <p className="text-sm text-muted" style={{ marginBottom: 16 }}>{t('exam_subtitle')}</p>
 
         {/* Band selector */}
-        <div style={{ display: 'flex', gap: 8, marginBottom: 12 }}>
+        <div className="seg-control" style={{ marginBottom: 12 }}>
           {(['A', 'B'] as const).map(b => (
             <button
               key={b}
               onClick={() => onBandChange(b)}
-              className={`btn ${selectedBand === b ? 'btn-primary' : 'btn-outline'}`}
-              style={{ flex: 1, minHeight: 44 }}
+              className={`seg-control__btn${selectedBand === b ? ' seg-control__btn--active' : ''}`}
             >
               Band {b}
             </button>
@@ -512,13 +574,12 @@ const SelectPhase: React.FC<{
 
         {/* Exam selector (Band A and Band B) */}
         {selectedBand === 'A' && availableBandAExams.length > 1 && (
-          <div style={{ display: 'flex', gap: 8, marginBottom: 16 }}>
+          <div className="seg-control seg-control--sm" style={{ marginBottom: 16 }}>
             {availableBandAExams.map(ek => (
               <button
                 key={ek}
                 onClick={() => onExamChange(ek)}
-                className={`btn btn-sm ${selectedExam === ek ? 'btn-primary' : 'btn-outline'}`}
-                style={{ flex: 1, minHeight: 40 }}
+                className={`seg-control__btn${selectedExam === ek ? ' seg-control__btn--active' : ''}`}
               >
                 {examLabels[ek][lang]}
               </button>
@@ -526,13 +587,12 @@ const SelectPhase: React.FC<{
           </div>
         )}
         {selectedBand === 'B' && availableBandBExams.length > 1 && (
-          <div style={{ display: 'flex', gap: 8, marginBottom: 16 }}>
+          <div className="seg-control seg-control--sm" style={{ marginBottom: 16 }}>
             {availableBandBExams.map(ek => (
               <button
                 key={ek}
                 onClick={() => onExamChange(ek)}
-                className={`btn btn-sm ${selectedExam === ek ? 'btn-primary' : 'btn-outline'}`}
-                style={{ flex: 1, minHeight: 40 }}
+                className={`seg-control__btn${selectedExam === ek ? ' seg-control__btn--active' : ''}`}
               >
                 {examLabels[ek][lang]}
               </button>
@@ -763,6 +823,70 @@ const HistoryPhase: React.FC<{
           );
         })
       )}
+    </div>
+  );
+};
+
+// ── Passage Analysis Display ───────────────────────────────────────────────────
+
+function toggleBtnStyle(active: boolean): React.CSSProperties {
+  return {
+    padding: '2px 10px', borderRadius: 12,
+    border: '1.5px solid rgba(255,255,255,.6)',
+    background: active ? 'rgba(255,255,255,.25)' : 'transparent',
+    color: '#fff', fontSize: '.68rem', fontWeight: 600, cursor: 'pointer',
+    fontFamily: 'inherit',
+  };
+}
+
+const PassageAnalysisDisplay: React.FC<{ lines: TranscriptLine[] }> = ({ lines }) => {
+  const [showPinyin,     setShowPinyin    ] = useState(false);
+  const [showVietnamese, setShowVietnamese] = useState(false);
+
+  return (
+    <div style={{ borderRadius: 8, border: '1.5px solid #7c3aed', overflow: 'hidden' }}>
+      {/* Header */}
+      <div style={{
+        background: '#7c3aed', color: '#fff',
+        padding: '7px 14px',
+        display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: 6,
+      }}>
+        <span style={{ fontWeight: 700, fontSize: '.78rem', letterSpacing: '.05em' }}>
+          📖 PHÂN TÍCH ĐOẠN VĂN · {lines.length} câu
+        </span>
+        <div style={{ display: 'flex', gap: 6 }}>
+          <button onClick={() => setShowPinyin(v => !v)} style={toggleBtnStyle(showPinyin)}>
+            {showPinyin ? '🙈 Ẩn pinyin' : '👁 Pinyin'}
+          </button>
+          <button onClick={() => setShowVietnamese(v => !v)} style={toggleBtnStyle(showVietnamese)}>
+            {showVietnamese ? '🙈 Ẩn TV' : '👁 Tiếng Việt'}
+          </button>
+        </div>
+      </div>
+
+      {/* Lines */}
+      <div style={{ background: '#faf5ff', padding: '10px 14px', display: 'flex', flexDirection: 'column', gap: 8 }}>
+        {lines.map((line, i) => (
+          <div key={i} style={{
+            background: '#fff', borderRadius: 8, padding: '10px 12px',
+            border: '1px solid #ddd6fe', boxShadow: '0 1px 3px rgba(124,58,237,.08)',
+          }}>
+            <div style={{ fontSize: '1.05rem', fontWeight: 700, color: '#5b21b6', lineHeight: 1.5, marginBottom: (showPinyin || showVietnamese) ? 4 : 0 }}>
+              {line.hanzi}
+            </div>
+            {showPinyin && (
+              <div style={{ fontSize: '.78rem', color: '#7c3aed', fontStyle: 'italic', marginBottom: showVietnamese ? 3 : 0 }}>
+                {line.pinyin}
+              </div>
+            )}
+            {showVietnamese && (
+              <div style={{ fontSize: '.8rem', color: '#475569', borderTop: '1px dashed #ddd6fe', paddingTop: 4 }}>
+                {line.vietnamese}
+              </div>
+            )}
+          </div>
+        ))}
+      </div>
     </div>
   );
 };
@@ -1000,6 +1124,11 @@ const AIDrawer: React.FC<AIDrawerProps> = ({
                 Lưu lúc {new Date(data.cachedAt).toLocaleString('vi-VN')}
               </div>
             </div>
+          )}
+
+          {/* ── Passage Analysis (pinyin + Vietnamese breakdown) ── */}
+          {status !== 'loading' && data && data.passage_analysis && data.passage_analysis.length > 0 && (
+            <PassageAnalysisDisplay lines={data.passage_analysis} />
           )}
 
         </div>

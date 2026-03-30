@@ -397,12 +397,11 @@ export const ListeningModule: React.FC<Props> = ({ listeningData, token }) => {
         </div>
 
         {/* Band selector */}
-        <div style={{ display: 'flex', gap: 10, marginBottom: 10 }}>
+        <div className="seg-control" style={{ marginBottom: 12 }}>
           {(['A', 'B', 'C'] as const).map(b => (
             <button
               key={b}
-              className={`btn ${band === b ? 'btn-primary' : 'btn-outline'}`}
-              style={{ flex: 1, minHeight: 48, fontSize: '.95rem' }}
+              className={`seg-control__btn${band === b ? ' seg-control__btn--active' : ''}`}
               onClick={() => { setBand(b); setExamKey('exam1'); }}
             >
               Band {b}
@@ -412,12 +411,11 @@ export const ListeningModule: React.FC<Props> = ({ listeningData, token }) => {
 
         {/* Exam selector */}
         {availableExams.length > 1 && (
-          <div style={{ display: 'flex', gap: 8, marginBottom: 14 }}>
+          <div className="seg-control seg-control--sm" style={{ marginBottom: 14 }}>
             {availableExams.map(ek => (
               <button
                 key={ek}
-                className={`btn btn-sm ${examKey === ek ? 'btn-primary' : 'btn-outline'}`}
-                style={{ flex: 1, minHeight: 40 }}
+                className={`seg-control__btn${examKey === ek ? ' seg-control__btn--active' : ''}`}
                 onClick={() => setExamKey(ek)}
               >
                 {examLabels[ek][lang]}
@@ -561,9 +559,9 @@ export const ListeningModule: React.FC<Props> = ({ listeningData, token }) => {
   const timerColor = remaining < 300 ? 'var(--error)' : remaining < 600 ? '#f59e0b' : 'var(--text)';
 
   const lbl = {
-    vi: { prev: '← Trước', next: 'Sau →', submit: 'Nộp bài', answered: 'đã trả lời', question: 'Câu' },
-    zh: { prev: '← 上題', next: '下題 →', submit: '交卷', answered: '已作答', question: '第' },
-    en: { prev: '← Prev', next: 'Next →', submit: 'Submit', answered: 'answered', question: 'Q' },
+    vi: { prev: '← Trước', next: 'Sau →', submit: 'Nộp bài', answered: 'đã trả lời', question: 'Câu', unanswered: 'Chưa làm', answered_lbl: 'Đã làm', current: 'Đang xem' },
+    zh: { prev: '← 上題', next: '下題 →', submit: '交卷', answered: '已作答', question: '第', unanswered: '未作答', answered_lbl: '已作答', current: '目前題目' },
+    en: { prev: '← Prev', next: 'Next →', submit: 'Submit', answered: 'answered', question: 'Q', unanswered: 'Unanswered', answered_lbl: 'Answered', current: 'Current' },
   }[lang];
 
   // Full audio URL
@@ -701,35 +699,34 @@ export const ListeningModule: React.FC<Props> = ({ listeningData, token }) => {
       />
 
       {/* Q-grid */}
-      <div style={{
-        display: 'grid',
-        gridTemplateColumns: 'repeat(10, 1fr)',
-        gap: 4,
-        marginBottom: 12,
-      }}>
-        {flat.map((fq, i) => {
-          const isAnswered = fq.id in answers;
-          const isCurrent = i === qIdx;
-          return (
-            <button
+      <div style={{ marginBottom: 4 }}>
+        <div className="q-grid">
+          {flat.map((fq, i) => (
+            <div
               key={fq.id}
+              className={`q-dot${fq.id in answers ? ' done' : ''}${i === qIdx ? ' current' : ''}`}
               onClick={() => setQIdx(i)}
-              style={{
-                aspectRatio: '1',
-                borderRadius: 4,
-                border: isCurrent ? '2px solid var(--accent)' : '1px solid var(--border)',
-                background: isCurrent ? 'var(--accent)' : isAnswered ? 'var(--accent-light)' : 'transparent',
-                color: isCurrent ? '#fff' : isAnswered ? 'var(--accent)' : 'var(--text-secondary)',
-                fontSize: '.68rem',
-                fontWeight: isCurrent ? 700 : 500,
-                cursor: 'pointer',
-                padding: 0,
-              }}
+              title={`${lbl!.question} ${fq.id}`}
             >
               {fq.id}
-            </button>
-          );
-        })}
+            </div>
+          ))}
+        </div>
+        {/* Legend */}
+        <div style={{ display: 'flex', gap: 14, marginTop: 8, paddingBottom: 10, borderBottom: '1px solid var(--border)' }}>
+          <div className="q-legend-row">
+            <div className="q-legend-dot" style={{ background: 'transparent', border: '1px solid var(--border)' }} />
+            <span>{lbl!.unanswered}</span>
+          </div>
+          <div className="q-legend-row">
+            <div className="q-legend-dot" style={{ background: 'var(--accent-light)', border: '1px solid var(--accent)' }} />
+            <span>{lbl!.answered_lbl}</span>
+          </div>
+          <div className="q-legend-row">
+            <div className="q-legend-dot" style={{ background: 'var(--accent)', border: '1px solid var(--accent)' }} />
+            <span>{lbl!.current}</span>
+          </div>
+        </div>
       </div>
 
       {/* Prev / Next */}

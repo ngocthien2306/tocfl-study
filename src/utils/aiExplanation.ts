@@ -17,10 +17,11 @@ export interface TranscriptLine {
 }
 
 export interface AIExplanationData {
-  explanation: string;
-  vocabulary:  AIVocabItem[];
-  transcript?: TranscriptLine[];  // listening only
-  cachedAt:    string;        // ISO timestamp
+  explanation:       string;
+  vocabulary:        AIVocabItem[];
+  transcript?:       TranscriptLine[];   // listening only — audio transcript
+  passage_analysis?: TranscriptLine[];   // exam only — reading passage breakdown
+  cachedAt:          string;             // ISO timestamp
 }
 
 const CACHE_KEY     = 'tocfl_ai_explanations';
@@ -98,7 +99,14 @@ async function streamCompletion(
   const res = await fetch(CHAT_URL, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${apiKey}` },
-    body: JSON.stringify({ model, messages, temperature: 0.4, stream: true }),
+    body: JSON.stringify({
+      model,
+      messages,
+      // o-series models (o1, o3, o4-mini, …) only accept temperature=1 (the default),
+      // so we omit the parameter entirely for them.
+      ...(/^o\d/i.test(model) ? {} : { temperature: 0.4 }),
+      stream: true,
+    }),
   });
   if (!res.ok) {
     const err = await res.json().catch(() => ({})) as { error?: { message?: string } };
@@ -181,7 +189,7 @@ function extractArray(str: string): string | null {
   return null;
 }
 
-function parseExplanationResponse(raw: string): { explanation: string; vocabulary: AIVocabItem[]; transcript?: TranscriptLine[] } {
+function parseExplanationResponse(raw: string): { explanation: string; vocabulary: AIVocabItem[]; transcript?: TranscriptLine[]; passage_analysis?: TranscriptLine[] } {
   const trimmed = raw.trim();
 
   const jsonStart = findJsonStart(trimmed);
@@ -192,10 +200,11 @@ function parseExplanationResponse(raw: string): { explanation: string; vocabular
   if (jsonChunk) {
     // Attempt 1: direct JSON.parse on the whole chunk
     try {
-      const meta = JSON.parse(jsonChunk) as { vocabulary?: AIVocabItem[]; transcript?: TranscriptLine[] };
-      const vocabulary = Array.isArray(meta.vocabulary) ? meta.vocabulary : [];
-      const transcript = Array.isArray(meta.transcript) ? meta.transcript : undefined;
-      return { explanation, vocabulary, transcript };
+      const meta = JSON.parse(jsonChunk) as { vocabulary?: AIVocabItem[]; transcript?: TranscriptLine[]; passage_analysis?: TranscriptLine[] };
+      const vocabulary        = Array.isArray(meta.vocabulary)        ? meta.vocabulary        : [];
+      const transcript        = Array.isArray(meta.transcript)        ? meta.transcript        : undefined;
+      const passage_analysis  = Array.isArray(meta.passage_analysis)  ? meta.passage_analysis  : undefined;
+      return { explanation, vocabulary, transcript, passage_analysis };
     } catch { /* try repair */ }
 
     // Attempt 2: pull out vocabulary array and parse that directly
@@ -243,14 +252,14 @@ Cấu trúc phản hồi:
 2. Giải thích ngắn gọn tại sao từng đáp án sai bị loại (mỗi đáp án sai một dòng)
 3. Ghi chú ngữ pháp hoặc văn hóa nếu hữu ích (có thể bỏ qua nếu không cần)
 
-SAU KHI VIẾT XONG PHẦN GIẢI THÍCH, xuống dòng và thêm JSON từ vựng (phải là JSON hợp lệ):
-{"vocabulary":[{"word":"漢字","pinyin":"hànzì","meaning":"chữ Hán","example":"我學漢字。"},{"word":"學習","pinyin":"xuéxí","meaning":"học tập","example":"我學習中文。"}]}
+SAU KHI VIẾT XONG PHẦN GIẢI THÍCH, xuống dòng và thêm JSON (phải là JSON hợp lệ):
+{"vocabulary":[{"word":"漢字","pinyin":"hànzì","meaning":"chữ Hán","example":"我學漢字。"}],"passage_analysis":[{"hanzi":"我是學生。","pinyin":"Wǒ shì xuéshēng.","vietnamese":"Tôi là học sinh."},{"hanzi":"你好嗎？","pinyin":"Nǐ hǎo ma?","vietnamese":"Bạn có khỏe không?"}]}
 
 Yêu cầu JSON:
 - Phải là JSON hợp lệ, đầy đủ dấu ngoặc kép cho tất cả key và value
 - Tất cả chữ Hán trong JSON PHẢI là phồn thể (繁體字)
-- Liệt kê 3-6 từ vựng quan trọng nhất trong câu hỏi
-- Nếu không có từ nào đáng chú ý, dùng: {"vocabulary":[]}
+- vocabulary: liệt kê 3-6 từ vựng quan trọng nhất trong câu hỏi; nếu không có thì dùng []
+- passage_analysis: phân tích toàn bộ đoạn văn/ngữ cảnh (nếu có) thành từng câu/cụm có nghĩa. Mỗi phần tử gồm: hanzi phồn thể đầy đủ + pinyin có dấu thanh đầy đủ + bản dịch tiếng Việt tự nhiên. Nếu câu hỏi chỉ có hình ảnh hoặc không có văn bản đáng phân tích, dùng passage_analysis:[]
 - KHÔNG thêm bất kỳ text nào sau JSON`;
 
 const LISTENING_SYSTEM_PROMPT = `Bạn là gia sư tiếng Trung phồn thể (Traditional Chinese / 繁體中文) chuyên luyện thi TOCFL phần Nghe. Phân tích câu hỏi và giải thích rõ ràng bằng tiếng Việt.
@@ -324,8 +333,8 @@ export async function generateReadingExplanation(opts: ExplainReadingOpts): Prom
   ];
 
   const raw = await streamCompletion(apiKey, messages, model, onToken);
-  const { explanation, vocabulary } = parseExplanationResponse(raw);
-  return { explanation, vocabulary, cachedAt: new Date().toISOString() };
+  const { explanation, vocabulary, passage_analysis } = parseExplanationResponse(raw);
+  return { explanation, vocabulary, passage_analysis, cachedAt: new Date().toISOString() };
 }
 
 // ─── Listening explanation ──────────────────────────────────────────────────────

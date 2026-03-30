@@ -600,7 +600,7 @@ button { cursor: pointer; font-family: inherit; }
 .fc-hint   { font-size: .72rem; color: var(--text-muted); position: absolute; bottom: 12px; }
 .fc-level  { position: absolute; top: 10px; right: 12px; }
 
-/* ── Q-grid (exam) ───────────────────────────────────────────────────────── */
+/* ── Q-grid (exam + listening) ───────────────────────────────────────────── */
 .q-grid { display: grid; grid-template-columns: repeat(10, 1fr); gap: 5px; }
 .q-dot {
   aspect-ratio: 1; border-radius: var(--radius-sm);
@@ -609,12 +609,40 @@ button { cursor: pointer; font-family: inherit; }
   font-size: .7rem; font-weight: 600;
   color: var(--text-secondary); cursor: pointer;
   transition: all .12s;
+  background: transparent;
+  font-family: inherit;
+  padding: 0;
 }
-.q-dot:hover   { border-color: var(--accent); color: var(--accent); }
+.q-dot:hover   { border-color: var(--accent); color: var(--accent); background: var(--accent-light); }
 .q-dot.done    { background: var(--accent-light); border-color: var(--accent); color: var(--accent); }
 .q-dot.current { background: var(--accent); color: #fff; border-color: var(--accent); box-shadow: 0 0 0 2px rgba(37,99,235,.25); }
 .q-dot.ok      { background: var(--success-light); border-color: var(--success); color: var(--success); }
 .q-dot.fail    { background: var(--error-light);   border-color: var(--error);   color: var(--error); }
+
+/* ── Exam 80/20 layout (sidebar navigator) ───────────────────────────────── */
+.exam-layout   { display: flex; gap: 16px; align-items: flex-start; }
+.exam-content  { flex: 1; min-width: 0; order: 1; }
+.exam-sidebar  { width: 192px; flex-shrink: 0; position: sticky; top: 108px; order: 2; }
+
+/* Sidebar uses a 5-col grid so 50 questions fit in 10 tidy rows */
+.q-grid--sidebar { grid-template-columns: repeat(5, 1fr); gap: 4px; }
+
+/* Thin progress bar at top of sidebar */
+.q-progress-bar  { height: 5px; background: var(--border); border-radius: 99px; overflow: hidden; margin: 6px 0 12px; }
+.q-progress-fill { height: 100%; background: var(--accent); border-radius: 99px; transition: width .35s ease; }
+
+/* Legend */
+.q-legend     { margin-top: 10px; padding-top: 10px; border-top: 1px solid var(--border); display: flex; flex-direction: column; gap: 5px; }
+.q-legend-row { display: flex; align-items: center; gap: 7px; font-size: .7rem; color: var(--text-secondary); }
+.q-legend-dot { width: 13px; height: 13px; border-radius: 3px; flex-shrink: 0; }
+
+/* Mobile: stack sidebar above content, expand to full width */
+@media (max-width: 720px) {
+  .exam-layout  { flex-direction: column; }
+  .exam-content { order: 2; }
+  .exam-sidebar { width: 100%; position: static; order: 1; }
+  .q-grid--sidebar { grid-template-columns: repeat(10, 1fr); }
+}
 
 /* ── Stats grid ──────────────────────────────────────────────────────────── */
 .stats-row { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-bottom: 16px; }
@@ -996,6 +1024,45 @@ button { cursor: pointer; font-family: inherit; }
 .btn-xs { padding: 4px 9px; font-size: .76rem; border-radius: var(--radius); border: 1px solid var(--border); background: transparent; color: var(--text-muted); cursor: pointer; }
 .btn-xs:hover { border-color: var(--primary); color: var(--primary); }
 /* NOTE: .btn-ghost and .btn-success are defined globally in the button section — no overrides here */
+
+/* ── Segmented pill control ────────────────────────────────────────────────── */
+.seg-control {
+  display: flex;
+  background: var(--surface-2);
+  border: 1px solid var(--border);
+  border-radius: 50px;
+  padding: 3px;
+  gap: 2px;
+}
+.seg-control__btn {
+  flex: 1;
+  border: none;
+  background: transparent;
+  border-radius: 50px;
+  padding: 9px 16px;
+  font-size: .9rem;
+  font-weight: 500;
+  color: var(--text-secondary);
+  cursor: pointer;
+  transition: background .16s ease, color .16s ease, box-shadow .16s ease;
+  white-space: nowrap;
+  font-family: inherit;
+}
+.seg-control__btn:hover:not(.seg-control__btn--active) {
+  color: var(--text-primary);
+  background: rgba(0, 0, 0, .045);
+}
+.seg-control__btn--active {
+  background: var(--surface);
+  color: var(--accent);
+  font-weight: 600;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, .1), 0 0 0 1px var(--border);
+}
+/* Smaller variant for exam selector */
+.seg-control--sm .seg-control__btn {
+  padding: 6px 12px;
+  font-size: .82rem;
+}
 
 @media (max-width: 640px) {
   .ai-rg-row { flex-direction: column; }
