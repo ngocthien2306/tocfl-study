@@ -13,7 +13,7 @@ async function callOpenAI(apiKey: string, messages: ChatMessage[]): Promise<stri
     method: 'POST',
     headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${apiKey}` },
     body: JSON.stringify({
-      model: 'gpt-4o-mini',
+      model: 'gpt-5.4',
       messages,
       temperature: 0.75,
       response_format: { type: 'json_object' },

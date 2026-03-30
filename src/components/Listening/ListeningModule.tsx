@@ -8,6 +8,7 @@ import { useAIModel } from '../../hooks/useAIModel';
 import {
   buildCacheKey, loadExplanation, saveExplanation,
   generateListeningExplanation, stripJsonSuffix,
+  syncExplanationsWithBE,
 } from '../../utils/aiExplanation';
 import { progressApi } from '../../api/client';
 
@@ -19,6 +20,8 @@ interface Props {
 // ── Timer hook ────────────────────────────────────────────────────────────────
 function useCountdown(seconds: number, running: boolean) {
   const [remaining, setRemaining] = useState(seconds);
+  // reset() lets us restore the timer from a saved draft
+  const reset = useCallback((secs: number) => setRemaining(secs), []);
   useEffect(() => {
     if (!running) return;
     if (remaining <= 0) return;
@@ -27,7 +30,39 @@ function useCountdown(seconds: number, running: boolean) {
   }, [running, remaining]);
   const mm = String(Math.floor(remaining / 60)).padStart(2, '0');
   const ss = String(remaining % 60).padStart(2, '0');
-  return { remaining, display: `${mm}:${ss}` };
+  return { remaining, display: `${mm}:${ss}`, reset };
+}
+
+// ── Draft save/resume ─────────────────────────────────────────────────────────
+const LISTENING_DRAFT_KEY = 'tocfl_listening_draft';
+
+interface ListeningDraft {
+  band:      'A' | 'B' | 'C';
+  examKey:   ExamKey;
+  answers:   Record<number, OptionKey>;
+  qIdx:      number;
+  remaining: number;   // timer seconds left at save time
+  savedAt:   number;   // Date.now()
+}
+
+function loadListeningDraft(): ListeningDraft | null {
+  try {
+    const raw = localStorage.getItem(LISTENING_DRAFT_KEY);
+    if (!raw) return null;
+    const d = JSON.parse(raw) as ListeningDraft;
+    // Discard drafts older than 48 hours
+    if (Date.now() - d.savedAt > 48 * 3600 * 1000) {
+      localStorage.removeItem(LISTENING_DRAFT_KEY);
+      return null;
+    }
+    return d;
+  } catch { return null; }
+}
+function saveListeningDraft(d: ListeningDraft) {
+  try { localStorage.setItem(LISTENING_DRAFT_KEY, JSON.stringify(d)); } catch { /* quota */ }
+}
+function clearListeningDraft() {
+  try { localStorage.removeItem(LISTENING_DRAFT_KEY); } catch { /* noop */ }
 }
 
 // ── Audio player component ────────────────────────────────────────────────────
@@ -226,8 +261,12 @@ export const ListeningModule: React.FC<Props> = ({ listeningData, token }) => {
   const [timerRunning, setTimerRunning] = useState(false);
   const [reviewAttempt, setReviewAttempt] = useState<ExamAttempt | null>(null);
   const [attempts, setAttempts] = useState<ExamAttempt[]>(() => loadAttempts('listening'));
+  const [draft,    setDraft   ] = useState<ListeningDraft | null>(() => loadListeningDraft());
   // Track elapsed time (exam start timestamp)
-  const startTimeRef = useRef<number>(0);
+  const startTimeRef  = useRef<number>(0);
+  // Ref that always holds the latest `remaining` so the draft-save interval
+  // captures the real value without needing it in the dep array
+  const remainingRef  = useRef<number>(0);
 
   const exam: ListeningExam = band === 'A'
     ? (listeningData.bandA[examKey] ?? listeningData.bandA.exam1)
@@ -239,10 +278,18 @@ export const ListeningModule: React.FC<Props> = ({ listeningData, token }) => {
   const total = flat.length;
   const q = flat[qIdx];
 
-  const { remaining, display: timerDisplay } = useCountdown(
+  // Sync AI explanations with BE when user logs in
+  useEffect(() => {
+    if (token) syncExplanationsWithBE(token).catch(() => {});
+  }, [token]);
+
+  const { remaining, display: timerDisplay, reset: resetTimer } = useCountdown(
     exam.duration,
     timerRunning && phase === 'exam'
   );
+
+  // Keep ref in sync every tick
+  useEffect(() => { remainingRef.current = remaining; }, [remaining]);
 
   // Auto-submit when time runs out
   useEffect(() => {
@@ -252,13 +299,43 @@ export const ListeningModule: React.FC<Props> = ({ listeningData, token }) => {
     }
   }, [remaining, phase]);
 
+  // Auto-save draft every 5 s while exam is running
+  useEffect(() => {
+    if (phase !== 'exam') return;
+    const save = () => saveListeningDraft({
+      band, examKey, answers, qIdx,
+      remaining: remainingRef.current,
+      savedAt:   Date.now(),
+    });
+    save(); // immediate save on any answer/nav change
+    const id = setInterval(save, 5000);
+    return () => clearInterval(id);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [phase, answers, qIdx]);
+
   const base = import.meta.env.BASE_URL;
 
   function startExam() {
+    clearListeningDraft();
+    setDraft(null);
     setAnswers({});
     setQIdx(0);
+    resetTimer(exam.duration);
     setTimerRunning(true);
     startTimeRef.current = Date.now();
+    setPhase('exam');
+  }
+
+  function resumeFromDraft() {
+    if (!draft) return;
+    setAnswers(draft.answers);
+    setQIdx(draft.qIdx);
+    resetTimer(draft.remaining);
+    // Reconstruct startTime so timeTakenSecs is accurate on submit
+    startTimeRef.current = Date.now() - (exam.duration - draft.remaining) * 1000;
+    clearListeningDraft();
+    setDraft(null);
+    setTimerRunning(true);
     setPhase('exam');
   }
 
@@ -272,6 +349,8 @@ export const ListeningModule: React.FC<Props> = ({ listeningData, token }) => {
 
   function submit() {
     setTimerRunning(false);
+    clearListeningDraft();
+    setDraft(null);
     const timeTakenSecs = Math.round((Date.now() - startTimeRef.current) / 1000);
 
     // Build and persist detailed attempt
@@ -436,6 +515,52 @@ export const ListeningModule: React.FC<Props> = ({ listeningData, token }) => {
             </div>
           ))}
         </div>
+
+        {/* ── Draft resume banner ─────────────────────────────────────────── */}
+        {draft && draft.band === band && draft.examKey === examKey && (() => {
+          const doneCt  = Object.keys(draft.answers).length;
+          const agoSecs = Math.round((Date.now() - draft.savedAt) / 1000);
+          const agoStr  = agoSecs < 60
+            ? `${agoSecs}s`
+            : agoSecs < 3600
+            ? `${Math.floor(agoSecs / 60)} phút`
+            : `${Math.floor(agoSecs / 3600)} giờ`;
+          const mm = String(Math.floor(draft.remaining / 60)).padStart(2, '0');
+          const ss = String(draft.remaining % 60).padStart(2, '0');
+          return (
+            <div style={{
+              border: '2px solid var(--accent)',
+              borderRadius: 'var(--radius)',
+              padding: '12px 14px',
+              marginBottom: 12,
+              background: 'var(--accent-light)',
+            }}>
+              <div style={{ fontWeight: 700, fontSize: '.88rem', marginBottom: 4 }}>
+                🔄 {{vi:'Bài thi đang làm dở',zh:'考試未完成',en:'Exam in progress'}[lang]}
+              </div>
+              <div style={{ fontSize: '.78rem', color: 'var(--text-secondary)', marginBottom: 10 }}>
+                {doneCt}/{total} {{vi:'câu đã trả lời',zh:'題已作答',en:'answered'}[lang]}
+                {' · '}⏱ {mm}:{ss} {{vi:'còn lại',zh:'剩餘',en:'left'}[lang]}
+                {' · '}{{vi:'đã lưu',zh:'儲存於',en:'saved'}[lang]} {agoStr} {{vi:'trước',zh:'前',en:'ago'}[lang]}
+              </div>
+              <div style={{ display: 'flex', gap: 8 }}>
+                <button
+                  className="btn btn-primary btn-sm"
+                  style={{ flex: 1 }}
+                  onClick={resumeFromDraft}
+                >
+                  ▶ {{vi:'Tiếp tục làm bài',zh:'繼續作答',en:'Continue exam'}[lang]}
+                </button>
+                <button
+                  className="btn btn-ghost btn-sm"
+                  onClick={() => { clearListeningDraft(); setDraft(null); }}
+                >
+                  {{vi:'Bỏ qua',zh:'放棄',en:'Discard'}[lang]}
+                </button>
+              </div>
+            </div>
+          );
+        })()}
 
         <button className="btn btn-primary" style={{ width: '100%', minHeight: 52, fontSize: '1rem' }} onClick={startExam}>
           {lbl.start}
@@ -694,6 +819,7 @@ export const ListeningModule: React.FC<Props> = ({ listeningData, token }) => {
               audioPaths={q.audio}
               audioBaseUrl={base}
               pageImageUrl={q.page_image && q.partType === 'image_choice' ? `${base}${q.page_image}` : undefined}
+              token={token}
             />
           </div>
         </div>
@@ -877,12 +1003,13 @@ interface ListeningAIDrawerProps {
   audioPaths:    string[];
   audioBaseUrl:  string;
   pageImageUrl?: string;
+  token?:        string | null;
 }
 
 const ListeningAIDrawer: React.FC<ListeningAIDrawerProps> = ({
   apiKey, hasKey, model, cacheKey,
   questionId, question, options, answer,
-  audioPaths, audioBaseUrl, pageImageUrl,
+  audioPaths, audioBaseUrl, pageImageUrl, token,
 }) => {
   const [status,     setStatus    ] = useState<'idle' | 'loading' | 'done'>('idle');
   const [step,       setStep      ] = useState<'transcribing' | 'analyzing' | null>(null);
@@ -921,10 +1048,10 @@ const ListeningAIDrawer: React.FC<ListeningAIDrawerProps> = ({
         options,
         answer,
         pageImageUrl,
-        onToken: (token) => setStreamText(prev => prev + token),
+        onToken: (tok) => setStreamText(prev => prev + tok),
         onProgress: (s) => setStep(s),
       });
-      saveExplanation(cacheKey, result);
+      saveExplanation(cacheKey, result, token);
       setData(result);
       setStatus('done');
       setStreamText('');

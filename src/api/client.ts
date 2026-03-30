@@ -199,6 +199,34 @@ export const highlightsApi = {
     }),
 };
 
+// ── AI Explanations ────────────────────────────────────────────────────────────
+export interface ExamExplanationRecord {
+  id:               number;
+  cache_key:        string;
+  explanation_json: string;   // full AIExplanationData as JSON string
+  updated_at:       string;
+}
+
+export const examExplanationsApi = {
+  /** Lấy tất cả explanations của user */
+  list: (token: string) =>
+    apiFetch<ExamExplanationRecord[]>("/exam-explanations", {}, token),
+
+  /** Upsert một explanation theo cache_key */
+  upsert: (token: string, cacheKey: string, explanationJson: string) =>
+    apiFetch<ExamExplanationRecord>(`/exam-explanations/${encodeURIComponent(cacheKey)}`, {
+      method: "PUT",
+      body: JSON.stringify({ cache_key: cacheKey, explanation_json: explanationJson }),
+    }, token),
+
+  /** Bulk-sync nhiều explanations cùng lúc (sau khi đăng nhập) */
+  bulkSync: (token: string, items: { cache_key: string; explanation_json: string }[]) =>
+    apiFetch<{ synced: number }>("/exam-explanations/bulk-sync", {
+      method: "POST",
+      body: JSON.stringify({ items }),
+    }, token),
+};
+
 // ── Interview ──────────────────────────────────────────────────────────────────
 import type {
   InterviewDocument, InterviewSession, SessionMessage,

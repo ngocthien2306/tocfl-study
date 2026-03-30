@@ -7,6 +7,7 @@
  */
 
 import type { AIVocabItem, OptionKey } from '../types';
+import { examExplanationsApi } from '../api/client';
 
 // ─── Cache types ───────────────────────────────────────────────────────────────
 
@@ -40,10 +41,50 @@ function saveCache(cache: Record<string, AIExplanationData>) {
 export function loadExplanation(cacheKey: string): AIExplanationData | null {
   return loadCache()[cacheKey] ?? null;
 }
-export function saveExplanation(cacheKey: string, data: AIExplanationData) {
+
+/**
+ * Save explanation to localStorage.
+ * If token is provided, also push to BE asynchronously (fire-and-forget).
+ */
+export function saveExplanation(cacheKey: string, data: AIExplanationData, token?: string | null) {
   const cache = loadCache();
   cache[cacheKey] = data;
   saveCache(cache);
+  if (token) {
+    examExplanationsApi
+      .upsert(token, cacheKey, JSON.stringify(data))
+      .catch(() => { /* ignore BE errors — localStorage is source of truth */ });
+  }
+}
+
+/**
+ * On login: fetch all explanations from BE and merge into localStorage,
+ * then push any localStorage-only entries to BE.
+ */
+export async function syncExplanationsWithBE(token: string): Promise<void> {
+  try {
+    // Pull BE list
+    const beList = await examExplanationsApi.list(token);
+    const cache  = loadCache();
+
+    // Merge BE → localStorage (BE wins for existing keys)
+    for (const rec of beList) {
+      try {
+        cache[rec.cache_key] = JSON.parse(rec.explanation_json) as AIExplanationData;
+      } catch { /* skip malformed */ }
+    }
+    saveCache(cache);
+
+    // Push localStorage-only entries to BE
+    const beKeys = new Set(beList.map(r => r.cache_key));
+    const toSync = Object.entries(cache).filter(([k]) => !beKeys.has(k));
+    if (toSync.length > 0) {
+      await examExplanationsApi.bulkSync(
+        token,
+        toSync.map(([k, v]) => ({ cache_key: k, explanation_json: JSON.stringify(v) })),
+      ).catch(() => { /* ignore */ });
+    }
+  } catch { /* BE unreachable — keep local only */ }
 }
 
 /** Canonical cache key: "exam_A_exam1_q5" or "listening_B_exam1_q3" */
@@ -378,6 +419,7 @@ export async function generateListeningExplanation(opts: ExplainListeningOpts): 
     formData.append('file',  file);
     formData.append('model', 'whisper-1');
     formData.append('language', 'zh');
+    formData.append('prompt', '這是一段繁體中文的練習音檔。');
 
     const whisperRes = await fetch(WHISPER_URL, {
       method: 'POST',

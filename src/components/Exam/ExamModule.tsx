@@ -11,12 +11,14 @@ import { HighlightableText } from '../HighlightableText';
 import {
   buildCacheKey, loadExplanation, saveExplanation,
   generateReadingExplanation, stripJsonSuffix,
+  syncExplanationsWithBE,
 } from '../../utils/aiExplanation';
 
 interface Props {
   examData: ExamData;
   addExam: (r: ExamRecord) => void;
   pastExams: ExamRecord[];
+  token?: string | null;
 }
 
 type Phase = 'select' | 'exam' | 'result' | 'history' | 'review';
@@ -124,7 +126,7 @@ function buildExamQuestions(band: 'A' | 'B', examKey: ExamKey, data: ExamData): 
   return out.sort((a, b) => a.id - b.id);
 }
 
-export const ExamModule: React.FC<Props> = ({ examData, addExam, pastExams }) => {
+export const ExamModule: React.FC<Props> = ({ examData, addExam, pastExams, token }) => {
   const { t, lang } = useLang();
   const { apiKey, hasKey } = useApiKey();
   const { model } = useAIModel();
@@ -142,6 +144,11 @@ export const ExamModule: React.FC<Props> = ({ examData, addExam, pastExams }) =>
   const questions = useMemo(() => buildExamQuestions(band, examKey, examData), [band, examKey, examData]);
 
   const timer = useTimer(EXAM_DURATION, () => finishExam());
+
+  // Sync AI explanations with BE when user logs in
+  useEffect(() => {
+    if (token) syncExplanationsWithBE(token).catch(() => {});
+  }, [token]);
 
   // Auto-save draft every 5 s while exam is in progress
   useEffect(() => {
@@ -422,6 +429,7 @@ export const ExamModule: React.FC<Props> = ({ examData, addExam, pastExams }) =>
               context={q.context}
               passage={q.passage}
               pageImageUrl={q.pageImage ? `${base}${q.pageImage}` : undefined}
+              token={token}
             />
 
             {/* Prev / Next */}
@@ -916,12 +924,13 @@ interface AIDrawerProps {
   context?:      string;
   passage?:      string;
   pageImageUrl?: string;
+  token?:        string | null;
 }
 
 const AIDrawer: React.FC<AIDrawerProps> = ({
   apiKey, hasKey, model, cacheKey,
   questionId, question, sentence, options, answer,
-  context, passage, pageImageUrl,
+  context, passage, pageImageUrl, token,
 }) => {
   const [status,      setStatus     ] = useState<'idle' | 'loading' | 'done'>('idle');
   const [expanded,    setExpanded   ] = useState(false);
@@ -959,9 +968,9 @@ const AIDrawer: React.FC<AIDrawerProps> = ({
         context,
         passage,
         pageImageUrl,
-        onToken: (token) => setStreamText(prev => prev + token),
+        onToken: (tok) => setStreamText(prev => prev + tok),
       });
-      saveExplanation(cacheKey, result);
+      saveExplanation(cacheKey, result, token);
       setData(result);
       setStatus('done');
       setStreamText('');

@@ -142,6 +142,7 @@ export default function App() {
               examData={examData}
               addExam={handleAddExam}
               pastExams={progress.exams}
+              token={auth.token}
             />
           )}
 

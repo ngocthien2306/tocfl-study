@@ -34,7 +34,7 @@ async function lookupWord(apiKey: string, word: string) {
     method: 'POST',
     headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${apiKey}` },
     body: JSON.stringify({
-      model: 'gpt-4o-mini',
+      model: 'gpt-5.4-mini',
       messages: [
         {
           role: 'system',
@@ -45,7 +45,7 @@ async function lookupWord(apiKey: string, word: string) {
         { role: 'user', content: word },
       ],
       temperature: 0.1,
-      max_tokens: 80,
+      max_completion_tokens: 80,
     }),
   });
   if (!res.ok) throw new Error(`HTTP ${res.status}`);
