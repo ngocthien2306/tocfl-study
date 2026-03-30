@@ -140,7 +140,7 @@ export interface AttemptQuestion {
 export interface ExamAttempt {
   id:            string;         // Date.now() string — unique per attempt
   module:        'exam' | 'listening';
-  band:          'A' | 'B';
+  band:          'A' | 'B' | 'C';
   examKey:       ExamKey;
   score:         number;
   total:         number;
@@ -227,6 +227,7 @@ export interface ListeningExam {
 export interface ListeningData {
   bandA: Record<ExamKey, ListeningExam>;
   bandB: Record<ExamKey, ListeningExam>;
+  bandC: Record<ExamKey, ListeningExam>;
 }
 
 // ─── AI Generator types ───────────────────────────────────────────────────────

@@ -218,7 +218,7 @@ export const ListeningModule: React.FC<Props> = ({ listeningData, token }) => {
   const { lang } = useLang();
   const { apiKey, hasKey } = useApiKey();
   const { model } = useAIModel();
-  const [band, setBand] = useState<'A' | 'B'>('A');
+  const [band, setBand] = useState<'A' | 'B' | 'C'>('A');
   const [examKey, setExamKey] = useState<ExamKey>('exam1');
   const [phase, setPhase] = useState<Phase>('select');
   const [qIdx, setQIdx] = useState(0);
@@ -231,7 +231,9 @@ export const ListeningModule: React.FC<Props> = ({ listeningData, token }) => {
 
   const exam: ListeningExam = band === 'A'
     ? (listeningData.bandA[examKey] ?? listeningData.bandA.exam1)
-    : (listeningData.bandB[examKey] ?? listeningData.bandB.exam1);
+    : band === 'B'
+    ? (listeningData.bandB[examKey] ?? listeningData.bandB.exam1)
+    : (listeningData.bandC[examKey] ?? listeningData.bandC.exam1);
 
   const flat = useMemo(() => buildFlat(exam), [exam]);
   const total = flat.length;
@@ -383,7 +385,8 @@ export const ListeningModule: React.FC<Props> = ({ listeningData, token }) => {
     };
     const availableBandAExams = Object.keys(listeningData.bandA) as ExamKey[];
     const availableBandBExams = Object.keys(listeningData.bandB) as ExamKey[];
-    const availableExams = band === 'A' ? availableBandAExams : availableBandBExams;
+    const availableBandCExams = Object.keys(listeningData.bandC) as ExamKey[];
+    const availableExams = band === 'A' ? availableBandAExams : band === 'B' ? availableBandBExams : availableBandCExams;
 
     return (
       <div>
@@ -395,7 +398,7 @@ export const ListeningModule: React.FC<Props> = ({ listeningData, token }) => {
 
         {/* Band selector */}
         <div style={{ display: 'flex', gap: 10, marginBottom: 10 }}>
-          {(['A', 'B'] as const).map(b => (
+          {(['A', 'B', 'C'] as const).map(b => (
             <button
               key={b}
               className={`btn ${band === b ? 'btn-primary' : 'btn-outline'}`}
@@ -628,7 +631,7 @@ export const ListeningModule: React.FC<Props> = ({ listeningData, token }) => {
       {/* Question number + text */}
       <div style={{ marginBottom: 12 }}>
         <div style={{ display: 'flex', alignItems: 'baseline', gap: 8, marginBottom: 6 }}>
-          <span className={`badge badge-${band === 'A' ? 'A1' : 'B1'}`} style={{ fontSize: '.72rem', flexShrink: 0 }}>
+          <span className={`badge badge-${band === 'A' ? 'A1' : band === 'B' ? 'B1' : 'B2'}`} style={{ fontSize: '.72rem', flexShrink: 0 }}>
             {lbl.question} {q.id}
           </span>
           {q.question && (

@@ -48,7 +48,7 @@ export function saveExplanation(cacheKey: string, data: AIExplanationData) {
 /** Canonical cache key: "exam_A_exam1_q5" or "listening_B_exam1_q3" */
 export function buildCacheKey(
   module:     'exam' | 'listening',
-  band:       'A' | 'B',
+  band:       'A' | 'B' | 'C',
   examKey:    string,
   questionId: number,
 ): string {
