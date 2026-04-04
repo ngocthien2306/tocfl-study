@@ -88,7 +88,7 @@ export interface BandBReading {
   part2: ExamPart2B & { image_dir?: string; image_passages?: ImagePassage[] };
 }
 
-export type ExamKey = 'exam1' | 'exam2' | 'exam3';
+export type ExamKey = 'exam1' | 'exam2' | 'exam3' | 'exam4' | 'exam5';
 
 export interface ExamData {
   bandA: Record<ExamKey, { title: string; reading: BandAReading }>;

@@ -462,6 +462,8 @@ export const ListeningModule: React.FC<Props> = ({ listeningData, token }) => {
       exam1: { vi: 'Đề 1', zh: '第1套', en: 'Exam 1' },
       exam2: { vi: 'Đề 2', zh: '第2套', en: 'Exam 2' },
       exam3: { vi: 'Đề 3', zh: '第3套', en: 'Exam 3' },
+      exam4: { vi: 'Đề 4', zh: '第4套', en: 'Exam 4' },
+      exam5: { vi: 'Đề 5', zh: '第5套', en: 'Exam 5' },
     };
     const availableBandAExams = Object.keys(listeningData.bandA) as ExamKey[];
     const availableBandBExams = Object.keys(listeningData.bandB) as ExamKey[];

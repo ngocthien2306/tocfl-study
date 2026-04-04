@@ -39,7 +39,7 @@ function getPartLabel(key: PartKey, lang: Lang): string {
 
 const BAND_A_PARTS: PartKey[] = ['part3', 'part4', 'part5'];
 const BAND_B_PARTS: PartKey[] = ['part1', 'part2'];
-const ALL_BAND_A_EXAMS = ['exam1', 'exam2', 'exam3'] as const;
+const ALL_BAND_A_EXAMS = ['exam1', 'exam2', 'exam3', 'exam4', 'exam5'] as const;
 
 function buildQuestions(band: Band, part: PartKey, data: ExamData): FlatQuestion[] {
   const out: FlatQuestion[] = [];
