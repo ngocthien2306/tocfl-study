@@ -2063,6 +2063,1358 @@
           ]
         }
       ]
+    },
+    "exam4": {
+      "title": "TOCFL Band A - Nghe Hiểu Đề 4",
+      "duration": 36000,
+      "parts": [
+        {
+          "type": "image_choice",
+          "questions": [
+            {
+              "id": 1,
+              "audio": [
+                "audio/band-a/exam4/1-01.mp3"
+              ],
+              "page_image": "exam-images/listening/band-a/exam4/page-04.png",
+              "options": {
+                "A": "(A)",
+                "B": "(B)",
+                "C": "(C)"
+              },
+              "answer": "B"
+            },
+            {
+              "id": 2,
+              "audio": [
+                "audio/band-a/exam4/1-02.mp3"
+              ],
+              "page_image": "exam-images/listening/band-a/exam4/page-04.png",
+              "options": {
+                "A": "(A)",
+                "B": "(B)",
+                "C": "(C)"
+              },
+              "answer": "A"
+            },
+            {
+              "id": 3,
+              "audio": [
+                "audio/band-a/exam4/1-03.mp3"
+              ],
+              "page_image": "exam-images/listening/band-a/exam4/page-04.png",
+              "options": {
+                "A": "(A)",
+                "B": "(B)",
+                "C": "(C)"
+              },
+              "answer": "B"
+            },
+            {
+              "id": 4,
+              "audio": [
+                "audio/band-a/exam4/1-04.mp3"
+              ],
+              "page_image": "exam-images/listening/band-a/exam4/page-04.png",
+              "options": {
+                "A": "(A)",
+                "B": "(B)",
+                "C": "(C)"
+              },
+              "answer": "C"
+            },
+            {
+              "id": 5,
+              "audio": [
+                "audio/band-a/exam4/1-05.mp3"
+              ],
+              "page_image": "exam-images/listening/band-a/exam4/page-04.png",
+              "options": {
+                "A": "(A)",
+                "B": "(B)",
+                "C": "(C)"
+              },
+              "answer": "A"
+            },
+            {
+              "id": 6,
+              "audio": [
+                "audio/band-a/exam4/1-06.mp3"
+              ],
+              "page_image": "exam-images/listening/band-a/exam4/page-05.png",
+              "options": {
+                "A": "(A)",
+                "B": "(B)",
+                "C": "(C)"
+              },
+              "answer": "C"
+            },
+            {
+              "id": 7,
+              "audio": [
+                "audio/band-a/exam4/1-07.mp3"
+              ],
+              "page_image": "exam-images/listening/band-a/exam4/page-05.png",
+              "options": {
+                "A": "(A)",
+                "B": "(B)",
+                "C": "(C)"
+              },
+              "answer": "C"
+            },
+            {
+              "id": 8,
+              "audio": [
+                "audio/band-a/exam4/1-08.mp3"
+              ],
+              "page_image": "exam-images/listening/band-a/exam4/page-05.png",
+              "options": {
+                "A": "(A)",
+                "B": "(B)",
+                "C": "(C)"
+              },
+              "answer": "B"
+            },
+            {
+              "id": 9,
+              "audio": [
+                "audio/band-a/exam4/1-09.mp3"
+              ],
+              "page_image": "exam-images/listening/band-a/exam4/page-05.png",
+              "options": {
+                "A": "(A)",
+                "B": "(B)",
+                "C": "(C)"
+              },
+              "answer": "A"
+            },
+            {
+              "id": 10,
+              "audio": [
+                "audio/band-a/exam4/1-10.mp3"
+              ],
+              "page_image": "exam-images/listening/band-a/exam4/page-05.png",
+              "options": {
+                "A": "(A)",
+                "B": "(B)",
+                "C": "(C)"
+              },
+              "answer": "A"
+            }
+          ]
+        },
+        {
+          "type": "image_choice",
+          "questions": [
+            {
+              "id": 11,
+              "audio": [
+                "audio/band-a/exam4/2-11.mp3"
+              ],
+              "page_image": "exam-images/listening/band-a/exam4/page-08.png",
+              "options": {
+                "A": "(A)",
+                "B": "(B)",
+                "C": "(C)"
+              },
+              "answer": "C"
+            },
+            {
+              "id": 12,
+              "audio": [
+                "audio/band-a/exam4/2-12.mp3"
+              ],
+              "page_image": "exam-images/listening/band-a/exam4/page-08.png",
+              "options": {
+                "A": "(A)",
+                "B": "(B)",
+                "C": "(C)"
+              },
+              "answer": "B"
+            },
+            {
+              "id": 13,
+              "audio": [
+                "audio/band-a/exam4/2-13.mp3"
+              ],
+              "page_image": "exam-images/listening/band-a/exam4/page-08.png",
+              "options": {
+                "A": "(A)",
+                "B": "(B)",
+                "C": "(C)"
+              },
+              "answer": "C"
+            },
+            {
+              "id": 14,
+              "audio": [
+                "audio/band-a/exam4/2-14.mp3"
+              ],
+              "page_image": "exam-images/listening/band-a/exam4/page-08.png",
+              "options": {
+                "A": "(A)",
+                "B": "(B)",
+                "C": "(C)"
+              },
+              "answer": "C"
+            },
+            {
+              "id": 15,
+              "audio": [
+                "audio/band-a/exam4/2-15.mp3"
+              ],
+              "page_image": "exam-images/listening/band-a/exam4/page-08.png",
+              "options": {
+                "A": "(A)",
+                "B": "(B)",
+                "C": "(C)"
+              },
+              "answer": "B"
+            },
+            {
+              "id": 16,
+              "audio": [
+                "audio/band-a/exam4/2-16.mp3"
+              ],
+              "page_image": "exam-images/listening/band-a/exam4/page-09.png",
+              "options": {
+                "A": "(A)",
+                "B": "(B)",
+                "C": "(C)"
+              },
+              "answer": "A"
+            },
+            {
+              "id": 17,
+              "audio": [
+                "audio/band-a/exam4/2-17.mp3"
+              ],
+              "page_image": "exam-images/listening/band-a/exam4/page-09.png",
+              "options": {
+                "A": "(A)",
+                "B": "(B)",
+                "C": "(C)"
+              },
+              "answer": "C"
+            },
+            {
+              "id": 18,
+              "audio": [
+                "audio/band-a/exam4/2-18.mp3"
+              ],
+              "page_image": "exam-images/listening/band-a/exam4/page-09.png",
+              "options": {
+                "A": "(A)",
+                "B": "(B)",
+                "C": "(C)"
+              },
+              "answer": "B"
+            },
+            {
+              "id": 19,
+              "audio": [
+                "audio/band-a/exam4/2-19.mp3"
+              ],
+              "page_image": "exam-images/listening/band-a/exam4/page-09.png",
+              "options": {
+                "A": "(A)",
+                "B": "(B)",
+                "C": "(C)"
+              },
+              "answer": "A"
+            },
+            {
+              "id": 20,
+              "audio": [
+                "audio/band-a/exam4/2-20.mp3"
+              ],
+              "page_image": "exam-images/listening/band-a/exam4/page-09.png",
+              "options": {
+                "A": "(A)",
+                "B": "(B)",
+                "C": "(C)"
+              },
+              "answer": "C"
+            },
+            {
+              "id": 21,
+              "audio": [
+                "audio/band-a/exam4/2-21.mp3"
+              ],
+              "page_image": "exam-images/listening/band-a/exam4/page-10.png",
+              "options": {
+                "A": "(A)",
+                "B": "(B)",
+                "C": "(C)"
+              },
+              "answer": "B"
+            },
+            {
+              "id": 22,
+              "audio": [
+                "audio/band-a/exam4/2-22.mp3"
+              ],
+              "page_image": "exam-images/listening/band-a/exam4/page-10.png",
+              "options": {
+                "A": "(A)",
+                "B": "(B)",
+                "C": "(C)"
+              },
+              "answer": "A"
+            },
+            {
+              "id": 23,
+              "audio": [
+                "audio/band-a/exam4/2-23.mp3"
+              ],
+              "page_image": "exam-images/listening/band-a/exam4/page-10.png",
+              "options": {
+                "A": "(A)",
+                "B": "(B)",
+                "C": "(C)"
+              },
+              "answer": "B"
+            },
+            {
+              "id": 24,
+              "audio": [
+                "audio/band-a/exam4/2-24.mp3"
+              ],
+              "page_image": "exam-images/listening/band-a/exam4/page-10.png",
+              "options": {
+                "A": "(A)",
+                "B": "(B)",
+                "C": "(C)"
+              },
+              "answer": "B"
+            },
+            {
+              "id": 25,
+              "audio": [
+                "audio/band-a/exam4/2-25.mp3"
+              ],
+              "page_image": "exam-images/listening/band-a/exam4/page-10.png",
+              "options": {
+                "A": "(A)",
+                "B": "(B)",
+                "C": "(C)"
+              },
+              "answer": "C"
+            }
+          ]
+        },
+        {
+          "type": "image_choice",
+          "questions": [
+            {
+              "id": 26,
+              "audio": [
+                "audio/band-a/exam4/3-26.mp3"
+              ],
+              "page_image": "exam-images/listening/band-a/exam4/page-12.png",
+              "options": {
+                "A": "(A)",
+                "B": "(B)",
+                "C": "(C)"
+              },
+              "answer": "A"
+            },
+            {
+              "id": 27,
+              "audio": [
+                "audio/band-a/exam4/3-27.mp3"
+              ],
+              "page_image": "exam-images/listening/band-a/exam4/page-12.png",
+              "options": {
+                "A": "(A)",
+                "B": "(B)",
+                "C": "(C)"
+              },
+              "answer": "A"
+            },
+            {
+              "id": 28,
+              "audio": [
+                "audio/band-a/exam4/3-28.mp3"
+              ],
+              "page_image": "exam-images/listening/band-a/exam4/page-12.png",
+              "options": {
+                "A": "(A)",
+                "B": "(B)",
+                "C": "(C)"
+              },
+              "answer": "B"
+            },
+            {
+              "id": 29,
+              "audio": [
+                "audio/band-a/exam4/3-29.mp3"
+              ],
+              "page_image": "exam-images/listening/band-a/exam4/page-12.png",
+              "options": {
+                "A": "(A)",
+                "B": "(B)",
+                "C": "(C)"
+              },
+              "answer": "C"
+            },
+            {
+              "id": 30,
+              "audio": [
+                "audio/band-a/exam4/3-30.mp3"
+              ],
+              "page_image": "exam-images/listening/band-a/exam4/page-12.png",
+              "options": {
+                "A": "(A)",
+                "B": "(B)",
+                "C": "(C)"
+              },
+              "answer": "C"
+            },
+            {
+              "id": 31,
+              "audio": [
+                "audio/band-a/exam4/3-31.mp3"
+              ],
+              "page_image": "exam-images/listening/band-a/exam4/page-13.png",
+              "options": {
+                "A": "(A)",
+                "B": "(B)",
+                "C": "(C)"
+              },
+              "answer": "A"
+            },
+            {
+              "id": 32,
+              "audio": [
+                "audio/band-a/exam4/3-32.mp3"
+              ],
+              "page_image": "exam-images/listening/band-a/exam4/page-13.png",
+              "options": {
+                "A": "(A)",
+                "B": "(B)",
+                "C": "(C)"
+              },
+              "answer": "A"
+            },
+            {
+              "id": 33,
+              "audio": [
+                "audio/band-a/exam4/3-33.mp3"
+              ],
+              "page_image": "exam-images/listening/band-a/exam4/page-13.png",
+              "options": {
+                "A": "(A)",
+                "B": "(B)",
+                "C": "(C)"
+              },
+              "answer": "B"
+            },
+            {
+              "id": 34,
+              "audio": [
+                "audio/band-a/exam4/3-34.mp3"
+              ],
+              "page_image": "exam-images/listening/band-a/exam4/page-13.png",
+              "options": {
+                "A": "(A)",
+                "B": "(B)",
+                "C": "(C)"
+              },
+              "answer": "B"
+            },
+            {
+              "id": 35,
+              "audio": [
+                "audio/band-a/exam4/3-35.mp3"
+              ],
+              "page_image": "exam-images/listening/band-a/exam4/page-13.png",
+              "options": {
+                "A": "(A)",
+                "B": "(B)",
+                "C": "(C)"
+              },
+              "answer": "A"
+            },
+            {
+              "id": 36,
+              "audio": [
+                "audio/band-a/exam4/3-36.mp3"
+              ],
+              "page_image": "exam-images/listening/band-a/exam4/page-14.png",
+              "options": {
+                "A": "(A)",
+                "B": "(B)",
+                "C": "(C)"
+              },
+              "answer": "C"
+            },
+            {
+              "id": 37,
+              "audio": [
+                "audio/band-a/exam4/3-37.mp3"
+              ],
+              "page_image": "exam-images/listening/band-a/exam4/page-14.png",
+              "options": {
+                "A": "(A)",
+                "B": "(B)",
+                "C": "(C)"
+              },
+              "answer": "A"
+            },
+            {
+              "id": 38,
+              "audio": [
+                "audio/band-a/exam4/3-38.mp3"
+              ],
+              "page_image": "exam-images/listening/band-a/exam4/page-14.png",
+              "options": {
+                "A": "(A)",
+                "B": "(B)",
+                "C": "(C)"
+              },
+              "answer": "A"
+            },
+            {
+              "id": 39,
+              "audio": [
+                "audio/band-a/exam4/3-39.mp3"
+              ],
+              "page_image": "exam-images/listening/band-a/exam4/page-14.png",
+              "options": {
+                "A": "(A)",
+                "B": "(B)",
+                "C": "(C)"
+              },
+              "answer": "B"
+            },
+            {
+              "id": 40,
+              "audio": [
+                "audio/band-a/exam4/3-40.mp3"
+              ],
+              "page_image": "exam-images/listening/band-a/exam4/page-14.png",
+              "options": {
+                "A": "(A)",
+                "B": "(B)",
+                "C": "(C)"
+              },
+              "answer": "C"
+            }
+          ]
+        },
+        {
+          "type": "text_choice",
+          "questions": [
+            {
+              "id": 41,
+              "audio": [
+                "audio/band-a/exam4/4-41.mp3"
+              ],
+              "options": {
+                "A": "這位先生找不到安全門",
+                "B": "這位小姐想搭電梯下樓",
+                "C": "這位先生要大家往樓梯那兒走",
+                "D": "這位小姐要這位先生快一點離開"
+              },
+              "answer": "C"
+            },
+            {
+              "id": 42,
+              "audio": [
+                "audio/band-a/exam4/4-42.mp3"
+              ],
+              "options": {
+                "A": "想參加大學考試",
+                "B": "想了解大學的學費",
+                "C": "想知道付學費的方法",
+                "D": "想問問讀大學的方法"
+              },
+              "answer": "B"
+            },
+            {
+              "id": 43,
+              "audio": [
+                "audio/band-a/exam4/4-43.mp3"
+              ],
+              "options": {
+                "A": "記者",
+                "B": "護士",
+                "C": "教師",
+                "D": "服務生"
+              },
+              "answer": "D"
+            },
+            {
+              "id": 44,
+              "audio": [
+                "audio/band-a/exam4/4-44.mp3"
+              ],
+              "options": {
+                "A": "這位小姐準備出國工作",
+                "B": "這位先生已經找到工作",
+                "C": "這位小姐每天都在讀書",
+                "D": "這位先生想快一點畢業"
+              },
+              "answer": "A"
+            },
+            {
+              "id": 45,
+              "audio": [
+                "audio/band-a/exam4/4-45.mp3"
+              ],
+              "options": {
+                "A": "他喜歡和明美聊天兒",
+                "B": "他有明美的電話號碼",
+                "C": "他和明美從小就認識",
+                "D": "他和明美一起去舞會"
+              },
+              "answer": "A"
+            },
+            {
+              "id": 46,
+              "audio": [
+                "audio/band-a/exam4/4-46.mp3"
+              ],
+              "options": {
+                "A": "這位先生每次都遲到",
+                "B": "這位先生現在不太高興",
+                "C": "這位先生著急地找這位小姐",
+                "D": "這位先生擔心這位小姐的安全"
+              },
+              "answer": "B"
+            },
+            {
+              "id": 47,
+              "audio": [
+                "audio/band-a/exam4/4-47.mp3"
+              ],
+              "options": {
+                "A": "他很願意幫忙",
+                "B": "他完全沒經驗",
+                "C": "他需要有人教他",
+                "D": "他認為工作太多"
+              },
+              "answer": "D"
+            },
+            {
+              "id": 48,
+              "audio": [
+                "audio/band-a/exam4/4-48.mp3"
+              ],
+              "options": {
+                "A": "感冒了",
+                "B": "害怕出門",
+                "C": "常常睡不好",
+                "D": "一運動就覺得累"
+              },
+              "answer": "C"
+            },
+            {
+              "id": 49,
+              "audio": [
+                "audio/band-a/exam4/4-49.mp3"
+              ],
+              "options": {
+                "A": "把手放車門",
+                "B": "從車上下來",
+                "C": "離開警察局",
+                "D": "把酒拿出來"
+              },
+              "answer": "B"
+            },
+            {
+              "id": 50,
+              "audio": [
+                "audio/band-a/exam4/4-50.mp3"
+              ],
+              "options": {
+                "A": "幾歲結婚比較好",
+                "B": "結婚要準備哪些東西",
+                "C": "要怎樣才能有幸福的生活",
+                "D": "要怎麼做才能讓人相信自己"
+              },
+              "answer": "C"
+            }
+          ]
+        }
+      ]
+    },
+    "exam5": {
+      "title": "TOCFL Band A - Nghe Hiểu Đề 5",
+      "duration": 36000,
+      "parts": [
+        {
+          "type": "image_choice",
+          "questions": [
+            {
+              "id": 1,
+              "audio": [
+                "audio/band-a/exam5/1-01.mp3"
+              ],
+              "page_image": "exam-images/listening/band-a/exam5/page-04.png",
+              "options": {
+                "A": "(A)",
+                "B": "(B)",
+                "C": "(C)"
+              },
+              "answer": "A"
+            },
+            {
+              "id": 2,
+              "audio": [
+                "audio/band-a/exam5/1-02.mp3"
+              ],
+              "page_image": "exam-images/listening/band-a/exam5/page-04.png",
+              "options": {
+                "A": "(A)",
+                "B": "(B)",
+                "C": "(C)"
+              },
+              "answer": "B"
+            },
+            {
+              "id": 3,
+              "audio": [
+                "audio/band-a/exam5/1-03.mp3"
+              ],
+              "page_image": "exam-images/listening/band-a/exam5/page-04.png",
+              "options": {
+                "A": "(A)",
+                "B": "(B)",
+                "C": "(C)"
+              },
+              "answer": "B"
+            },
+            {
+              "id": 4,
+              "audio": [
+                "audio/band-a/exam5/1-04.mp3"
+              ],
+              "page_image": "exam-images/listening/band-a/exam5/page-04.png",
+              "options": {
+                "A": "(A)",
+                "B": "(B)",
+                "C": "(C)"
+              },
+              "answer": "C"
+            },
+            {
+              "id": 5,
+              "audio": [
+                "audio/band-a/exam5/1-05.mp3"
+              ],
+              "page_image": "exam-images/listening/band-a/exam5/page-04.png",
+              "options": {
+                "A": "(A)",
+                "B": "(B)",
+                "C": "(C)"
+              },
+              "answer": "A"
+            },
+            {
+              "id": 6,
+              "audio": [
+                "audio/band-a/exam5/1-06.mp3"
+              ],
+              "page_image": "exam-images/listening/band-a/exam5/page-05.png",
+              "options": {
+                "A": "(A)",
+                "B": "(B)",
+                "C": "(C)"
+              },
+              "answer": "B"
+            },
+            {
+              "id": 7,
+              "audio": [
+                "audio/band-a/exam5/1-07.mp3"
+              ],
+              "page_image": "exam-images/listening/band-a/exam5/page-05.png",
+              "options": {
+                "A": "(A)",
+                "B": "(B)",
+                "C": "(C)"
+              },
+              "answer": "A"
+            },
+            {
+              "id": 8,
+              "audio": [
+                "audio/band-a/exam5/1-08.mp3"
+              ],
+              "page_image": "exam-images/listening/band-a/exam5/page-05.png",
+              "options": {
+                "A": "(A)",
+                "B": "(B)",
+                "C": "(C)"
+              },
+              "answer": "B"
+            },
+            {
+              "id": 9,
+              "audio": [
+                "audio/band-a/exam5/1-09.mp3"
+              ],
+              "page_image": "exam-images/listening/band-a/exam5/page-05.png",
+              "options": {
+                "A": "(A)",
+                "B": "(B)",
+                "C": "(C)"
+              },
+              "answer": "A"
+            },
+            {
+              "id": 10,
+              "audio": [
+                "audio/band-a/exam5/1-10.mp3"
+              ],
+              "page_image": "exam-images/listening/band-a/exam5/page-05.png",
+              "options": {
+                "A": "(A)",
+                "B": "(B)",
+                "C": "(C)"
+              },
+              "answer": "B"
+            }
+          ]
+        },
+        {
+          "type": "image_choice",
+          "questions": [
+            {
+              "id": 11,
+              "audio": [
+                "audio/band-a/exam5/2-11.mp3"
+              ],
+              "page_image": "exam-images/listening/band-a/exam5/page-08.png",
+              "options": {
+                "A": "(A)",
+                "B": "(B)",
+                "C": "(C)"
+              },
+              "answer": "B"
+            },
+            {
+              "id": 12,
+              "audio": [
+                "audio/band-a/exam5/2-12.mp3"
+              ],
+              "page_image": "exam-images/listening/band-a/exam5/page-08.png",
+              "options": {
+                "A": "(A)",
+                "B": "(B)",
+                "C": "(C)"
+              },
+              "answer": "A"
+            },
+            {
+              "id": 13,
+              "audio": [
+                "audio/band-a/exam5/2-13.mp3"
+              ],
+              "page_image": "exam-images/listening/band-a/exam5/page-08.png",
+              "options": {
+                "A": "(A)",
+                "B": "(B)",
+                "C": "(C)"
+              },
+              "answer": "C"
+            },
+            {
+              "id": 14,
+              "audio": [
+                "audio/band-a/exam5/2-14.mp3"
+              ],
+              "page_image": "exam-images/listening/band-a/exam5/page-08.png",
+              "options": {
+                "A": "(A)",
+                "B": "(B)",
+                "C": "(C)"
+              },
+              "answer": "B"
+            },
+            {
+              "id": 15,
+              "audio": [
+                "audio/band-a/exam5/2-15.mp3"
+              ],
+              "page_image": "exam-images/listening/band-a/exam5/page-08.png",
+              "options": {
+                "A": "(A)",
+                "B": "(B)",
+                "C": "(C)"
+              },
+              "answer": "C"
+            },
+            {
+              "id": 16,
+              "audio": [
+                "audio/band-a/exam5/2-16.mp3"
+              ],
+              "page_image": "exam-images/listening/band-a/exam5/page-09.png",
+              "options": {
+                "A": "(A)",
+                "B": "(B)",
+                "C": "(C)"
+              },
+              "answer": "B"
+            },
+            {
+              "id": 17,
+              "audio": [
+                "audio/band-a/exam5/2-17.mp3"
+              ],
+              "page_image": "exam-images/listening/band-a/exam5/page-09.png",
+              "options": {
+                "A": "(A)",
+                "B": "(B)",
+                "C": "(C)"
+              },
+              "answer": "C"
+            },
+            {
+              "id": 18,
+              "audio": [
+                "audio/band-a/exam5/2-18.mp3"
+              ],
+              "page_image": "exam-images/listening/band-a/exam5/page-09.png",
+              "options": {
+                "A": "(A)",
+                "B": "(B)",
+                "C": "(C)"
+              },
+              "answer": "A"
+            },
+            {
+              "id": 19,
+              "audio": [
+                "audio/band-a/exam5/2-19.mp3"
+              ],
+              "page_image": "exam-images/listening/band-a/exam5/page-09.png",
+              "options": {
+                "A": "(A)",
+                "B": "(B)",
+                "C": "(C)"
+              },
+              "answer": "A"
+            },
+            {
+              "id": 20,
+              "audio": [
+                "audio/band-a/exam5/2-20.mp3"
+              ],
+              "page_image": "exam-images/listening/band-a/exam5/page-09.png",
+              "options": {
+                "A": "(A)",
+                "B": "(B)",
+                "C": "(C)"
+              },
+              "answer": "B"
+            },
+            {
+              "id": 21,
+              "audio": [
+                "audio/band-a/exam5/2-21.mp3"
+              ],
+              "page_image": "exam-images/listening/band-a/exam5/page-10.png",
+              "options": {
+                "A": "(A)",
+                "B": "(B)",
+                "C": "(C)"
+              },
+              "answer": "B"
+            },
+            {
+              "id": 22,
+              "audio": [
+                "audio/band-a/exam5/2-22.mp3"
+              ],
+              "page_image": "exam-images/listening/band-a/exam5/page-10.png",
+              "options": {
+                "A": "(A)",
+                "B": "(B)",
+                "C": "(C)"
+              },
+              "answer": "C"
+            },
+            {
+              "id": 23,
+              "audio": [
+                "audio/band-a/exam5/2-23.mp3"
+              ],
+              "page_image": "exam-images/listening/band-a/exam5/page-10.png",
+              "options": {
+                "A": "(A)",
+                "B": "(B)",
+                "C": "(C)"
+              },
+              "answer": "B"
+            },
+            {
+              "id": 24,
+              "audio": [
+                "audio/band-a/exam5/2-24.mp3"
+              ],
+              "page_image": "exam-images/listening/band-a/exam5/page-10.png",
+              "options": {
+                "A": "(A)",
+                "B": "(B)",
+                "C": "(C)"
+              },
+              "answer": "C"
+            },
+            {
+              "id": 25,
+              "audio": [
+                "audio/band-a/exam5/2-25.mp3"
+              ],
+              "page_image": "exam-images/listening/band-a/exam5/page-10.png",
+              "options": {
+                "A": "(A)",
+                "B": "(B)",
+                "C": "(C)"
+              },
+              "answer": "A"
+            },
+            {
+              "id": 26,
+              "audio": [
+                "audio/band-a/exam5/2-26.mp3"
+              ],
+              "page_image": "exam-images/listening/band-a/exam5/page-11.png",
+              "options": {
+                "A": "(A)",
+                "B": "(B)",
+                "C": "(C)"
+              },
+              "answer": "C"
+            },
+            {
+              "id": 27,
+              "audio": [
+                "audio/band-a/exam5/2-27.mp3"
+              ],
+              "page_image": "exam-images/listening/band-a/exam5/page-11.png",
+              "options": {
+                "A": "(A)",
+                "B": "(B)",
+                "C": "(C)"
+              },
+              "answer": "A"
+            },
+            {
+              "id": 28,
+              "audio": [
+                "audio/band-a/exam5/2-28.mp3"
+              ],
+              "page_image": "exam-images/listening/band-a/exam5/page-11.png",
+              "options": {
+                "A": "(A)",
+                "B": "(B)",
+                "C": "(C)"
+              },
+              "answer": "C"
+            }
+          ]
+        },
+        {
+          "type": "image_choice",
+          "questions": [
+            {
+              "id": 29,
+              "audio": [
+                "audio/band-a/exam5/3-29.mp3"
+              ],
+              "page_image": "exam-images/listening/band-a/exam5/page-13.png",
+              "options": {
+                "A": "(A)",
+                "B": "(B)",
+                "C": "(C)"
+              },
+              "answer": "A"
+            },
+            {
+              "id": 30,
+              "audio": [
+                "audio/band-a/exam5/3-30.mp3"
+              ],
+              "page_image": "exam-images/listening/band-a/exam5/page-13.png",
+              "options": {
+                "A": "(A)",
+                "B": "(B)",
+                "C": "(C)"
+              },
+              "answer": "B"
+            },
+            {
+              "id": 31,
+              "audio": [
+                "audio/band-a/exam5/3-31.mp3"
+              ],
+              "page_image": "exam-images/listening/band-a/exam5/page-13.png",
+              "options": {
+                "A": "(A)",
+                "B": "(B)",
+                "C": "(C)"
+              },
+              "answer": "C"
+            },
+            {
+              "id": 32,
+              "audio": [
+                "audio/band-a/exam5/3-32.mp3"
+              ],
+              "page_image": "exam-images/listening/band-a/exam5/page-13.png",
+              "options": {
+                "A": "(A)",
+                "B": "(B)",
+                "C": "(C)"
+              },
+              "answer": "C"
+            },
+            {
+              "id": 33,
+              "audio": [
+                "audio/band-a/exam5/3-33.mp3"
+              ],
+              "page_image": "exam-images/listening/band-a/exam5/page-13.png",
+              "options": {
+                "A": "(A)",
+                "B": "(B)",
+                "C": "(C)"
+              },
+              "answer": "C"
+            },
+            {
+              "id": 34,
+              "audio": [
+                "audio/band-a/exam5/3-34.mp3"
+              ],
+              "page_image": "exam-images/listening/band-a/exam5/page-14.png",
+              "options": {
+                "A": "(A)",
+                "B": "(B)",
+                "C": "(C)"
+              },
+              "answer": "A"
+            },
+            {
+              "id": 35,
+              "audio": [
+                "audio/band-a/exam5/3-35.mp3"
+              ],
+              "page_image": "exam-images/listening/band-a/exam5/page-14.png",
+              "options": {
+                "A": "(A)",
+                "B": "(B)",
+                "C": "(C)"
+              },
+              "answer": "C"
+            },
+            {
+              "id": 36,
+              "audio": [
+                "audio/band-a/exam5/3-36.mp3"
+              ],
+              "page_image": "exam-images/listening/band-a/exam5/page-14.png",
+              "options": {
+                "A": "(A)",
+                "B": "(B)",
+                "C": "(C)"
+              },
+              "answer": "C"
+            },
+            {
+              "id": 37,
+              "audio": [
+                "audio/band-a/exam5/3-37.mp3"
+              ],
+              "page_image": "exam-images/listening/band-a/exam5/page-14.png",
+              "options": {
+                "A": "(A)",
+                "B": "(B)",
+                "C": "(C)"
+              },
+              "answer": "A"
+            },
+            {
+              "id": 38,
+              "audio": [
+                "audio/band-a/exam5/3-38.mp3"
+              ],
+              "page_image": "exam-images/listening/band-a/exam5/page-14.png",
+              "options": {
+                "A": "(A)",
+                "B": "(B)",
+                "C": "(C)"
+              },
+              "answer": "B"
+            },
+            {
+              "id": 39,
+              "audio": [
+                "audio/band-a/exam5/3-39.mp3"
+              ],
+              "page_image": "exam-images/listening/band-a/exam5/page-15.png",
+              "options": {
+                "A": "(A)",
+                "B": "(B)",
+                "C": "(C)"
+              },
+              "answer": "B"
+            },
+            {
+              "id": 40,
+              "audio": [
+                "audio/band-a/exam5/3-40.mp3"
+              ],
+              "page_image": "exam-images/listening/band-a/exam5/page-15.png",
+              "options": {
+                "A": "(A)",
+                "B": "(B)",
+                "C": "(C)"
+              },
+              "answer": "B"
+            }
+          ]
+        },
+        {
+          "type": "text_choice",
+          "questions": [
+            {
+              "id": 41,
+              "audio": [
+                "audio/band-a/exam5/4-41.mp3"
+              ],
+              "options": {
+                "A": "因為他想睡覺",
+                "B": "因為他想運動",
+                "C": "因為他不想上班",
+                "D": "因為他起不了床"
+              },
+              "answer": "A"
+            },
+            {
+              "id": 42,
+              "audio": [
+                "audio/band-a/exam5/4-42.mp3"
+              ],
+              "options": {
+                "A": "她旅行時不小心掉了東西",
+                "B": "她旅行時有些想去的地方沒去",
+                "C": "她覺得旅行時最麻煩的是交通",
+                "D": "她覺得旅行最重要的是風景漂亮"
+              },
+              "answer": "A"
+            },
+            {
+              "id": 43,
+              "audio": [
+                "audio/band-a/exam5/4-43.mp3"
+              ],
+              "options": {
+                "A": "她怕考得不好",
+                "B": "她的成績不好",
+                "C": "她沒參加考試",
+                "D": "她怕題目寫不完"
+              },
+              "answer": "A"
+            },
+            {
+              "id": 44,
+              "audio": [
+                "audio/band-a/exam5/4-44.mp3"
+              ],
+              "options": {
+                "A": "想請他搬家",
+                "B": "想請他吃飯",
+                "C": "介紹女朋友給他",
+                "D": "請他注意聲音的大小"
+              },
+              "answer": "D"
+            },
+            {
+              "id": 45,
+              "audio": [
+                "audio/band-a/exam5/4-45.mp3"
+              ],
+              "options": {
+                "A": "她習慣在不同的時間睡覺",
+                "B": "她每天都是這個時間起床",
+                "C": "她認為睡覺對健康有影響",
+                "D": "她不覺得自己很晚才睡覺"
+              },
+              "answer": "D"
+            },
+            {
+              "id": 46,
+              "audio": [
+                "audio/band-a/exam5/4-46.mp3"
+              ],
+              "options": {
+                "A": "他剛從海邊回來",
+                "B": "他喜歡夏天去海邊玩",
+                "C": "他給這位小姐買了褲子",
+                "D": "他約了這位小姐明天去運動"
+              },
+              "answer": "D"
+            },
+            {
+              "id": 47,
+              "audio": [
+                "audio/band-a/exam5/4-47.mp3"
+              ],
+              "options": {
+                "A": "她不想請這位先生吃蛋糕",
+                "B": "她想幫這位先生慶祝生日",
+                "C": "她要朋友來參加舞會就好",
+                "D": "她想要大家一起唱生日歌"
+              },
+              "answer": "C"
+            },
+            {
+              "id": 48,
+              "audio": [
+                "audio/band-a/exam5/4-48.mp3"
+              ],
+              "options": {
+                "A": "她想拿商店送的東西",
+                "B": "她最近很想花錢買東西",
+                "C": "她想要這位先生送她禮物",
+                "D": "她想和這位先生一起去逛街"
+              },
+              "answer": "A"
+            },
+            {
+              "id": 49,
+              "audio": [
+                "audio/band-a/exam5/4-49.mp3"
+              ],
+              "options": {
+                "A": "這位先生今天想留在家裡",
+                "B": "這位小姐怕自己太晚回家",
+                "C": "他們兩人今天都想看棒球比賽",
+                "D": "他們已經買完衣服回家休息了"
+              },
+              "answer": "A"
+            },
+            {
+              "id": 50,
+              "audio": [
+                "audio/band-a/exam5/4-50.mp3"
+              ],
+              "options": {
+                "A": "她要把錢還給客人",
+                "B": "東西賣出去就不能換了",
+                "C": "她沒有東西可以換給客人",
+                "D": "沒有發票，就不能換東西"
+              },
+              "answer": "D"
+            }
+          ]
+        }
+      ]
     }
   },
   "bandB": {
