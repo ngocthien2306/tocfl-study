@@ -1,7 +1,7 @@
 import React from 'react';
 import { useLang } from '../../i18n/LangContext';
 
-export type TabId = 'flashcard' | 'reading' | 'exam' | 'listening' | 'ai' | 'progress' | 'interview';
+export type TabId = 'flashcard' | 'reading' | 'exam' | 'ai' | 'progress' | 'interview';
 
 interface Props {
   active:   TabId;
@@ -34,12 +34,6 @@ const IconExam = () => (
   </svg>
 );
 
-const IconListening = () => (
-  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-    <path d="M3 18v-6a9 9 0 0 1 18 0v6"/>
-    <path d="M21 19a2 2 0 0 1-2 2h-1a2 2 0 0 1-2-2v-3a2 2 0 0 1 2-2h3zM3 19a2 2 0 0 0 2 2h1a2 2 0 0 0 2-2v-3a2 2 0 0 0-2-2H3z"/>
-  </svg>
-);
 
 const IconAI = () => (
   <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
@@ -75,9 +69,8 @@ const TABS: {
   label: Record<'vi' | 'zh' | 'en', string>;
 }[] = [
   { id: 'flashcard', icon: IconFlashcard, label: { vi: 'Từ vựng',   zh: '詞彙',   en: 'Vocab'    } },
-  { id: 'reading',   icon: IconReading,   label: { vi: 'Luyện đọc', zh: '閱讀',   en: 'Reading'  } },
-  { id: 'exam',      icon: IconExam,      label: { vi: 'Thi thử',   zh: '考試',   en: 'Exam'     } },
-  { id: 'listening', icon: IconListening, label: { vi: 'Nghe',      zh: '聽力',   en: 'Listen'   } },
+  { id: 'reading',   icon: IconReading,   label: { vi: 'Đoạn văn', zh: '閱讀',   en: 'Paragraph'  } },
+  { id: 'exam',      icon: IconExam,      label: { vi: 'Thi thử', zh: '考試',   en: 'Mock Test'   } },
   { id: 'ai',        icon: IconAI,        label: { vi: 'AI Tạo',    zh: 'AI生成', en: 'AI Gen'   } },
   { id: 'progress',  icon: IconProgress,  label: { vi: 'Tiến độ',   zh: '進度',   en: 'Progress' } },
   { id: 'interview', icon: IconInterview, label: { vi: 'Interview',  zh: '面試',   en: 'Interview'} },

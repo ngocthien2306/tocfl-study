@@ -501,6 +501,7 @@ button { cursor: pointer; font-family: inherit; }
   font-size: .9rem;
   color: var(--text-primary);
   transition: border-color .15s, background .15s, box-shadow .15s;
+  user-select: text;
 }
 .option-btn:hover:not(:disabled) { border-color: var(--border-focus); background: var(--surface-2); }
 .option-btn.selected { border-color: var(--accent); background: var(--accent-light); box-shadow: 0 0 0 3px rgba(37,99,235,.12); }

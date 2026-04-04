@@ -14,8 +14,7 @@ import { AppFooter }         from './components/Layout/AppFooter';
 import type { TabId }        from './components/Layout/AppNav';
 import { FlashcardModule }   from './components/Flashcard/FlashcardModule';
 import { ReadingModule }     from './components/Reading/ReadingModule';
-import { ExamModule }        from './components/Exam/ExamModule';
-import { ListeningModule }   from './components/Listening/ListeningModule';
+import { ExamHubModule }     from './components/Exam/ExamHubModule';
 import { ProgressModule }    from './components/Progress/ProgressModule';
 import { AIGeneratorModule } from './components/AIGenerator/AIGeneratorModule';
 import { InterviewModule }   from './components/Interview/InterviewModule';
@@ -134,20 +133,18 @@ export default function App() {
               examData={examData}
               progress={progress}
               markReading={handleMarkReading}
-            />
-          )}
-
-          {tab === 'exam' && examData && (
-            <ExamModule
-              examData={examData}
-              addExam={handleAddExam}
-              pastExams={progress.exams}
               token={auth.token}
             />
           )}
 
-          {tab === 'listening' && listeningData && (
-            <ListeningModule listeningData={listeningData} token={auth.token} />
+          {tab === 'exam' && examData && listeningData && (
+            <ExamHubModule
+              examData={examData}
+              listeningData={listeningData}
+              addExam={handleAddExam}
+              pastExams={progress.exams}
+              token={auth.token}
+            />
           )}
 
           {tab === 'ai' && <AIGeneratorModule vocabulary={vocabulary} progress={progress} />}

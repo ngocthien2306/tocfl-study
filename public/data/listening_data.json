@@ -2,7 +2,7 @@
   "bandA": {
     "exam1": {
       "title": "TOCFL Band A · Nghe (Đề 1)",
-      "duration": 3600,
+      "duration": 36000,
       "parts": [
         {
           "id": "part1",
@@ -690,7 +690,7 @@
     },
     "exam2": {
       "title": "TOCFL Band A · Nghe (Đề 2)",
-      "duration": 3600,
+      "duration": 36000,
       "parts": [
         {
           "id": "part1",
@@ -1378,7 +1378,7 @@
     },
     "exam3": {
       "title": "TOCFL Band A · Nghe (Đề 3)",
-      "duration": 3600,
+      "duration": 36000,
       "parts": [
         {
           "id": "part1",
@@ -2068,7 +2068,7 @@
   "bandB": {
     "exam1": {
       "title": "TOCFL Band B · Nghe (Đề 1)",
-      "duration": 3600,
+      "duration": 36000,
       "parts": [
         {
           "id": "part1",
@@ -2760,7 +2760,7 @@
     },
     "exam2": {
       "title": "TOCFL Band B · Nghe (Đề 2)",
-      "duration": 3600,
+      "duration": 36000,
       "parts": [
         {
           "id": "part1",
@@ -3443,7 +3443,7 @@
     },
     "exam3": {
       "title": "TOCFL Band B · Nghe (Đề 3)",
-      "duration": 3600,
+      "duration": 36000,
       "parts": [
         {
           "id": "part1",
@@ -4128,7 +4128,7 @@
   "bandC": {
     "exam1": {
       "title": "TOCFL Band C · Nghe (Đề 1)",
-      "duration": 3600,
+      "duration": 36000,
       "parts": [
         {
           "id": "part1",
@@ -4815,7 +4815,7 @@
     },
     "exam2": {
       "title": "TOCFL Band C · Nghe (Đề 2)",
-      "duration": 3600,
+      "duration": 36000,
       "parts": [
         {
           "id": "part1",
@@ -5502,7 +5502,7 @@
     },
     "exam3": {
       "title": "TOCFL Band C · Nghe (Đề 3)",
-      "duration": 3600,
+      "duration": 36000,
       "parts": [
         {
           "id": "part1",

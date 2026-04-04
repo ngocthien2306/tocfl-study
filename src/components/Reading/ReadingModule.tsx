@@ -1,22 +1,30 @@
-import React, { useMemo, useState } from 'react';
+import React, { useMemo, useState, useEffect, useRef, useCallback } from 'react';
 import type { ExamData, FlatQuestion, Progress, OptionKey } from '../../types';
+import type { AIExplanationData } from '../../utils/aiExplanation';
 import { ClozeQuestion } from './ClozeQuestion';
 import { AIReadingGenerator } from './AIReadingGenerator';
 import { useLang } from '../../i18n/LangContext';
 import type { Lang } from '../../i18n/translations';
 import { t } from '../../i18n/translations';
 import { IconBookOpen } from '../UI/Icons';
+import { HighlightableText } from '../HighlightableText';
+import { useApiKey } from '../../contexts/ApiKeyContext';
+import { useAIModel } from '../../hooks/useAIModel';
+import {
+  loadExplanation, saveExplanation,
+  generateReadingExplanation, stripJsonSuffix,
+} from '../../utils/aiExplanation';
 
 interface Props {
-  examData: ExamData;
-  progress?: Progress;
+  examData:    ExamData;
+  progress?:   Progress;
   markReading: (key: string, correct: boolean) => void;
+  token?:      string | null;
 }
 
 type ReadingMode = 'practice' | 'ai';
-
-type Band    = 'A' | 'B';
-type PartKey = 'part3' | 'part4' | 'part5' | 'part1' | 'part2';
+type Band        = 'A' | 'B';
+type PartKey     = 'part3' | 'part4' | 'part5' | 'part1' | 'part2';
 
 function getPartLabel(key: PartKey, lang: Lang): string {
   const map: Record<PartKey, string> = {
@@ -31,16 +39,14 @@ function getPartLabel(key: PartKey, lang: Lang): string {
 
 const BAND_A_PARTS: PartKey[] = ['part3', 'part4', 'part5'];
 const BAND_B_PARTS: PartKey[] = ['part1', 'part2'];
-
 const ALL_BAND_A_EXAMS = ['exam1', 'exam2', 'exam3'] as const;
 
 function buildQuestions(band: Band, part: PartKey, data: ExamData): FlatQuestion[] {
   const out: FlatQuestion[] = [];
-  let uid = 1; // sequential unique ID across all exams
+  let uid = 1;
 
   if (band === 'A') {
     if (part === 'part3') {
-      // Combine Part 3 from all available exams, including images
       ALL_BAND_A_EXAMS.forEach(examKey => {
         const exam = data.bandA[examKey];
         if (!exam) return;
@@ -49,19 +55,11 @@ function buildQuestions(band: Band, part: PartKey, data: ExamData): FlatQuestion
           const pageImage = g.page_image && p3.image_dir
             ? `${p3.image_dir}/${g.page_image}` : undefined;
           g.questions.forEach(q => {
-            out.push({
-              ...q,
-              id: uid++,
-              type: 'gap',
-              part,
-              context: g.context,
-              pageImage,
-            });
+            out.push({ ...q, id: uid++, type: 'gap', part, context: g.context, pageImage });
           });
         });
       });
     } else if (part === 'part5') {
-      // Combine Part 5 from all available exams
       ALL_BAND_A_EXAMS.forEach(examKey => {
         const exam = data.bandA[examKey];
         if (!exam) return;
@@ -92,8 +90,169 @@ function buildQuestions(band: Band, part: PartKey, data: ExamData): FlatQuestion
 
 interface SessionStat { correct: number; total: number }
 
-export const ReadingModule: React.FC<Props> = ({ examData, markReading }) => {
+// ─── AI Drawer ────────────────────────────────────────────────────────────────
+interface AIDrawerProps {
+  apiKey:    string;
+  hasKey:    boolean;
+  model:     string;
+  cacheKey:  string;
+  question?: string;
+  sentence?: string;
+  options:   Partial<Record<OptionKey, string>>;
+  answer:    OptionKey;
+  context?:  string;
+  passage?:  string;
+  token?:    string | null;
+}
+
+const AIDrawer: React.FC<AIDrawerProps> = ({
+  apiKey, hasKey, model, cacheKey,
+  question, sentence, options, answer, context, passage, token,
+}) => {
+  const [status,     setStatus    ] = useState<'idle' | 'loading' | 'done'>('idle');
+  const [expanded,   setExpanded  ] = useState(false);
+  const [streamText, setStreamText] = useState('');
+  const [data,       setData      ] = useState<AIExplanationData | null>(() => loadExplanation(cacheKey));
+  const prevKey = useRef(cacheKey);
+
+  useEffect(() => {
+    if (prevKey.current !== cacheKey) {
+      prevKey.current = cacheKey;
+      const cached = loadExplanation(cacheKey);
+      setData(cached);
+      setStatus(cached ? 'done' : 'idle');
+      setExpanded(false);
+      setStreamText('');
+    }
+  }, [cacheKey]);
+
+  const handleAsk = useCallback(async () => {
+    if (!hasKey || status === 'loading') return;
+    setStatus('loading');
+    setStreamText('');
+    setExpanded(true);
+    try {
+      const result = await generateReadingExplanation({
+        apiKey, model, questionId: 0,
+        question, sentence, options, answer, context, passage,
+        onToken: tok => setStreamText(prev => prev + tok),
+      });
+      saveExplanation(cacheKey, result, token);
+      setData(result);
+      setStatus('done');
+      setStreamText('');
+    } catch {
+      setStatus('idle');
+      setExpanded(false);
+    }
+  }, [apiKey, hasKey, model, status, cacheKey, question, sentence, options, answer, context, passage, token]);
+
+  if (!hasKey) {
+    return (
+      <div style={{
+        marginTop: 12, padding: '8px 12px', borderRadius: 8,
+        background: 'var(--bg)', border: '1px dashed var(--border)',
+        fontSize: '.78rem', color: 'var(--text-muted)', textAlign: 'center',
+      }}>
+        🤖 Nhập OpenAI API key để dùng AI giải thích câu này
+      </div>
+    );
+  }
+
+  const hasCached = !!data;
+
+  return (
+    <div style={{ marginTop: 12 }}>
+      <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+        {status === 'idle' && !hasCached && (
+          <button
+            className="btn btn-ghost btn-sm"
+            style={{ border: '1px solid var(--accent)', color: 'var(--accent)', fontSize: '.78rem', padding: '4px 12px', borderRadius: 20 }}
+            onClick={handleAsk}
+          >
+            🤖 Hỏi AI giải thích
+          </button>
+        )}
+        {status === 'loading' && (
+          <div style={{ display: 'flex', alignItems: 'center', gap: 6, fontSize: '.78rem', color: 'var(--accent)' }}>
+            <span className="iv-typing-dots"><span/><span/><span/></span>
+            Đang phân tích...
+          </div>
+        )}
+        {(status === 'done' || (hasCached && status === 'idle')) && (
+          <button
+            className="btn btn-ghost btn-sm"
+            style={{ border: '1px solid var(--success)', color: 'var(--success)', fontSize: '.78rem', padding: '4px 12px', borderRadius: 20 }}
+            onClick={() => setExpanded(e => !e)}
+          >
+            ✓ AI đã giải {expanded ? '▲' : '▼'}
+          </button>
+        )}
+        {hasCached && status !== 'loading' && (
+          <button
+            className="btn btn-ghost btn-sm"
+            style={{ fontSize: '.72rem', color: 'var(--text-muted)', padding: '3px 8px' }}
+            onClick={handleAsk}
+            title="Tạo lại giải thích"
+          >
+            ↻ Tạo lại
+          </button>
+        )}
+      </div>
+
+      {expanded && (
+        <div style={{ marginTop: 8, display: 'flex', flexDirection: 'column', gap: 8 }}>
+          <div style={{
+            padding: '12px 14px', background: 'var(--bg)', borderRadius: 8,
+            border: '1px solid var(--border)', fontSize: '.83rem', lineHeight: 1.75,
+          }}>
+            {status === 'loading' && (
+              <div style={{ color: 'var(--text-secondary)', whiteSpace: 'pre-wrap' }}>
+                {stripJsonSuffix(streamText)}
+                <span className="iv-typing-cursor">▍</span>
+              </div>
+            )}
+            {status !== 'loading' && data && (
+              <div style={{ whiteSpace: 'pre-wrap', color: 'var(--text)' }}>{data.explanation}</div>
+            )}
+          </div>
+
+          {status !== 'loading' && data && data.vocabulary.length > 0 && (
+            <div style={{ borderRadius: 8, border: '1.5px solid var(--accent)', overflow: 'hidden' }}>
+              <div style={{ background: 'var(--accent)', color: '#fff', padding: '7px 14px', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+                <span style={{ fontWeight: 700, fontSize: '.78rem', letterSpacing: '.05em' }}>📚 TỪ VỰNG CẦN HỌC</span>
+                <span style={{ fontSize: '.7rem', opacity: 0.85 }}>{data.vocabulary.length} từ</span>
+              </div>
+              <div style={{ background: 'var(--accent-light)', padding: '10px 12px', display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(160px, 1fr))', gap: 8 }}>
+                {data.vocabulary.map((v, i) => (
+                  <div key={i} style={{ background: 'var(--surface)', borderRadius: 8, padding: '10px 12px', border: '1px solid var(--border)', boxShadow: '0 1px 4px rgba(0,0,0,.06)' }}>
+                    <div style={{ display: 'flex', alignItems: 'baseline', gap: 6, marginBottom: 4 }}>
+                      <span style={{ fontSize: '1.35rem', fontWeight: 800, color: 'var(--accent)', lineHeight: 1 }}>{v.word}</span>
+                      <span style={{ fontSize: '.72rem', color: 'var(--text-muted)', fontStyle: 'italic' }}>{v.pinyin}</span>
+                    </div>
+                    <div style={{ fontSize: '.8rem', fontWeight: 600, color: 'var(--text)', marginBottom: v.example ? 6 : 0 }}>{v.meaning}</div>
+                    {v.example && (
+                      <div style={{ fontSize: '.73rem', color: 'var(--text-secondary)', borderTop: '1px dashed var(--border)', paddingTop: 5, lineHeight: 1.5 }}>
+                        {v.example}
+                      </div>
+                    )}
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
+        </div>
+      )}
+    </div>
+  );
+};
+
+// ─── Main component ───────────────────────────────────────────────────────────
+export const ReadingModule: React.FC<Props> = ({ examData, markReading, token }) => {
   const { lang } = useLang();
+  const { apiKey, hasKey } = useApiKey();
+  const { model } = useAIModel();
+
   const [mode,     setMode]     = useState<ReadingMode>('practice');
   const [band,     setBand]     = useState<Band>('B');
   const [part,     setPart]     = useState<PartKey>('part2');
@@ -202,6 +361,8 @@ export const ReadingModule: React.FC<Props> = ({ examData, markReading }) => {
     ? `第 ${q.id} 題`
     : `${t('read_q_of', lang)} ${q.id}.`;
 
+  const cacheKey = `reading_${band}_${part}_q${q.id}`;
+
   return (
     <div>
       {modeSwitcher}
@@ -257,16 +418,8 @@ export const ReadingModule: React.FC<Props> = ({ examData, markReading }) => {
           </div>
         )}
 
-        {/* Context image (Part 3) */}
         {q.pageImage && (
-          <div style={{
-            border: '1px solid var(--border)',
-            borderRadius: 'var(--radius)',
-            overflow: 'hidden',
-            background: '#f8f9fa',
-            marginBottom: 14,
-            textAlign: 'center',
-          }}>
+          <div style={{ border: '1px solid var(--border)', borderRadius: 'var(--radius)', overflow: 'hidden', background: '#f8f9fa', marginBottom: 14, textAlign: 'center' }}>
             <img
               src={`${import.meta.env.BASE_URL}${q.pageImage}`}
               alt={q.context ?? `Hình câu ${q.id}`}
@@ -278,13 +431,21 @@ export const ReadingModule: React.FC<Props> = ({ examData, markReading }) => {
         {showPassage && q.passage && (
           <div className="passage-box">
             <div className="passage-label">{t('passage_label', lang)}</div>
-            {q.passage}
+            <HighlightableText
+              text={q.passage}
+              page_key={`reading_${band}_${part}_p${q.passageId ?? q.id}`}
+            />
           </div>
         )}
 
         <div className="question-header">
           <span className="question-num">{qNumLabel}</span>
-          {q.question ?? q.sentence}
+          {(q.question ?? q.sentence) && (
+            <HighlightableText
+              text={q.question ?? q.sentence ?? ''}
+              page_key={`reading_${band}_${part}_q${q.id}`}
+            />
+          )}
         </div>
 
         <div className="option-list">
@@ -297,7 +458,10 @@ export const ReadingModule: React.FC<Props> = ({ examData, markReading }) => {
             return (
               <button key={key} className={cls} onClick={() => handleSelect(key)} disabled={answered}>
                 <span className="option-key">{key}</span>
-                <span>{text}</span>
+                <HighlightableText
+                  text={text}
+                  page_key={`reading_${band}_${part}_q${q.id}_opt${key}`}
+                />
               </button>
             );
           })}
@@ -313,18 +477,38 @@ export const ReadingModule: React.FC<Props> = ({ examData, markReading }) => {
           </div>
         )}
 
+        {/* AI Drawer */}
+        <AIDrawer
+          apiKey={apiKey}
+          hasKey={hasKey}
+          model={model}
+          cacheKey={cacheKey}
+          question={q.question}
+          sentence={q.sentence}
+          options={q.options}
+          answer={q.answer}
+          context={q.context}
+          passage={q.passage}
+          token={token}
+        />
+
+        {/* Navigation */}
         <div className="flex gap-8 mt-16">
           <button className="btn btn-outline" onClick={handlePrev} disabled={qIdx === 0}>
             {t('btn_prev', lang)}
           </button>
-          {!answered
-            ? <button className="btn btn-primary" onClick={handleCheck} disabled={!selected}>
-                {t('read_check', lang)}
-              </button>
-            : <button className="btn btn-primary" onClick={handleNext} disabled={qIdx === questions.length - 1}>
-                {t('read_next_q', lang)}
-              </button>
-          }
+          {selected && !answered && (
+            <button className="btn btn-outline" onClick={handleCheck}>
+              {t('read_check', lang)}
+            </button>
+          )}
+          <button
+            className="btn btn-primary"
+            onClick={handleNext}
+            disabled={qIdx === questions.length - 1}
+          >
+            {t('read_next_q', lang)}
+          </button>
         </div>
       </div>
     </div>
@@ -333,7 +517,7 @@ export const ReadingModule: React.FC<Props> = ({ examData, markReading }) => {
 
 // ─── Cloze section (Band A Part 4) ────────────────────────────────────────────
 interface ClozeProps {
-  examData: ExamData;
+  examData:    ExamData;
   markReading: (key: string, correct: boolean) => void;
 }
 const ClozeSection: React.FC<ClozeProps> = ({ examData, markReading }) => {

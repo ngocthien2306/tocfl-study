@@ -23,7 +23,7 @@ interface Props {
 
 type Phase = 'select' | 'exam' | 'result' | 'history' | 'review';
 
-const EXAM_DURATION = 60 * 60; // 60 min
+const EXAM_DURATION = 60 * 60 * 24 * 10; // 60 min
 const DRAFT_KEY = 'tocfl_exam_draft';
 
 interface ExamDraft {
@@ -46,9 +46,6 @@ function saveDraft(d: ExamDraft) {
 }
 function clearDraft() {
   try { localStorage.removeItem(DRAFT_KEY); } catch { /* silent */ }
-}
-function fmtSeconds(s: number) {
-  return `${String(Math.floor(s / 60)).padStart(2, '0')}:${String(s % 60).padStart(2, '0')}`;
 }
 
 function buildExamQuestions(band: 'A' | 'B', examKey: ExamKey, data: ExamData): FlatQuestion[] {
@@ -388,13 +385,23 @@ export const ExamModule: React.FC<Props> = ({ examData, addExam, pastExams, toke
             <div className="question-header">
               <span className="question-num">{t('question_prefix')} {q.id}.</span>
               {q.type === 'image_choice' && q.sentence && (
-                <span style={{ fontSize: '1.1rem', fontWeight: 600 }}>{q.sentence}</span>
+                <HighlightableText
+                  text={q.sentence}
+                  page_key={`exam_${band}_${examKey}_q${q.id}`}
+                  style={{ fontSize: '1.1rem', fontWeight: 600 }}
+                />
               )}
               {(q.type === 'picture_description' || q.type === 'image_material') && q.question && (
-                <span>{q.question}</span>
+                <HighlightableText
+                  text={q.question}
+                  page_key={`exam_${band}_${examKey}_q${q.id}`}
+                />
               )}
-              {(q.type === 'mc' || q.type === 'gap' || q.type === 'cloze') && (
-                <span>{q.question ?? q.sentence}</span>
+              {(q.type === 'mc' || q.type === 'gap' || q.type === 'cloze') && (q.question ?? q.sentence) && (
+                <HighlightableText
+                  text={q.question ?? q.sentence ?? ''}
+                  page_key={`exam_${band}_${examKey}_q${q.id}`}
+                />
               )}
             </div>
 
@@ -409,7 +416,10 @@ export const ExamModule: React.FC<Props> = ({ examData, addExam, pastExams, toke
                   <span className="option-key">{key}</span>
                   {q.type === 'image_choice'
                     ? <span style={{ color: 'var(--text-secondary)', fontSize: '.85rem' }}>{t('pick_image')} {key}</span>
-                    : <span>{text}</span>
+                    : <HighlightableText
+                        text={text}
+                        page_key={`exam_${band}_${examKey}_q${q.id}_opt${key}`}
+                      />
                   }
                 </button>
               ))}
@@ -549,6 +559,13 @@ const SelectPhase: React.FC<{
         const elapsed = Math.floor((Date.now() - draft.savedAt) / 1000);
         const remaining = Math.max(0, draft.timeLeft - elapsed);
         const answeredCount = Object.keys(draft.answers).length;
+        const mm = String(Math.floor(remaining / 60)).padStart(2, '0');
+        const ss = String(remaining % 60).padStart(2, '0');
+        const draftLbl = {
+          vi: { title: 'Bài thi đang tạm dừng', answered: 'câu đã trả lời', left: 'còn lại', resume: '▶ Tiếp tục', discard: 'Huỷ bài' },
+          zh: { title: '考試未完成',             answered: '題已作答',       left: '剩餘',     resume: '▶ 繼續作答', discard: '放棄'   },
+          en: { title: 'Exam in progress',       answered: 'answered',       left: 'left',     resume: '▶ Continue', discard: 'Discard' },
+        }[lang];
         return (
           <div style={{
             background: 'var(--accent-light)', border: '1px solid var(--accent)',
@@ -557,17 +574,17 @@ const SelectPhase: React.FC<{
           }}>
             <div style={{ flex: 1, minWidth: 180 }}>
               <div style={{ fontWeight: 700, fontSize: '.95rem', color: 'var(--accent)', marginBottom: 3 }}>
-                ⏸ Bài thi đang tạm dừng
+                ⏸ {draftLbl.title}
               </div>
               <div style={{ fontSize: '.82rem', color: 'var(--text-secondary)', display: 'flex', gap: 12, flexWrap: 'wrap' }}>
-                <span>Band {draft.band} · {draft.examKey.replace('exam', 'Đề ')}</span>
-                <span>{answeredCount} câu đã trả lời</span>
-                <span>⏱ Còn {fmtSeconds(remaining)}</span>
+                <span>Band {draft.band} · {examLabels[draft.examKey]?.[lang] ?? draft.examKey}</span>
+                <span>{answeredCount} {draftLbl.answered}</span>
+                <span>⏱ {mm}:{ss} {draftLbl.left}</span>
               </div>
             </div>
             <div style={{ display: 'flex', gap: 8, flexShrink: 0 }}>
-              <button className="btn btn-primary btn-sm" onClick={onResume}>▶ Tiếp tục</button>
-              <button className="btn btn-ghost btn-sm" style={{ color: 'var(--error)' }} onClick={onDiscardDraft}>Huỷ bài</button>
+              <button className="btn btn-primary btn-sm" onClick={onResume}>{draftLbl.resume}</button>
+              <button className="btn btn-ghost btn-sm" style={{ color: 'var(--error)' }} onClick={onDiscardDraft}>{draftLbl.discard}</button>
             </div>
           </div>
         );
@@ -635,45 +652,50 @@ const SelectPhase: React.FC<{
         </div>
       </div>
 
-      {attempts.length > 0 && (
-        <div className="card">
-          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 12 }}>
-            <h3 style={{ margin: 0 }}>{t('exam_history')}</h3>
-            <button className="btn btn-ghost btn-sm" onClick={onViewHistory}>
-              📋 Xem tất cả ({attempts.length})
-            </button>
+      {attempts.length > 0 && (() => {
+        const histLbl = {
+          vi: { title: 'Lịch sử gần đây', viewAll: 'Xem tất cả', wrong: 'câu sai', review: 'Xem lại' },
+          zh: { title: '近期紀錄',         viewAll: '查看全部',   wrong: '題錯',     review: '回顧'     },
+          en: { title: 'Recent attempts',  viewAll: 'View all',   wrong: 'wrong',    review: 'Review'  },
+        }[lang];
+        return (
+          <div className="card">
+            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 12 }}>
+              <h3 style={{ margin: 0 }}>{histLbl.title}</h3>
+              <button className="btn btn-ghost btn-sm" onClick={onViewHistory}>
+                📋 {histLbl.viewAll} ({attempts.length})
+              </button>
+            </div>
+            {attempts.slice(0, 3).map((a) => {
+              const pct = Math.round(a.score / a.total * 100);
+              const wrongCt = a.questions.filter(q => q.chosen !== q.answer).length;
+              return (
+                <div key={a.id} style={{
+                  display: 'flex', alignItems: 'center', gap: 10,
+                  padding: '8px 0', borderBottom: '1px solid var(--bg)',
+                  flexWrap: 'wrap',
+                }}>
+                  <div style={{ flex: 1, minWidth: 120 }}>
+                    <div style={{ fontSize: '.82rem' }}>Band {a.band} · {examLabels[a.examKey as ExamKey]?.[lang] ?? a.examKey} · ⏱ {fmtDuration(a.timeTakenSecs)}</div>
+                    <div style={{ fontSize: '.75rem', color: 'var(--text-muted)' }}>{fmtDate(a.date)}</div>
+                  </div>
+                  <div style={{ textAlign: 'right', flexShrink: 0 }}>
+                    <div style={{ fontWeight: 700, color: pct >= 70 ? 'var(--success)' : 'var(--error)' }}>
+                      {a.score}/{a.total} ({pct}%)
+                    </div>
+                    <div style={{ fontSize: '.75rem', color: 'var(--text-muted)' }}>
+                      {wrongCt} {histLbl.wrong}
+                    </div>
+                  </div>
+                  <button className="btn btn-outline btn-sm" onClick={() => onReview(a)} style={{ flexShrink: 0 }}>
+                    🔍 {histLbl.review}
+                  </button>
+                </div>
+              );
+            })}
           </div>
-          {attempts.slice(0, 4).map((a) => {
-            const pct = Math.round(a.score / a.total * 100);
-            const wrongCt = a.questions.filter(q => q.chosen !== q.answer).length;
-            return (
-              <div key={a.id} style={{
-                display: 'flex', alignItems: 'center', gap: 10,
-                padding: '8px 0', borderBottom: '1px solid var(--bg)',
-                flexWrap: 'wrap',
-              }}>
-                <div style={{ flex: 1, minWidth: 120 }}>
-                  <div style={{ fontSize: '.82rem', color: 'var(--text-secondary)' }}>{fmtDate(a.date)}</div>
-                  <div style={{ fontSize: '.8rem', color: 'var(--text-muted)' }}>
-                    Band {a.band} · {a.examKey.replace('exam', 'Đề ')} · ⏱ {fmtDuration(a.timeTakenSecs)}
-                  </div>
-                </div>
-                <div style={{ textAlign: 'right', flexShrink: 0 }}>
-                  <div style={{ fontWeight: 700, color: pct >= 70 ? 'var(--success)' : 'var(--error)' }}>
-                    {a.score}/{a.total} ({pct}%)
-                  </div>
-                  <div style={{ fontSize: '.75rem', color: 'var(--text-muted)' }}>
-                    {wrongCt} câu sai
-                  </div>
-                </div>
-                <button className="btn btn-outline btn-sm" onClick={() => onReview(a)} style={{ flexShrink: 0 }}>
-                  🔍 Xem lại
-                </button>
-              </div>
-            );
-          })}
-        </div>
-      )}
+        );
+      })()}
     </div>
   );
 };

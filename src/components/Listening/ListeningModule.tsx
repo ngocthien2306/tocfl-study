@@ -11,6 +11,7 @@ import {
   syncExplanationsWithBE,
 } from '../../utils/aiExplanation';
 import { progressApi } from '../../api/client';
+import { HighlightableText } from '../HighlightableText';
 
 interface Props {
   listeningData: ListeningData;
@@ -51,7 +52,7 @@ function loadListeningDraft(): ListeningDraft | null {
     if (!raw) return null;
     const d = JSON.parse(raw) as ListeningDraft;
     // Discard drafts older than 48 hours
-    if (Date.now() - d.savedAt > 48 * 3600 * 1000) {
+    if (Date.now() - d.savedAt > 720 * 3600 * 1000) {
       localStorage.removeItem(LISTENING_DRAFT_KEY);
       return null;
     }
@@ -518,45 +519,32 @@ export const ListeningModule: React.FC<Props> = ({ listeningData, token }) => {
 
         {/* ── Draft resume banner ─────────────────────────────────────────── */}
         {draft && draft.band === band && draft.examKey === examKey && (() => {
-          const doneCt  = Object.keys(draft.answers).length;
-          const agoSecs = Math.round((Date.now() - draft.savedAt) / 1000);
-          const agoStr  = agoSecs < 60
-            ? `${agoSecs}s`
-            : agoSecs < 3600
-            ? `${Math.floor(agoSecs / 60)} phút`
-            : `${Math.floor(agoSecs / 3600)} giờ`;
+          const doneCt = Object.keys(draft.answers).length;
           const mm = String(Math.floor(draft.remaining / 60)).padStart(2, '0');
           const ss = String(draft.remaining % 60).padStart(2, '0');
+          const draftLbl = {
+            vi: { title: 'Bài thi đang tạm dừng', answered: 'câu đã trả lời', left: 'còn lại', resume: '▶ Tiếp tục', discard: 'Huỷ bài' },
+            zh: { title: '考試未完成',             answered: '題已作答',       left: '剩餘',     resume: '▶ 繼續作答', discard: '放棄'   },
+            en: { title: 'Exam in progress',       answered: 'answered',       left: 'left',     resume: '▶ Continue', discard: 'Discard' },
+          }[lang];
           return (
             <div style={{
-              border: '2px solid var(--accent)',
-              borderRadius: 'var(--radius)',
-              padding: '12px 14px',
-              marginBottom: 12,
-              background: 'var(--accent-light)',
+              background: 'var(--accent-light)', border: '1px solid var(--accent)',
+              borderRadius: 'var(--radius-lg)', padding: '14px 16px', marginBottom: 12,
+              display: 'flex', alignItems: 'center', gap: 12, flexWrap: 'wrap',
             }}>
-              <div style={{ fontWeight: 700, fontSize: '.88rem', marginBottom: 4 }}>
-                🔄 {{vi:'Bài thi đang làm dở',zh:'考試未完成',en:'Exam in progress'}[lang]}
+              <div style={{ flex: 1, minWidth: 180 }}>
+                <div style={{ fontWeight: 700, fontSize: '.95rem', color: 'var(--accent)', marginBottom: 3 }}>
+                  ⏸ {draftLbl.title}
+                </div>
+                <div style={{ fontSize: '.82rem', color: 'var(--text-secondary)', display: 'flex', gap: 12, flexWrap: 'wrap' }}>
+                  <span>{doneCt}/{total} {draftLbl.answered}</span>
+                  <span>⏱ {mm}:{ss} {draftLbl.left}</span>
+                </div>
               </div>
-              <div style={{ fontSize: '.78rem', color: 'var(--text-secondary)', marginBottom: 10 }}>
-                {doneCt}/{total} {{vi:'câu đã trả lời',zh:'題已作答',en:'answered'}[lang]}
-                {' · '}⏱ {mm}:{ss} {{vi:'còn lại',zh:'剩餘',en:'left'}[lang]}
-                {' · '}{{vi:'đã lưu',zh:'儲存於',en:'saved'}[lang]} {agoStr} {{vi:'trước',zh:'前',en:'ago'}[lang]}
-              </div>
-              <div style={{ display: 'flex', gap: 8 }}>
-                <button
-                  className="btn btn-primary btn-sm"
-                  style={{ flex: 1 }}
-                  onClick={resumeFromDraft}
-                >
-                  ▶ {{vi:'Tiếp tục làm bài',zh:'繼續作答',en:'Continue exam'}[lang]}
-                </button>
-                <button
-                  className="btn btn-ghost btn-sm"
-                  onClick={() => { clearListeningDraft(); setDraft(null); }}
-                >
-                  {{vi:'Bỏ qua',zh:'放棄',en:'Discard'}[lang]}
-                </button>
+              <div style={{ display: 'flex', gap: 8, flexShrink: 0 }}>
+                <button className="btn btn-primary btn-sm" onClick={resumeFromDraft}>{draftLbl.resume}</button>
+                <button className="btn btn-ghost btn-sm" style={{ color: 'var(--error)' }} onClick={() => { clearListeningDraft(); setDraft(null); }}>{draftLbl.discard}</button>
               </div>
             </div>
           );
@@ -567,11 +555,11 @@ export const ListeningModule: React.FC<Props> = ({ listeningData, token }) => {
         </button>
 
         {attempts.length > 0 && (
-          <div style={{ marginTop: 16, paddingTop: 14, borderTop: '1px solid var(--border)' }}>
-            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 10 }}>
-              <span style={{ fontWeight: 600, fontSize: '.9rem' }}>
+          <div className="card">
+            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 12 }}>
+              <h3 style={{ margin: 0 }}>
                 {{vi:'Lịch sử gần đây',zh:'近期紀錄',en:'Recent attempts'}[lang]}
-              </span>
+              </h3>
               <button className="btn btn-ghost btn-sm" onClick={() => setPhase('history')}>
                 📋 {{vi:'Xem tất cả',zh:'查看全部',en:'View all'}[lang]} ({attempts.length})
               </button>
@@ -580,9 +568,9 @@ export const ListeningModule: React.FC<Props> = ({ listeningData, token }) => {
               const pct = Math.round(a.score / a.total * 100);
               const wrongCt = a.questions.filter(q => q.chosen !== q.answer).length;
               return (
-                <div key={a.id} style={{ display: 'flex', alignItems: 'center', gap: 8, padding: '6px 0', borderBottom: '1px solid var(--bg)', flexWrap: 'wrap' }}>
+                <div key={a.id} style={{ display: 'flex', alignItems: 'center', gap: 10, padding: '8px 0', borderBottom: '1px solid var(--bg)', flexWrap: 'wrap' }}>
                   <div style={{ flex: 1, minWidth: 120 }}>
-                    <div style={{ fontSize: '.82rem' }}>Band {a.band} · {a.examKey.replace('exam', 'Đề ')} · ⏱ {fmtDuration(a.timeTakenSecs)}</div>
+                    <div style={{ fontSize: '.82rem' }}>Band {a.band} · {examLabels[a.examKey][lang]} · ⏱ {fmtDuration(a.timeTakenSecs)}</div>
                     <div style={{ fontSize: '.75rem', color: 'var(--text-muted)' }}>{fmtDate(a.date)}</div>
                   </div>
                   <div style={{ textAlign: 'right', flexShrink: 0 }}>
@@ -763,7 +751,11 @@ export const ListeningModule: React.FC<Props> = ({ listeningData, token }) => {
                   {lbl.question} {q.id}
                 </span>
                 {q.question && (
-                  <span style={{ fontSize: '.92rem', lineHeight: 1.5 }}>{q.question}</span>
+                  <HighlightableText
+                    text={q.question}
+                    page_key={`listening_${band}_${examKey}_q${q.id}`}
+                    style={{ fontSize: '.92rem', lineHeight: 1.5 }}
+                  />
                 )}
                 {!q.question && q.partType === 'text_choice' && (
                   <span style={{ fontSize: '.85rem', color: 'var(--text-secondary)' }}>請聽錄音選出正確答案</span>
@@ -800,7 +792,13 @@ export const ListeningModule: React.FC<Props> = ({ listeningData, token }) => {
                       color: isChosen ? '#fff' : 'var(--text)',
                       fontWeight: 700, fontSize: '.8rem', flexShrink: 0, marginRight: 10,
                     }}>{key}</span>
-                    {isImgLabel ? `選項 ${key}` : val}
+                    {isImgLabel
+                      ? `選項 ${key}`
+                      : <HighlightableText
+                          text={val}
+                          page_key={`listening_${band}_${examKey}_q${q.id}_opt${key}`}
+                        />
+                    }
                   </button>
                 );
               })}
@@ -898,7 +896,7 @@ export const ListeningModule: React.FC<Props> = ({ listeningData, token }) => {
 
 // ── Transcript display ─────────────────────────────────────────────────────────
 
-const TranscriptDisplay: React.FC<{ lines: TranscriptLine[] }> = ({ lines }) => {
+const TranscriptDisplay: React.FC<{ lines: TranscriptLine[]; pageKeyPrefix?: string }> = ({ lines, pageKeyPrefix }) => {
   const [showPinyin, setShowPinyin] = useState(true);
   const [showVietnamese, setShowVietnamese] = useState(true);
 
@@ -968,7 +966,10 @@ const TranscriptDisplay: React.FC<{ lines: TranscriptLine[] }> = ({ lines }) => 
           }}>
             {/* Hanzi */}
             <div style={{ fontSize: '1.1rem', fontWeight: 700, color: '#0369a1', lineHeight: 1.4, marginBottom: showPinyin || showVietnamese ? 4 : 0 }}>
-              {line.hanzi}
+              <HighlightableText
+                text={line.hanzi}
+                page_key={`${pageKeyPrefix ?? 'listening'}_t${i}`}
+              />
             </div>
             {/* Pinyin */}
             {showPinyin && (
@@ -1156,7 +1157,7 @@ const ListeningAIDrawer: React.FC<ListeningAIDrawerProps> = ({
 
           {/* ── Transcript card ── */}
           {status !== 'loading' && data && data.transcript && data.transcript.length > 0 && (
-            <TranscriptDisplay lines={data.transcript} />
+            <TranscriptDisplay lines={data.transcript} pageKeyPrefix={cacheKey} />
           )}
 
           {/* ── Vocabulary card — separate section ── */}

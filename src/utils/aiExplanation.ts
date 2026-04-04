@@ -287,12 +287,12 @@ const SYSTEM_PROMPT = `Bạn là gia sư TOCFL. Giải thích câu hỏi đọc 
 ${COMMON_RULES}
 
 Định dạng bắt buộc — dùng đúng ký tự ✓ và ✗, mỗi dòng có 3 phần:
-✓/✗ [đáp án]: KEYWORD_HÁN_TỰ (pīnyīn keyword) — nghĩa keyword → CÂU_NGẮN_HÁN_TỰ (pīnyīn của câu đó) — nghĩa Việt của câu
+✓/✗ [đáp án]: hán tự - pinyin đáp án - KEYWORD_HÁN_TỰ (pīnyīn keyword) — nghĩa keyword → CÂU_NGẮN_HÁN_TỰ (pīnyīn của câu đó) — nghĩa Việt của câu
 
 Ví dụ đúng cách viết:
-✓ A: 看報紙 (kàn bàozhǐ) — đọc báo → 他正在看報紙 (tā zhèngzài kàn bàozhǐ) — anh ấy đang đọc báo
-✗ B: 洗杯子 (xǐ bēizi) — rửa cốc → 沒有提到洗杯子 (méiyǒu tídào xǐ bēizi) — không đề cập việc rửa cốc
-✗ C: 穿衣服 (chuān yīfu) — mặc quần áo → 已經穿好衣服了 (yǐjīng chuān hǎo yīfu le) — đã mặc quần áo sẵn rồi
+✓ A: hán tự — pinyin đáp án — 看報紙 (kàn bàozhǐ) — đọc báo → 他正在看報紙 (tā zhèngzài kàn bàozhǐ) — anh ấy đang đọc báo
+✗ B: hán tự — pinyin đáp án — 洗杯子 (xǐ bēizi) — rửa cốc → 沒有提到洗杯子 (méiyǒu tídào xǐ bēizi) — không đề cập việc rửa cốc
+✗ C: hán tự — pinyin đáp án — 穿衣服 (chuān yīfu) — mặc quần áo → 已經穿好衣服了 (yǐjīng chuān hǎo yīfu le) — đã mặc quần áo sẵn rồi
 
 Quy tắc:
 - Câu sau → phải là hán tự thật (trích từ bài hoặc tóm tắt ngắn), có pinyin đi kèm, có nghĩa Việt

@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import type { AIResult, AISentenceResult, AIReadingResult, AIQuestion, AIVocabItem } from '../../types';
 import { SpeakButton } from '../UI/SpeakButton';
 import { IconLightbulb, IconCheck, IconBookOpen, IconFlagVN } from '../UI/Icons';
+import { HighlightableText } from '../HighlightableText';
 
 // ─── Vocab table (shared between ReadingResult and library view) ───────────────
 const VocabTable: React.FC<{ vocab: AIVocabItem[] }> = ({ vocab }) => {
@@ -184,7 +185,10 @@ const ReadingResult: React.FC<{ r: AIReadingResult }> = ({ r }) => {
 
         <div className="passage-box">
           <div style={{ fontFamily: 'var(--font-zh)', fontSize: '1rem', lineHeight: 2 }}>
-            {r.passage}
+            <HighlightableText
+              text={r.passage}
+              page_key={`ai_reading_${r.band}_${r.topic}`}
+            />
           </div>
           {showPinyin && r.passage_pinyin && (
             <div style={{ marginTop: 10, fontSize: '.85rem', color: 'var(--accent)', lineHeight: 1.8, borderTop: '1px solid var(--border)', paddingTop: 8 }}>
