@@ -11,8 +11,9 @@
 import React, {
   useState, useEffect, useRef, useMemo, useCallback,
 } from 'react';
-import type { ExamData, ListeningData } from '../../types';
+import type { ExamData, ListeningData, CATAttempt } from '../../types';
 import { useLang } from '../../i18n/LangContext';
+import { loadCATAttempts, saveCATAttempt, deleteCATAttempt, fmtDate, fmtDuration } from '../../utils/historyStorage';
 import {
   buildCATPool,
   buildListeningCATPool,
@@ -322,7 +323,7 @@ function QuestionView({
           <img
             src={`${base}${item.pageImage}`}
             alt={`Q${item.id}`}
-            style={{ width: '100%', display: 'block', maxHeight: 300, objectFit: 'contain' }}
+            style={{ width: '100%', display: 'block', maxHeight: 1060, objectFit: 'contain' }}
           />
           <div style={{
             background: 'var(--primary)', color: '#fff',
@@ -330,17 +331,6 @@ function QuestionView({
           }}>
             {seeImageLabel} <strong>{item.id}</strong>
           </div>
-        </div>
-      )}
-
-      {/* Context (reading part3) */}
-      {item.context && (
-        <div style={{
-          background: 'var(--surface)', border: '1px solid var(--border)',
-          borderRadius: 8, padding: '8px 12px', marginBottom: 10,
-          fontSize: '.82rem', color: 'var(--text-secondary)', fontStyle: 'italic',
-        }}>
-          {item.context}
         </div>
       )}
 
@@ -446,7 +436,7 @@ interface Props {
   listeningData?: ListeningData;
 }
 
-type Phase = 'intro' | 'testing' | 'result';
+type Phase = 'intro' | 'testing' | 'result' | 'history';
 
 export const CATModule: React.FC<Props> = ({ examData, listeningData }) => {
   const base        = import.meta.env.BASE_URL;
@@ -469,11 +459,13 @@ export const CATModule: React.FC<Props> = ({ examData, listeningData }) => {
   const [flash,       setFlash      ] = useState<'correct' | 'wrong' | null>(null);
   const [elapsedSecs, setElapsedSecs] = useState(0);
   const [totalSecs,   setTotalSecs  ] = useState(0);
+  const [catAttempts, setCatAttempts] = useState<CATAttempt[]>(() => loadCATAttempts());
 
-  // ── Timers ─────────────────────────────────────────────────────────────────
-  const qTimerRef     = useRef<ReturnType<typeof setInterval> | null>(null);
-  const totalTimerRef = useRef<ReturnType<typeof setInterval> | null>(null);
-  const questionStart = useRef<number>(0);
+  // ── Timers & tracking ──────────────────────────────────────────────────────
+  const qTimerRef        = useRef<ReturnType<typeof setInterval> | null>(null);
+  const totalTimerRef    = useRef<ReturnType<typeof setInterval> | null>(null);
+  const questionStart    = useRef<number>(0);
+  const answeredItemsRef = useRef<CATItem[]>([]);
 
   const stopQTimer = useCallback(() => {
     if (qTimerRef.current) { clearInterval(qTimerRef.current); qTimerRef.current = null; }
@@ -504,6 +496,7 @@ export const CATModule: React.FC<Props> = ({ examData, listeningData }) => {
     setTheta(INITIAL_THETA);
     setResponses([]);
     setUsedUids(freshUids);
+    answeredItemsRef.current = [];
     setCurrentItem(first);
     setSelected(null);
     setFlash(null);
@@ -531,13 +524,14 @@ export const CATModule: React.FC<Props> = ({ examData, listeningData }) => {
 
     const newResponse: CATResponse = {
       uid: currentItem.uid, difficulty: currentItem.difficulty,
-      correct, responseTimeSecs, thetaBefore: theta, thetaAfter: newTheta,
+      correct, chosen: selected, responseTimeSecs, thetaBefore: theta, thetaAfter: newTheta,
     };
 
     const newResponses = [...responses, newResponse];
     const newUsed      = new Set(usedUids).add(currentItem.uid);
     const pool         = mode === 'listening' ? listeningPool : readingPool;
 
+    answeredItemsRef.current = [...answeredItemsRef.current, currentItem];
     setTheta(newTheta);
     setResponses(newResponses);
     setUsedUids(newUsed);
@@ -548,10 +542,27 @@ export const CATModule: React.FC<Props> = ({ examData, listeningData }) => {
 
       if (newResponses.length >= TOTAL_QUESTIONS) {
         if (totalTimerRef.current) { clearInterval(totalTimerRef.current); totalTimerRef.current = null; }
+        // ── Save attempt ──
+        const finalScore = thetaToScore(newTheta);
+        const lv         = scoreToLevel(finalScore);
+        const attempt: CATAttempt = {
+          id:            String(Date.now()),
+          date:          new Date().toISOString(),
+          mode,
+          total:         newResponses.length,
+          correct:       newResponses.filter(r => r.correct).length,
+          finalScore,
+          theta:         newTheta,
+          cefr:          lv.cefr,
+          levelName:     lv.name,
+          timeTakenSecs: totalSecs,
+        };
+        saveCATAttempt(attempt);
+        setCatAttempts(loadCATAttempts());
         setPhase('result');
         return;
       }
-      const next = selectNextQuestion(pool, newTheta, newUsed, currentItem.examKey);
+      const next = selectNextQuestion(pool, newTheta, newUsed, currentItem.examKey, correct);
       if (!next) {
         if (totalTimerRef.current) { clearInterval(totalTimerRef.current); totalTimerRef.current = null; }
         setPhase('result');
@@ -575,7 +586,7 @@ export const CATModule: React.FC<Props> = ({ examData, listeningData }) => {
     const poolSize = (m: CATMode) => m === 'listening' ? listeningPool.length : readingPool.length;
 
     return (
-      <div style={{ maxWidth: 560, margin: '0 auto', padding: '0 16px' }}>
+      <div style={{ width: '100%', padding: '0 16px' }}>
         <div style={{
           background: 'var(--card)', borderRadius: 14,
           border: '1px solid var(--border)', padding: '28px 26px',
@@ -694,7 +705,104 @@ export const CATModule: React.FC<Props> = ({ examData, listeningData }) => {
               ))}
             </div>
           </div>
+
+          {/* History link */}
+          {catAttempts.length > 0 && (
+            <button onClick={() => setPhase('history')} style={{
+              marginTop: 14, width: '100%', padding: '10px', borderRadius: 8,
+              border: '1px solid var(--border)', background: 'var(--surface)',
+              color: 'var(--text-secondary)', fontSize: '.85rem', cursor: 'pointer',
+            }}>
+              📋 {lang === 'vi' ? `Xem lịch sử (${catAttempts.length} lần)` : lang === 'zh' ? `查看歷史 (${catAttempts.length})` : `History (${catAttempts.length})`}
+            </button>
+          )}
         </div>
+      </div>
+    );
+  }
+
+  // ─── History screen ───────────────────────────────────────────────────────
+
+  if (phase === 'history') {
+    const lbl = lang === 'zh'
+      ? { title: 'CAT 測試紀錄', back: '← 返回', empty: '尚無紀錄。', del: '刪除', reading: '閱讀', listening: '聽力', correct: '正確', time: '用時' }
+      : lang === 'en'
+      ? { title: 'CAT History', back: '← Back', empty: 'No attempts yet.', del: 'Delete', reading: 'Reading', listening: 'Listening', correct: 'correct', time: 'Time' }
+      : { title: 'Lịch sử CAT', back: '← Quay lại', empty: 'Chưa có lần thi nào.', del: 'Xoá', reading: 'Đọc', listening: 'Nghe', correct: 'đúng', time: 'Thời gian' };
+
+    return (
+      <div style={{ width: '100%', padding: '0 16px 40px' }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 14 }}>
+          <button onClick={() => setPhase('intro')} style={{
+            padding: '6px 12px', borderRadius: 7, border: '1px solid var(--border)',
+            background: 'var(--card)', color: 'var(--text)', cursor: 'pointer', fontSize: '.85rem',
+          }}>
+            {lbl.back}
+          </button>
+          <h2 style={{ margin: 0, fontSize: '1rem', fontWeight: 700 }}>{lbl.title}</h2>
+        </div>
+
+        {catAttempts.length === 0 ? (
+          <div style={{
+            background: 'var(--card)', borderRadius: 12, border: '1px solid var(--border)',
+            padding: '32px', textAlign: 'center', color: 'var(--text-muted)',
+          }}>
+            {lbl.empty}
+          </div>
+        ) : (
+          <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
+            {catAttempts.map(a => {
+              const pct = Math.round((a.correct / a.total) * 100);
+              const lvColor = TOCFL_LEVELS.find(l => l.cefr === a.cefr)?.color ?? '#6B7280';
+              return (
+                <div key={a.id} style={{
+                  background: 'var(--card)', borderRadius: 12, border: '1px solid var(--border)',
+                  padding: '12px 16px', display: 'flex', alignItems: 'center', gap: 14, flexWrap: 'wrap',
+                }}>
+                  {/* Score */}
+                  <div style={{
+                    width: 56, height: 56, borderRadius: '50%', flexShrink: 0,
+                    border: `3px solid ${lvColor}`,
+                    display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center',
+                  }}>
+                    <span style={{ fontSize: '.78rem', fontWeight: 800, color: lvColor, lineHeight: 1 }}>{a.finalScore}</span>
+                    <span style={{ fontSize: '.6rem', color: 'var(--text-muted)', fontWeight: 600 }}>{a.cefr}</span>
+                  </div>
+
+                  {/* Meta */}
+                  <div style={{ flex: 1, minWidth: 160 }}>
+                    <div style={{ fontWeight: 700, fontSize: '.9rem', marginBottom: 2 }}>
+                      <span style={{
+                        background: lvColor + '18', border: `1px solid ${lvColor}`,
+                        borderRadius: 4, padding: '1px 6px', fontSize: '.75rem', color: lvColor, marginRight: 6,
+                      }}>{a.levelName}</span>
+                      {a.mode === 'reading' ? lbl.reading : lbl.listening}
+                    </div>
+                    <div style={{ fontSize: '.75rem', color: 'var(--text-muted)' }}>
+                      {fmtDate(a.date)} · {lbl.time} {fmtDuration(a.timeTakenSecs)} · {a.correct}/{a.total} {lbl.correct} ({pct}%)
+                    </div>
+                  </div>
+
+                  {/* Delete */}
+                  <button
+                    onClick={() => {
+                      if (confirm(lang === 'vi' ? 'Xoá lần thi này?' : 'Delete this attempt?')) {
+                        deleteCATAttempt(a.id);
+                        setCatAttempts(loadCATAttempts());
+                      }
+                    }}
+                    style={{
+                      padding: '5px 10px', borderRadius: 6, border: '1px solid var(--border)',
+                      background: 'var(--surface)', color: '#EF4444', cursor: 'pointer', fontSize: '.8rem',
+                    }}
+                  >
+                    {lbl.del}
+                  </button>
+                </div>
+              );
+            })}
+          </div>
+        )}
       </div>
     );
   }
@@ -721,7 +829,7 @@ export const CATModule: React.FC<Props> = ({ examData, listeningData }) => {
     });
 
     return (
-      <div style={{ maxWidth: 600, margin: '0 auto', padding: '0 16px 40px' }}>
+      <div style={{ width: '100%', padding: '0 16px 40px' }}>
         <div style={{
           background: 'var(--card)', borderRadius: 14,
           border: '1px solid var(--border)', padding: '28px 24px',
@@ -857,6 +965,14 @@ export const CATModule: React.FC<Props> = ({ examData, listeningData }) => {
             }}>
               {t('cat_redo')}
             </button>
+            <button onClick={() => setPhase('history')} style={{
+              flex: 1, padding: '12px', borderRadius: 10,
+              border: '1.5px solid var(--border)',
+              background: 'var(--card)', color: 'var(--text)',
+              fontSize: '.92rem', fontWeight: 600, cursor: 'pointer',
+            }}>
+              📋 {lang === 'vi' ? 'Lịch sử' : lang === 'zh' ? '歷史' : 'History'}
+            </button>
             <button onClick={() => setPhase('intro')} style={{
               flex: 1, padding: '12px', borderRadius: 10,
               border: '1.5px solid var(--border)',
@@ -887,7 +1003,7 @@ export const CATModule: React.FC<Props> = ({ examData, listeningData }) => {
   };
 
   return (
-    <div style={{ maxWidth: 600, margin: '0 auto', padding: '0 16px 40px' }}>
+    <div style={{ maxWidth: 960, margin: '0 auto', padding: '0 16px 40px' }}>
       {/* ── Test header ── */}
       <div style={{
         background: 'var(--card)', borderRadius: '14px 14px 0 0',

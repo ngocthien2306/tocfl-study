@@ -27,7 +27,7 @@ const EXAM_DURATION = 60 * 60 * 24 * 10; // 60 min
 const DRAFT_KEY = 'tocfl_exam_draft';
 
 interface ExamDraft {
-  band: 'A' | 'B';
+  band: 'A' | 'B' | 'C';
   examKey: ExamKey;
   answers: Record<number, OptionKey>;
   qIdx: number;
@@ -48,7 +48,7 @@ function clearDraft() {
   try { localStorage.removeItem(DRAFT_KEY); } catch { /* silent */ }
 }
 
-function buildExamQuestions(band: 'A' | 'B', examKey: ExamKey, data: ExamData): FlatQuestion[] {
+function buildExamQuestions(band: 'A' | 'B' | 'C', examKey: ExamKey, data: ExamData): FlatQuestion[] {
   const out: FlatQuestion[] = [];
   if (band === 'A') {
     const exam = data.bandA[examKey] ?? data.bandA.exam1;
@@ -96,7 +96,7 @@ function buildExamQuestions(band: 'A' | 'B', examKey: ExamKey, data: ExamData): 
     r.part5.passages.forEach(p =>
       p.questions.forEach(q => out.push({ ...q, type: 'mc', part: 'part5', passage: p.text, passageId: p.id }))
     );
-  } else {
+  } else if (band === 'B') {
     const r = (data.bandB[examKey] ?? data.bandB.exam1).reading;
     // Part 1
     r.part1.passages.forEach(p =>
@@ -119,6 +119,23 @@ function buildExamQuestions(band: 'A' | 'B', examKey: ExamKey, data: ExamData): 
         }))
       );
     }
+  } else {
+    // Band C
+    const r = (data.bandC[examKey] ?? data.bandC.exam1).reading;
+    // Part 1 — gap-fill passages
+    r.part1.passages.forEach(p =>
+      p.questions.forEach(q => out.push({ ...q, type: 'mc', part: 'part1', passage: p.passage_raw, passageId: p.id }))
+    );
+    // Part 2 — reading passages (text or image)
+    r.part2.passages.forEach(p => {
+      const pageImage = p.image ? `exam-images/${p.image}` : undefined;
+      p.questions.forEach(q => out.push({
+        ...q, type: 'mc', part: 'part2',
+        passage: p.text ?? undefined,
+        passageId: p.id,
+        pageImage,
+      }));
+    });
   }
   return out.sort((a, b) => a.id - b.id);
 }
@@ -128,7 +145,7 @@ export const ExamModule: React.FC<Props> = ({ examData, addExam, pastExams, toke
   const { apiKey, hasKey } = useApiKey();
   const { model } = useAIModel();
   const [phase,         setPhase        ] = useState<Phase>('select');
-  const [band,          setBand         ] = useState<'A' | 'B'>('B');
+  const [band,          setBand         ] = useState<'A' | 'B' | 'C'>('C');
   const [examKey,       setExamKey      ] = useState<ExamKey>('exam1');
   const [answers,          setAnswers         ] = useState<Record<number, OptionKey>>({});
   const [qIdx,             setQIdx            ] = useState(0);
@@ -171,7 +188,7 @@ export const ExamModule: React.FC<Props> = ({ examData, addExam, pastExams, toke
     }
   }, [questions, qIdx]);
 
-  function startExam(b: 'A' | 'B', ek: ExamKey) {
+  function startExam(b: 'A' | 'B' | 'C', ek: ExamKey) {
     clearDraft();
     setDraft(null);
     setBand(b);
@@ -255,7 +272,7 @@ export const ExamModule: React.FC<Props> = ({ examData, addExam, pastExams, toke
       onStart={startExam} onResume={resumeExam} onDiscardDraft={discardDraft}
       draft={draft} pastExams={pastExams} examData={examData}
       selectedBand={band} selectedExam={examKey}
-      onBandChange={(b) => { setBand(b); setExamKey('exam1'); }} onExamChange={setExamKey}
+      onBandChange={(b: 'A' | 'B' | 'C') => { setBand(b); setExamKey('exam1'); }} onExamChange={setExamKey}
       onViewHistory={() => setPhase('history')}
       attempts={attempts}
       onReview={(a) => { setReviewAttempt(a); setPhase('review'); }}
@@ -519,15 +536,15 @@ export const ExamModule: React.FC<Props> = ({ examData, addExam, pastExams, toke
 
 // ── Select phase ───────────────────────────────────────────────────────────────
 const SelectPhase: React.FC<{
-  onStart: (b: 'A' | 'B', ek: ExamKey) => void;
+  onStart: (b: 'A' | 'B' | 'C', ek: ExamKey) => void;
   onResume: () => void;
   onDiscardDraft: () => void;
   draft: ExamDraft | null;
   pastExams: ExamRecord[];
   examData: ExamData;
-  selectedBand: 'A' | 'B';
+  selectedBand: 'A' | 'B' | 'C';
   selectedExam: ExamKey;
-  onBandChange: (b: 'A' | 'B') => void;
+  onBandChange: (b: 'A' | 'B' | 'C') => void;
   onExamChange: (ek: ExamKey) => void;
   onViewHistory: () => void;
   attempts: ExamAttempt[];
@@ -537,6 +554,7 @@ const SelectPhase: React.FC<{
 
   const availableBandAExams = Object.keys(examData.bandA) as ExamKey[];
   const availableBandBExams = Object.keys(examData.bandB) as ExamKey[];
+  const availableBandCExams = Object.keys(examData.bandC) as ExamKey[];
 
   const countB = (() => {
     const r = (examData.bandB[selectedExam] ?? examData.bandB.exam1).reading;
@@ -544,6 +562,12 @@ const SelectPhase: React.FC<{
     return r.part1.passages.reduce((s, p) => s + p.questions.length, 0)
          + r.part2.passages.reduce((s, p) => s + p.questions.length, 0)
          + imgCount;
+  })();
+
+  const countC = (() => {
+    const r = (examData.bandC[selectedExam] ?? examData.bandC.exam1).reading;
+    return r.part1.passages.reduce((s, p) => s + p.questions.length, 0)
+         + r.part2.passages.reduce((s, p) => s + p.questions.length, 0);
   })();
 
   const examLabels: Record<ExamKey, Record<string, string>> = {
@@ -598,7 +622,7 @@ const SelectPhase: React.FC<{
 
         {/* Band selector */}
         <div className="seg-control" style={{ marginBottom: 12 }}>
-          {(['A', 'B'] as const).map(b => (
+          {(['A', 'B', 'C'] as const).map(b => (
             <button
               key={b}
               onClick={() => onBandChange(b)}
@@ -609,7 +633,7 @@ const SelectPhase: React.FC<{
           ))}
         </div>
 
-        {/* Exam selector (Band A and Band B) */}
+        {/* Exam selector */}
         {selectedBand === 'A' && availableBandAExams.length > 1 && (
           <div className="seg-control seg-control--sm" style={{ marginBottom: 16 }}>
             {availableBandAExams.map(ek => (
@@ -636,6 +660,19 @@ const SelectPhase: React.FC<{
             ))}
           </div>
         )}
+        {selectedBand === 'C' && availableBandCExams.length > 1 && (
+          <div className="seg-control seg-control--sm" style={{ marginBottom: 16 }}>
+            {availableBandCExams.map(ek => (
+              <button
+                key={ek}
+                onClick={() => onExamChange(ek)}
+                className={`seg-control__btn${selectedExam === ek ? ' seg-control__btn--active' : ''}`}
+              >
+                {examLabels[ek][lang]}
+              </button>
+            ))}
+          </div>
+        )}
 
         <button
           className="btn btn-primary"
@@ -648,8 +685,10 @@ const SelectPhase: React.FC<{
         <div className="flex gap-12 mt-12" style={{ flexWrap: 'wrap' }}>
           {selectedBand === 'A' ? (
             <ExamCard band="A" count={50} parts="Phần 1 · 2 · 3 · 4 · 5" onClick={() => onStart('A', selectedExam)} />
-          ) : (
+          ) : selectedBand === 'B' ? (
             <ExamCard band="B" count={countB} parts="Phần 1 · 2" onClick={() => onStart('B', selectedExam)} />
+          ) : (
+            <ExamCard band="C" count={countC} parts="Phần 1 · 2" onClick={() => onStart('C', selectedExam)} />
           )}
         </div>
       </div>
@@ -702,7 +741,7 @@ const SelectPhase: React.FC<{
   );
 };
 
-const ExamCard: React.FC<{ band: 'A' | 'B'; count: number; parts: string; onClick: () => void }> = ({ band, count, parts, onClick }) => {
+const ExamCard: React.FC<{ band: 'A' | 'B' | 'C'; count: number; parts: string; onClick: () => void }> = ({ band, count, parts, onClick }) => {
   const { t } = useLang();
   return (
     <div style={{ flex: 1, minWidth: 200, border: '1px solid var(--border)', borderRadius: 'var(--radius-lg)', padding: '20px', cursor: 'pointer', transition: 'border-color .15s' }}

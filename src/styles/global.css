@@ -45,7 +45,7 @@
   --nav-active:    #2563eb;
 
   /* Layout */
-  --content-max:   960px;
+  --content-max:   1100px;
   --content-pad-x: 20px;
 
   /* Aliases used by interview / shared components */
@@ -326,7 +326,6 @@ body {
 .nav-tab--active .nav-tab-icon svg,
 .nav-tab:hover .nav-tab-icon svg { transform: scale(1.1); }
 .nav-tab-label { font-size: .72rem; }
-
 /* ── Main content area ───────────────────────────────────────────────────── */
 .app-main {
   flex: 1;

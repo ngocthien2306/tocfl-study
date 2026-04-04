@@ -5,7 +5,7 @@
  * Up to MAX_ATTEMPTS per module are kept (oldest dropped first).
  */
 
-import type { ExamAttempt } from '../types';
+import type { ExamAttempt, CATAttempt } from '../types';
 
 const KEYS = {
   exam:      'tocfl_exam_attempts',
@@ -45,6 +45,37 @@ export function deleteAttempt(module: 'exam' | 'listening', id: string): void {
     if (!raw) return;
     const list = (JSON.parse(raw) as ExamAttempt[]).filter(a => a.id !== id);
     localStorage.setItem(key, JSON.stringify(list));
+  } catch { /* silent */ }
+}
+
+// ─── CAT attempts ─────────────────────────────────────────────────────────────
+
+const CAT_KEY = 'tocfl_cat_attempts';
+
+export function loadCATAttempts(): CATAttempt[] {
+  try {
+    const raw = localStorage.getItem(CAT_KEY);
+    const list = raw ? (JSON.parse(raw) as CATAttempt[]) : [];
+    return list.slice().reverse(); // newest first
+  } catch { return []; }
+}
+
+export function saveCATAttempt(attempt: CATAttempt): void {
+  try {
+    const raw = localStorage.getItem(CAT_KEY);
+    const list: CATAttempt[] = raw ? JSON.parse(raw) : [];
+    list.push(attempt);
+    if (list.length > MAX_ATTEMPTS) list.splice(0, list.length - MAX_ATTEMPTS);
+    localStorage.setItem(CAT_KEY, JSON.stringify(list));
+  } catch { /* quota / private browsing */ }
+}
+
+export function deleteCATAttempt(id: string): void {
+  try {
+    const raw = localStorage.getItem(CAT_KEY);
+    if (!raw) return;
+    const list = (JSON.parse(raw) as CATAttempt[]).filter(a => a.id !== id);
+    localStorage.setItem(CAT_KEY, JSON.stringify(list));
   } catch { /* silent */ }
 }
 

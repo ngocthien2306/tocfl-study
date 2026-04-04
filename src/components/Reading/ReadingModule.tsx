@@ -23,7 +23,7 @@ interface Props {
 }
 
 type ReadingMode = 'practice' | 'ai';
-type Band        = 'A' | 'B';
+type Band        = 'A' | 'B' | 'C';
 type PartKey     = 'part3' | 'part4' | 'part5' | 'part1' | 'part2';
 
 function getPartLabel(key: PartKey, lang: Lang): string {
@@ -39,6 +39,7 @@ function getPartLabel(key: PartKey, lang: Lang): string {
 
 const BAND_A_PARTS: PartKey[] = ['part3', 'part4', 'part5'];
 const BAND_B_PARTS: PartKey[] = ['part1', 'part2'];
+const BAND_C_PARTS: PartKey[] = ['part1', 'part2'];
 const ALL_BAND_A_EXAMS = ['exam1', 'exam2', 'exam3', 'exam4', 'exam5'] as const;
 
 function buildQuestions(band: Band, part: PartKey, data: ExamData): FlatQuestion[] {
@@ -70,7 +71,7 @@ function buildQuestions(band: Band, part: PartKey, data: ExamData): FlatQuestion
         );
       });
     }
-  } else {
+  } else if (band === 'B') {
     if (part === 'part1') {
       data.bandB.exam1.reading.part1.passages.forEach(p =>
         p.questions.forEach(q =>
@@ -83,6 +84,31 @@ function buildQuestions(band: Band, part: PartKey, data: ExamData): FlatQuestion
           out.push({ ...q, id: uid++, type: 'mc', part, passage: p.text, passageId: p.id })
         )
       );
+    }
+  } else {
+    // Band C
+    const allCExams = Object.keys(data.bandC) as Array<keyof typeof data.bandC>;
+    if (part === 'part1') {
+      allCExams.forEach(examKey => {
+        data.bandC[examKey].reading.part1.passages.forEach(p =>
+          p.questions.forEach(q =>
+            out.push({ ...q, id: uid++, type: 'mc', part, passage: p.passage_raw, passageId: p.id })
+          )
+        );
+      });
+    } else if (part === 'part2') {
+      allCExams.forEach(examKey => {
+        data.bandC[examKey].reading.part2.passages.forEach(p =>
+          p.questions.forEach(q =>
+            out.push({
+              ...q, id: uid++, type: 'mc', part,
+              passage: p.text ?? (p.image ? `[image:${p.image}]` : ''),
+              passageId: p.id,
+              pageImage: p.image ? `exam-images/${p.image}` : undefined,
+            })
+          )
+        );
+      });
     }
   }
   return out;
@@ -254,7 +280,7 @@ export const ReadingModule: React.FC<Props> = ({ examData, markReading, token })
   const { model } = useAIModel();
 
   const [mode,     setMode]     = useState<ReadingMode>('practice');
-  const [band,     setBand]     = useState<Band>('B');
+  const [band,     setBand]     = useState<Band>('C');
   const [part,     setPart]     = useState<PartKey>('part2');
   const [qIdx,     setQIdx]     = useState(0);
   const [selected, setSelected] = useState<OptionKey | null>(null);
@@ -338,6 +364,12 @@ export const ReadingModule: React.FC<Props> = ({ examData, markReading, token })
     resetSession();
   }
 
+  function partsForBand(b: Band): PartKey[] {
+    if (b === 'A') return BAND_A_PARTS;
+    if (b === 'B') return BAND_B_PARTS;
+    return BAND_C_PARTS;
+  }
+
   function changePart(p: PartKey) {
     setPart(p);
     resetSession();
@@ -351,7 +383,11 @@ export const ReadingModule: React.FC<Props> = ({ examData, markReading, token })
   }
 
   const prevPassage = qIdx > 0 ? questions[qIdx - 1].passage : null;
-  const showPassage = !!q.passage && q.passage !== prevPassage;
+  const prevPageImage = qIdx > 0 ? questions[qIdx - 1].pageImage : null;
+  // show passage text only when it changes; skip [image:...] placeholder strings
+  const showPassage = !!q.passage && !q.passage.startsWith('[image:') && q.passage !== prevPassage;
+  // show image only when the image path changes (new passage group)
+  const showPassageImage = !!q.pageImage && q.pageImage !== prevPageImage;
 
   const qLabel = lang === 'zh'
     ? `第 ${qIdx + 1} / ${questions.length} 題`
@@ -370,7 +406,7 @@ export const ReadingModule: React.FC<Props> = ({ examData, markReading, token })
       <div className="card card--compact mb-12">
         <div className="filter-group mb-8">
           <span className="filter-label">{t('read_band_label', lang)}</span>
-          {(['A', 'B'] as Band[]).map(b => (
+          {(['A', 'B', 'C'] as Band[]).map(b => (
             <button key={b} className={`chip ${band === b ? 'active' : ''}`} onClick={() => changeBand(b)}>
               Band {b}
             </button>
@@ -378,7 +414,7 @@ export const ReadingModule: React.FC<Props> = ({ examData, markReading, token })
         </div>
         <div className="filter-group mb-8">
           <span className="filter-label">{t('read_part_label', lang)}</span>
-          {(band === 'A' ? BAND_A_PARTS : BAND_B_PARTS).map(p => (
+          {partsForBand(band).map(p => (
             <button key={p} className={`chip ${part === p ? 'active' : ''}`} onClick={() => changePart(p)}>
               {getPartLabel(p, lang)}
             </button>
@@ -418,12 +454,13 @@ export const ReadingModule: React.FC<Props> = ({ examData, markReading, token })
           </div>
         )}
 
-        {q.pageImage && (
+        {showPassageImage && q.pageImage && (
           <div style={{ border: '1px solid var(--border)', borderRadius: 'var(--radius)', overflow: 'hidden', background: '#f8f9fa', marginBottom: 14, textAlign: 'center' }}>
+            <div className="passage-label" style={{ padding: '6px 12px', background: 'var(--bg)', borderBottom: '1px solid var(--border)', textAlign: 'left' }}>{t('passage_label', lang)}</div>
             <img
               src={`${import.meta.env.BASE_URL}${q.pageImage}`}
               alt={q.context ?? `Hình câu ${q.id}`}
-              style={{ maxWidth: '100%', maxHeight: 480, objectFit: 'contain', display: 'block', margin: '0 auto' }}
+              style={{ maxWidth: '100%', maxHeight: 600, objectFit: 'contain', display: 'block', margin: '0 auto', padding: 8 }}
             />
           </div>
         )}

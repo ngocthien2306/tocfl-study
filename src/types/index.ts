@@ -88,17 +88,37 @@ export interface BandBReading {
   part2: ExamPart2B & { image_dir?: string; image_passages?: ImagePassage[] };
 }
 
+/** Reading passage for Band C — text OR image reference */
+export interface ReadingPassageC {
+  id: string | number;
+  text?: string;
+  image?: string;   // relative path under public/exam-images/, e.g. "bandC/exam2_p1_passage7-16.png"
+  questions: MCQuestion[];
+}
+
+export interface ExamPart2C {
+  title: string;
+  instruction: string;
+  passages: ReadingPassageC[];
+}
+
+export interface BandCReading {
+  part1: ExamPart1B;   // same gap-fill format as Band B
+  part2: ExamPart2C;
+}
+
 export type ExamKey = 'exam1' | 'exam2' | 'exam3' | 'exam4' | 'exam5';
 
 export interface ExamData {
   bandA: Record<ExamKey, { title: string; reading: BandAReading }>;
   bandB: Record<ExamKey, { title: string; reading: BandBReading }>;
+  bandC: Record<ExamKey, { title: string; reading: BandCReading }>;
 }
 
 
 // ─── Progress / storage ───────────────────────────────────────────────────────
 export interface ExamRecord {
-  band:           'A' | 'B';
+  band:           'A' | 'B' | 'C';
   examKey?:       ExamKey;
   score:          number;
   total:          number;
@@ -147,6 +167,19 @@ export interface ExamAttempt {
   date:          string;         // ISO timestamp
   timeTakenSecs: number;         // seconds elapsed (EXAM_DURATION - timeLeft)
   questions:     AttemptQuestion[];
+}
+
+export interface CATAttempt {
+  id:            string;
+  date:          string;
+  mode:          'reading' | 'listening';
+  total:         number;
+  correct:       number;
+  finalScore:    number;   // 200–800 TOCFL scale
+  theta:         number;
+  cefr:          string;   // A1–C2 or '—'
+  levelName:     string;   // 入門級 / Sơ cấp 1 / ...
+  timeTakenSecs: number;
 }
 
 // ─── Image-based question types ───────────────────────────────────────────────
