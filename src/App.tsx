@@ -15,6 +15,7 @@ import type { TabId }        from './components/Layout/AppNav';
 import { FlashcardModule }   from './components/Flashcard/FlashcardModule';
 import { ReadingModule }     from './components/Reading/ReadingModule';
 import { ExamHubModule }     from './components/Exam/ExamHubModule';
+import { CATModule }         from './components/CAT/CATModule';
 import { ProgressModule }    from './components/Progress/ProgressModule';
 import { AIGeneratorModule } from './components/AIGenerator/AIGeneratorModule';
 import { InterviewModule }   from './components/Interview/InterviewModule';
@@ -145,6 +146,10 @@ export default function App() {
               pastExams={progress.exams}
               token={auth.token}
             />
+          )}
+
+          {tab === 'cat' && examData && (
+            <CATModule examData={examData} listeningData={listeningData ?? undefined} />
           )}
 
           {tab === 'ai' && <AIGeneratorModule vocabulary={vocabulary} progress={progress} />}

@@ -1,7 +1,7 @@
 import React from 'react';
 import { useLang } from '../../i18n/LangContext';
 
-export type TabId = 'flashcard' | 'reading' | 'exam' | 'ai' | 'progress' | 'interview';
+export type TabId = 'flashcard' | 'reading' | 'exam' | 'cat' | 'ai' | 'progress' | 'interview';
 
 interface Props {
   active:   TabId;
@@ -61,6 +61,12 @@ const IconInterview = () => (
   </svg>
 );
 
+const IconCAT = () => (
+  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+    <polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/>
+  </svg>
+);
+
 // ── Tab definitions ──────────────────────────────────────────────────────────
 
 const TABS: {
@@ -71,6 +77,7 @@ const TABS: {
   { id: 'flashcard', icon: IconFlashcard, label: { vi: 'Từ vựng',   zh: '詞彙',   en: 'Vocab'    } },
   { id: 'reading',   icon: IconReading,   label: { vi: 'Đoạn văn', zh: '閱讀',   en: 'Paragraph'  } },
   { id: 'exam',      icon: IconExam,      label: { vi: 'Thi thử', zh: '考試',   en: 'Mock Test'   } },
+  { id: 'cat',       icon: IconCAT,       label: { vi: 'CAT',       zh: '適性測', en: 'CAT'       } },
   { id: 'ai',        icon: IconAI,        label: { vi: 'AI Tạo',    zh: 'AI生成', en: 'AI Gen'   } },
   { id: 'progress',  icon: IconProgress,  label: { vi: 'Tiến độ',   zh: '進度',   en: 'Progress' } },
   { id: 'interview', icon: IconInterview, label: { vi: 'Interview',  zh: '面試',   en: 'Interview'} },
