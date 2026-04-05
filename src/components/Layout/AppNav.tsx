@@ -1,7 +1,7 @@
 import React from 'react';
 import { useLang } from '../../i18n/LangContext';
 
-export type TabId = 'flashcard' | 'reading' | 'exam' | 'cat' | 'ai' | 'progress' | 'interview';
+export type TabId = 'flashcard' | 'quiz' | 'reading' | 'exam' | 'cat' | 'ai' | 'progress' | 'interview' | 'vocab-admin';
 
 interface Props {
   active:   TabId;
@@ -67,6 +67,14 @@ const IconCAT = () => (
   </svg>
 );
 
+const IconQuiz = () => (
+  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+    <circle cx="12" cy="12" r="10"/>
+    <path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/>
+    <line x1="12" y1="17" x2="12.01" y2="17" strokeWidth="3" strokeLinecap="round"/>
+  </svg>
+);
+
 // ── Tab definitions ──────────────────────────────────────────────────────────
 
 const TABS: {
@@ -74,13 +82,15 @@ const TABS: {
   icon: React.FC;
   label: Record<'vi' | 'zh' | 'en', string>;
 }[] = [
-  { id: 'flashcard', icon: IconFlashcard, label: { vi: 'Từ vựng',   zh: '詞彙',   en: 'Vocab'    } },
+  { id: 'flashcard', icon: IconFlashcard, label: { vi: 'Flashcard',  zh: '單詞卡', en: 'Flashcard' } },
+  { id: 'quiz',      icon: IconQuiz,      label: { vi: 'Luyện từ',  zh: '詞彙練', en: 'Quiz'      } },
   { id: 'reading',   icon: IconReading,   label: { vi: 'Đoạn văn', zh: '閱讀',   en: 'Paragraph'  } },
   { id: 'exam',      icon: IconExam,      label: { vi: 'Thi thử', zh: '考試',   en: 'Mock Test'   } },
   { id: 'cat',       icon: IconCAT,       label: { vi: 'CAT',       zh: '適性測', en: 'CAT'       } },
   { id: 'ai',        icon: IconAI,        label: { vi: 'AI Tạo',    zh: 'AI生成', en: 'AI Gen'   } },
   { id: 'progress',  icon: IconProgress,  label: { vi: 'Tiến độ',   zh: '進度',   en: 'Progress' } },
-  { id: 'interview', icon: IconInterview, label: { vi: 'Interview',  zh: '面試',   en: 'Interview'} },
+  { id: 'interview',   icon: IconInterview, label: { vi: 'Interview',   zh: '面試',    en: 'Interview'  } },
+  { id: 'vocab-admin', icon: IconQuiz,      label: { vi: 'Dịch từ',    zh: '補充翻譯', en: 'Translate'  } },
 ];
 
 // ── Component ────────────────────────────────────────────────────────────────

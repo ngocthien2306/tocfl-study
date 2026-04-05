@@ -13,6 +13,8 @@ import { AppNav }            from './components/Layout/AppNav';
 import { AppFooter }         from './components/Layout/AppFooter';
 import type { TabId }        from './components/Layout/AppNav';
 import { FlashcardModule }   from './components/Flashcard/FlashcardModule';
+import { VocabQuizModule }   from './components/Flashcard/VocabQuizModule';
+import { VocabAdminTool }   from './components/Flashcard/VocabAdminTool';
 import { ReadingModule }     from './components/Reading/ReadingModule';
 import { ExamHubModule }     from './components/Exam/ExamHubModule';
 import { CATModule }         from './components/CAT/CATModule';
@@ -26,7 +28,7 @@ export default function App() {
   const [tab,      setTab     ] = useState<TabId>('flashcard');
   const [showAuth, setShowAuth] = useState(false);
 
-  const { vocabulary, examData, listeningData, loading, error } = useData();
+  const { vocabulary, examData, listeningData, loading, error, refreshVocab } = useData();
   const { progress, markWord, markReading, addExam, resetAll, mergeFromServer } = useProgress();
   const auth = useAuth();
 
@@ -129,6 +131,14 @@ export default function App() {
             />
           )}
 
+          {tab === 'quiz' && (
+            <VocabQuizModule
+              vocabulary={vocabulary}
+              progress={progress}
+              markWord={handleMarkWord}
+            />
+          )}
+
           {tab === 'reading' && examData && (
             <ReadingModule
               examData={examData}
@@ -155,6 +165,13 @@ export default function App() {
           {tab === 'ai' && <AIGeneratorModule vocabulary={vocabulary} progress={progress} />}
 
           {tab === 'interview' && <InterviewModule />}
+
+          {tab === 'vocab-admin' && (
+            <VocabAdminTool
+              vocabulary={vocabulary}
+              onVocabUpdated={refreshVocab}
+            />
+          )}
 
           {tab === 'progress' && (
             <ProgressModule

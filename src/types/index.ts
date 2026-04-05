@@ -2,10 +2,13 @@
 export interface Word {
   hanzi: string;
   pinyin: string;
-  level: string;       // A1 | A2 | B1 | B2
-  pos: string;         // (N) (V) (Adv) …
-  meaning: string;
-  band: 'A' | 'B';
+  level: string;       // A1 | A2 | A3 | A4 | B1 | B2 | C1
+  levelName: string;   // 準備一級 | 準備二級 | 入門級 | 基礎級 | 進階級 | 高階級 | 流利級
+  pos: string;         // N | V | Adv | Vs | Vst | Vi | Vp | M | Conj | Det | Prep | Ptc …
+  meaning: string;     // Vietnamese translation (may be empty for high-level words)
+  band: 'A' | 'B' | 'C';
+  context: string;     // Task domain / 任務領域 (only for levels A1–A4)
+  example?: string;    // Optional: Traditional Chinese example sentence + Vietnamese translation
 }
 
 // ─── Exam / Questions ─────────────────────────────────────────────────────────
