@@ -247,6 +247,24 @@ function buildFlat(exam: ListeningExam): FlatListeningQ[] {
   return flat;
 }
 
+// ── Band theme constants ──────────────────────────────────────────────────────
+const ZH_NUMS = ['', '一', '二', '三', '四', '五', '六', '七', '八', '九', '十'];
+
+const BAND_THEME: Record<'A' | 'B' | 'C', {
+  grad: string; gradDark: string;
+  levels: string;
+}> = {
+  A: { grad: '#F4A080', gradDark: '#D05A4C', levels: 'Level 1–2' },
+  B: { grad: '#F5C55A', gradDark: '#C8881A', levels: 'Level 3–4' },
+  C: { grad: '#68BBBC', gradDark: '#2E8E90', levels: 'Level 5–6' },
+};
+
+const BAND_DESC: Record<'A'|'B'|'C', Record<string,string>> = {
+  A: { vi: 'Sơ cấp', zh: '初階', en: 'Elementary' },
+  B: { vi: 'Trung cấp', zh: '進階', en: 'Intermediate' },
+  C: { vi: 'Cao cấp', zh: '高階', en: 'Advanced' },
+};
+
 // ── Main component ────────────────────────────────────────────────────────────
 type Phase = 'select' | 'exam' | 'result' | 'history' | 'review';
 
@@ -316,12 +334,19 @@ export const ListeningModule: React.FC<Props> = ({ listeningData, token }) => {
 
   const base = import.meta.env.BASE_URL;
 
-  function startExam() {
+  function startExamDirect(targetBand: 'A' | 'B' | 'C', targetKey: ExamKey) {
+    const targetExam = targetBand === 'A'
+      ? (listeningData.bandA[targetKey] ?? listeningData.bandA.exam1)
+      : targetBand === 'B'
+      ? (listeningData.bandB[targetKey] ?? listeningData.bandB.exam1)
+      : (listeningData.bandC[targetKey] ?? listeningData.bandC.exam1);
+    setBand(targetBand);
+    setExamKey(targetKey);
     clearListeningDraft();
     setDraft(null);
     setAnswers({});
     setQIdx(0);
-    resetTimer(exam.duration);
+    resetTimer(targetExam.duration);
     setTimerRunning(true);
     startTimeRef.current = Date.now();
     setPhase('exam');
@@ -452,12 +477,6 @@ export const ListeningModule: React.FC<Props> = ({ listeningData, token }) => {
 
   // ── Select phase ────────────────────────────────────────────────────────────
   if (phase === 'select') {
-    const lbl = {
-      vi: { title: 'Thi Nghe TOCFL', sub: 'Chọn band và đề thi · Đếm giờ 60 phút', start: 'Bắt đầu →' },
-      zh: { title: 'TOCFL 聽力測驗', sub: '選擇程度與試題 · 計時60分鐘', start: '開始考試 →' },
-      en: { title: 'TOCFL Listening Exam', sub: 'Choose band & exam · 60-minute timer', start: 'Start →' },
-    }[lang];
-
     const examLabels: Record<ExamKey, Record<string, string>> = {
       exam1: { vi: 'Đề 1', zh: '第1套', en: 'Exam 1' },
       exam2: { vi: 'Đề 2', zh: '第2套', en: 'Exam 2' },
@@ -465,6 +484,7 @@ export const ListeningModule: React.FC<Props> = ({ listeningData, token }) => {
       exam4: { vi: 'Đề 4', zh: '第4套', en: 'Exam 4' },
       exam5: { vi: 'Đề 5', zh: '第5套', en: 'Exam 5' },
     };
+    const examIdxMap: Record<ExamKey, number> = { exam1: 1, exam2: 2, exam3: 3, exam4: 4, exam5: 5 };
     const availableBandAExams = Object.keys(listeningData.bandA) as ExamKey[];
     const availableBandBExams = Object.keys(listeningData.bandB) as ExamKey[];
     const availableBandCExams = Object.keys(listeningData.bandC) as ExamKey[];
@@ -472,55 +492,8 @@ export const ListeningModule: React.FC<Props> = ({ listeningData, token }) => {
 
     return (
       <div>
-        <div className="card" style={{ textAlign: 'center', marginBottom: 16 }}>
-          <div style={{ fontSize: '2.5rem', marginBottom: 8 }}>🎧</div>
-          <h2 style={{ fontSize: '1.1rem', marginBottom: 4 }}>{lbl.title}</h2>
-          <p className="text-sm text-muted">{lbl.sub}</p>
-        </div>
-
-        {/* Band selector */}
-        <div className="seg-control" style={{ marginBottom: 12 }}>
-          {(['A', 'B', 'C'] as const).map(b => (
-            <button
-              key={b}
-              className={`seg-control__btn${band === b ? ' seg-control__btn--active' : ''}`}
-              onClick={() => { setBand(b); setExamKey('exam1'); }}
-            >
-              Band {b}
-            </button>
-          ))}
-        </div>
-
-        {/* Exam selector */}
-        {availableExams.length > 1 && (
-          <div className="seg-control seg-control--sm" style={{ marginBottom: 14 }}>
-            {availableExams.map(ek => (
-              <button
-                key={ek}
-                className={`seg-control__btn${examKey === ek ? ' seg-control__btn--active' : ''}`}
-                onClick={() => setExamKey(ek)}
-              >
-                {examLabels[ek][lang]}
-              </button>
-            ))}
-          </div>
-        )}
-
-        {/* Exam info */}
-        <div className="card card--compact mb-12">
-          <p className="text-sm text-muted" style={{ marginBottom: 6 }}>
-            <strong>{exam.title}</strong>
-          </p>
-          {exam.parts.map(p => (
-            <div key={p.id} style={{ display: 'flex', justifyContent: 'space-between', padding: '4px 0', borderBottom: '1px solid var(--border)', fontSize: '.82rem' }}>
-              <span>{p.title}</span>
-              <span className="text-muted">{p.questions.length} câu</span>
-            </div>
-          ))}
-        </div>
-
         {/* ── Draft resume banner ─────────────────────────────────────────── */}
-        {draft && draft.band === band && draft.examKey === examKey && (() => {
+        {draft && (() => {
           const doneCt = Object.keys(draft.answers).length;
           const mm = String(Math.floor(draft.remaining / 60)).padStart(2, '0');
           const ss = String(draft.remaining % 60).padStart(2, '0');
@@ -532,7 +505,7 @@ export const ListeningModule: React.FC<Props> = ({ listeningData, token }) => {
           return (
             <div style={{
               background: 'var(--accent-light)', border: '1px solid var(--accent)',
-              borderRadius: 'var(--radius-lg)', padding: '14px 16px', marginBottom: 12,
+              borderRadius: 'var(--radius-lg)', padding: '14px 16px', marginBottom: 20,
               display: 'flex', alignItems: 'center', gap: 12, flexWrap: 'wrap',
             }}>
               <div style={{ flex: 1, minWidth: 180 }}>
@@ -540,7 +513,8 @@ export const ListeningModule: React.FC<Props> = ({ listeningData, token }) => {
                   ⏸ {draftLbl.title}
                 </div>
                 <div style={{ fontSize: '.82rem', color: 'var(--text-secondary)', display: 'flex', gap: 12, flexWrap: 'wrap' }}>
-                  <span>{doneCt}/{total} {draftLbl.answered}</span>
+                  <span>Band {draft.band} · {examLabels[draft.examKey]?.[lang] ?? draft.examKey}</span>
+                  <span>{doneCt} {draftLbl.answered}</span>
                   <span>⏱ {mm}:{ss} {draftLbl.left}</span>
                 </div>
               </div>
@@ -552,10 +526,191 @@ export const ListeningModule: React.FC<Props> = ({ listeningData, token }) => {
           );
         })()}
 
-        <button className="btn btn-primary" style={{ width: '100%', minHeight: 52, fontSize: '1rem' }} onClick={startExam}>
-          {lbl.start}
-        </button>
+        {/* ── Section label: Band ─────────────────────────────────────────── */}
+        <div style={{ fontSize: '.72rem', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '.08em', color: 'var(--text-muted)', marginBottom: 10 }}>
+          {{ vi: 'Chọn trình độ', zh: '選擇級別', en: 'Select Level' }[lang]}
+        </div>
 
+        {/* ── Band poster cards ────────────────────────────────────────────── */}
+        <div style={{
+          display: 'flex', gap: 12, overflowX: 'auto', paddingBottom: 4, marginBottom: 28,
+          scrollbarWidth: 'none', msOverflowStyle: 'none',
+        }}>
+          {(['A', 'B', 'C'] as const).map(b => {
+            const th = BAND_THEME[b];
+            const isActive = band === b;
+            const examCt = b === 'A' ? availableBandAExams.length : b === 'B' ? availableBandBExams.length : availableBandCExams.length;
+            return (
+              <button
+                key={b}
+                onClick={() => { setBand(b); setExamKey('exam1'); }}
+                style={{
+                  flexShrink: 0,
+                  width: 130,
+                  height: 190,
+                  borderRadius: 16,
+                  border: isActive ? `3px solid ${th.gradDark}` : '3px solid transparent',
+                  background: `linear-gradient(160deg, ${th.grad} 0%, ${th.gradDark} 100%)`,
+                  cursor: 'pointer',
+                  padding: 0,
+                  overflow: 'hidden',
+                  position: 'relative',
+                  boxShadow: isActive ? `0 6px 24px ${th.gradDark}55` : '0 2px 8px rgba(0,0,0,.12)',
+                  transition: 'all .2s',
+                  fontFamily: 'inherit',
+                  outline: 'none',
+                }}
+              >
+                {/* Decorative circles */}
+                <div style={{ position: 'absolute', top: -18, right: -18, width: 90, height: 90, borderRadius: '50%', background: 'rgba(255,255,255,.13)', pointerEvents: 'none' }} />
+                <div style={{ position: 'absolute', bottom: 28, left: -22, width: 70, height: 70, borderRadius: '50%', background: 'rgba(255,255,255,.09)', pointerEvents: 'none' }} />
+                <div style={{ position: 'absolute', top: 36, left: -10, width: 40, height: 40, borderRadius: '50%', background: 'rgba(255,255,255,.07)', pointerEvents: 'none' }} />
+
+                {/* Content */}
+                <div style={{ position: 'absolute', inset: 0, display: 'flex', flexDirection: 'column', justifyContent: 'flex-end', padding: '14px 14px 16px', color: '#fff', textAlign: 'left' }}>
+                  <div style={{ fontSize: '2rem', fontWeight: 900, lineHeight: 1, letterSpacing: '-.02em', textShadow: '0 2px 8px rgba(0,0,0,.2)' }}>
+                    Band {b}
+                  </div>
+                  <div style={{ fontSize: '.72rem', fontWeight: 700, opacity: .9, marginTop: 3, letterSpacing: '.02em' }}>
+                    {th.levels}
+                  </div>
+                  <div style={{ fontSize: '.68rem', opacity: .8, marginTop: 2 }}>
+                    {BAND_DESC[b][lang]}
+                  </div>
+                  <div style={{ marginTop: 10, display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+                    <span style={{ fontSize: '.62rem', background: 'rgba(255,255,255,.25)', borderRadius: 20, padding: '2px 8px', fontWeight: 700 }}>
+                      {examCt} {{ vi: 'đề', zh: '套', en: 'sets' }[lang]}
+                    </span>
+                    {isActive && <span style={{ fontSize: '.72rem', fontWeight: 800 }}>✓</span>}
+                  </div>
+                </div>
+              </button>
+            );
+          })}
+        </div>
+
+        {/* ── Section label: Exam ─────────────────────────────────────────── */}
+        <div style={{ fontSize: '.72rem', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '.08em', color: 'var(--text-muted)', marginBottom: 10 }}>
+          {{ vi: 'Chọn đề thi', zh: '選擇試卷', en: 'Select Exam' }[lang]}
+        </div>
+
+        {/* ── Exam book-cover cards ────────────────────────────────────────── */}
+        <div style={{
+          display: 'flex', gap: 12, overflowX: 'auto', paddingBottom: 8, marginBottom: 24,
+          scrollbarWidth: 'none', msOverflowStyle: 'none',
+        }}>
+          {availableExams.map(ek => {
+            const th = BAND_THEME[band];
+            const idx = examIdxMap[ek];
+            const zhNum = ZH_NUMS[idx] ?? String(idx);
+            const best = attempts
+              .filter(a => a.band === band && a.examKey === ek)
+              .sort((a, b) => b.score / b.total - a.score / a.total)[0];
+            const pct = best ? Math.round(best.score / best.total * 100) : null;
+            const hasDraft = draft && draft.band === band && draft.examKey === ek;
+            const qc = (() => {
+              const e = band === 'A'
+                ? (listeningData.bandA[ek] ?? listeningData.bandA.exam1)
+                : band === 'B'
+                ? (listeningData.bandB[ek] ?? listeningData.bandB.exam1)
+                : (listeningData.bandC[ek] ?? listeningData.bandC.exam1);
+              return e.parts.reduce((s, p) => s + p.questions.length, 0);
+            })();
+            return (
+              <button
+                key={ek}
+                onClick={() => { if (hasDraft) { setExamKey(ek); resumeFromDraft(); } else { startExamDirect(band, ek); } }}
+                style={{
+                  flexShrink: 0,
+                  width: 130,
+                  borderRadius: 14,
+                  border: 'none',
+                  background: 'var(--surface)',
+                  cursor: 'pointer',
+                  padding: 0,
+                  overflow: 'hidden',
+                  boxShadow: '0 2px 12px rgba(0,0,0,.10)',
+                  fontFamily: 'inherit',
+                  outline: 'none',
+                  transition: 'transform .15s, box-shadow .15s',
+                  display: 'flex',
+                  flexDirection: 'column',
+                }}
+                onMouseEnter={e => { (e.currentTarget as HTMLButtonElement).style.transform = 'translateY(-3px)'; (e.currentTarget as HTMLButtonElement).style.boxShadow = `0 8px 24px ${th.gradDark}44`; }}
+                onMouseLeave={e => { (e.currentTarget as HTMLButtonElement).style.transform = ''; (e.currentTarget as HTMLButtonElement).style.boxShadow = '0 2px 12px rgba(0,0,0,.10)'; }}
+              >
+                {/* Cover image area */}
+                <div style={{
+                  background: `linear-gradient(150deg, ${th.grad} 0%, ${th.gradDark} 100%)`,
+                  padding: '18px 12px 14px',
+                  position: 'relative',
+                  overflow: 'hidden',
+                  minHeight: 108,
+                  display: 'flex',
+                  flexDirection: 'column',
+                  justifyContent: 'flex-end',
+                }}>
+                  <div style={{ position: 'absolute', top: -14, right: -14, width: 64, height: 64, borderRadius: '50%', background: 'rgba(255,255,255,.15)' }} />
+                  <div style={{ position: 'absolute', top: 20, right: 18, width: 30, height: 30, borderRadius: '50%', background: 'rgba(255,255,255,.10)' }} />
+                  <div style={{ position: 'relative', color: '#fff', textAlign: 'left' }}>
+                    <div style={{ fontSize: '.65rem', fontWeight: 700, opacity: .85, letterSpacing: '.04em', marginBottom: 4 }}>
+                      Band {band} 🎧
+                    </div>
+                    <div style={{ fontSize: '1.55rem', fontWeight: 900, lineHeight: 1, letterSpacing: '-.01em' }}>
+                      {zhNum}
+                    </div>
+                    <div style={{ fontSize: '.62rem', opacity: .8, marginTop: 3 }}>
+                      {{ vi: 'Mô phỏng thi nghe', zh: '模擬聽力測驗', en: 'Mock Listening' }[lang]}
+                    </div>
+                  </div>
+                  {pct !== null && (
+                    <div style={{
+                      position: 'absolute', top: 10, right: 10,
+                      background: pct >= 70 ? '#16a34a' : pct >= 50 ? '#d97706' : '#dc2626',
+                      color: '#fff', borderRadius: 20, padding: '2px 7px',
+                      fontSize: '.6rem', fontWeight: 800,
+                    }}>
+                      {pct}%
+                    </div>
+                  )}
+                  {hasDraft && (
+                    <div style={{
+                      position: 'absolute', bottom: 10, right: 10,
+                      background: 'rgba(255,255,255,.3)', color: '#fff',
+                      borderRadius: 20, padding: '2px 7px',
+                      fontSize: '.6rem', fontWeight: 800,
+                    }}>
+                      ⏸
+                    </div>
+                  )}
+                </div>
+
+                {/* Bottom white section */}
+                <div style={{ padding: '10px 10px 12px', background: 'var(--surface)', textAlign: 'left', flex: 1 }}>
+                  <div style={{ fontSize: '.7rem', fontWeight: 700, color: 'var(--text)', marginBottom: 2 }}>
+                    {examLabels[ek][lang]}
+                  </div>
+                  <div style={{ fontSize: '.6rem', color: 'var(--text-muted)', marginBottom: 10 }}>
+                    {qc} {{ vi: 'câu', zh: '題', en: 'Q' }[lang]} · 60'
+                  </div>
+                  <div style={{
+                    display: 'inline-flex', alignItems: 'center', gap: 4,
+                    background: `${th.grad}22`, color: th.gradDark,
+                    borderRadius: 8, padding: '4px 8px',
+                    fontSize: '.62rem', fontWeight: 800, letterSpacing: '.02em',
+                  }}>
+                    {hasDraft
+                      ? ({ vi: 'Tiếp tục', zh: '繼續作答', en: 'Resume' }[lang])
+                      : ({ vi: 'Vào thi', zh: '進入測驗', en: 'Start' }[lang])
+                    } →
+                  </div>
+                </div>
+              </button>
+            );
+          })}
+        </div>
+
+        {/* ── Recent history ───────────────────────────────────────────────── */}
         {attempts.length > 0 && (
           <div className="card">
             <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 12 }}>
@@ -569,8 +724,17 @@ export const ListeningModule: React.FC<Props> = ({ listeningData, token }) => {
             {attempts.slice(0, 3).map((a) => {
               const pct = Math.round(a.score / a.total * 100);
               const wrongCt = a.questions.filter(q => q.chosen !== q.answer).length;
+              const th = BAND_THEME[a.band as 'A'|'B'|'C'];
               return (
                 <div key={a.id} style={{ display: 'flex', alignItems: 'center', gap: 10, padding: '8px 0', borderBottom: '1px solid var(--bg)', flexWrap: 'wrap' }}>
+                  <div style={{
+                    width: 34, height: 34, borderRadius: 8, flexShrink: 0,
+                    background: `linear-gradient(135deg, ${th.grad}, ${th.gradDark})`,
+                    display: 'flex', alignItems: 'center', justifyContent: 'center',
+                    fontSize: '.75rem', fontWeight: 800, color: '#fff',
+                  }}>
+                    {a.band}
+                  </div>
                   <div style={{ flex: 1, minWidth: 120 }}>
                     <div style={{ fontSize: '.82rem' }}>Band {a.band} · {examLabels[a.examKey][lang]} · ⏱ {fmtDuration(a.timeTakenSecs)}</div>
                     <div style={{ fontSize: '.75rem', color: 'var(--text-muted)' }}>{fmtDate(a.date)}</div>

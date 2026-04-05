@@ -271,8 +271,8 @@ export const ExamModule: React.FC<Props> = ({ examData, addExam, pastExams, toke
     <SelectPhase
       onStart={startExam} onResume={resumeExam} onDiscardDraft={discardDraft}
       draft={draft} pastExams={pastExams} examData={examData}
-      selectedBand={band} selectedExam={examKey}
-      onBandChange={(b: 'A' | 'B' | 'C') => { setBand(b); setExamKey('exam1'); }} onExamChange={setExamKey}
+      selectedBand={band}
+      onBandChange={(b: 'A' | 'B' | 'C') => { setBand(b); setExamKey('exam1'); }}
       onViewHistory={() => setPhase('history')}
       attempts={attempts}
       onReview={(a) => { setReviewAttempt(a); setPhase('review'); }}
@@ -535,6 +535,34 @@ export const ExamModule: React.FC<Props> = ({ examData, addExam, pastExams, toke
 };
 
 // ── Select phase ───────────────────────────────────────────────────────────────
+const ZH_NUMS = ['', '一', '二', '三', '四', '五', '六', '七', '八', '九', '十'];
+
+const BAND_THEME: Record<'A' | 'B' | 'C', {
+  grad: string; gradDark: string; textColor: string;
+  parts: string; levels: string;
+  subdesc: Record<string, string>;
+  desc: Record<string, string>;
+}> = {
+  A: {
+    grad: '#F4A080', gradDark: '#D05A4C', textColor: '#fff',
+    parts: 'Phần 1–5', levels: 'Level 1–2',
+    desc:    { vi: 'Sơ cấp', zh: '初階', en: 'Elementary' },
+    subdesc: { vi: 'Giao tiếp hàng ngày', zh: '日常簡易溝通能力', en: 'Basic communication' },
+  },
+  B: {
+    grad: '#F5C55A', gradDark: '#C8881A', textColor: '#fff',
+    parts: 'Phần 1–2', levels: 'Level 3–4',
+    desc:    { vi: 'Trung cấp', zh: '進階', en: 'Intermediate' },
+    subdesc: { vi: 'Đọc hiểu đoạn văn', zh: '語言段落理解分析', en: 'Reading comprehension' },
+  },
+  C: {
+    grad: '#68BBBC', gradDark: '#2E8E90', textColor: '#fff',
+    parts: 'Phần 1–2', levels: 'Level 5–6',
+    desc:    { vi: 'Cao cấp', zh: '高階', en: 'Advanced' },
+    subdesc: { vi: 'Ngôn ngữ thành thạo', zh: '語言廣度與精熟度', en: 'Fluent language use' },
+  },
+};
+
 const SelectPhase: React.FC<{
   onStart: (b: 'A' | 'B' | 'C', ek: ExamKey) => void;
   onResume: () => void;
@@ -543,32 +571,34 @@ const SelectPhase: React.FC<{
   pastExams: ExamRecord[];
   examData: ExamData;
   selectedBand: 'A' | 'B' | 'C';
-  selectedExam: ExamKey;
   onBandChange: (b: 'A' | 'B' | 'C') => void;
-  onExamChange: (ek: ExamKey) => void;
   onViewHistory: () => void;
   attempts: ExamAttempt[];
   onReview: (a: ExamAttempt) => void;
-}> = ({ onStart, onResume, onDiscardDraft, draft, examData, selectedBand, selectedExam, onBandChange, onExamChange, onViewHistory, attempts, onReview }) => {
-  const { t, lang } = useLang();
+}> = ({ onStart, onResume, onDiscardDraft, draft, examData, selectedBand, onBandChange, onViewHistory, attempts, onReview }) => {
+  const { lang } = useLang();
 
   const availableBandAExams = Object.keys(examData.bandA) as ExamKey[];
   const availableBandBExams = Object.keys(examData.bandB) as ExamKey[];
   const availableBandCExams = Object.keys(examData.bandC) as ExamKey[];
 
-  const countB = (() => {
-    const r = (examData.bandB[selectedExam] ?? examData.bandB.exam1).reading;
-    const imgCount = r.part2.image_passages?.reduce((s, ip) => s + ip.questions.length, 0) ?? 0;
-    return r.part1.passages.reduce((s, p) => s + p.questions.length, 0)
-         + r.part2.passages.reduce((s, p) => s + p.questions.length, 0)
-         + imgCount;
-  })();
+  const availableExams = selectedBand === 'A' ? availableBandAExams
+                       : selectedBand === 'B' ? availableBandBExams
+                       : availableBandCExams;
 
-  const countC = (() => {
-    const r = (examData.bandC[selectedExam] ?? examData.bandC.exam1).reading;
+  const getQCount = (band: 'A' | 'B' | 'C', ek: ExamKey) => {
+    if (band === 'A') return 50;
+    if (band === 'B') {
+      const r = (examData.bandB[ek] ?? examData.bandB.exam1).reading;
+      const imgCount = r.part2.image_passages?.reduce((s, ip) => s + ip.questions.length, 0) ?? 0;
+      return r.part1.passages.reduce((s, p) => s + p.questions.length, 0)
+           + r.part2.passages.reduce((s, p) => s + p.questions.length, 0)
+           + imgCount;
+    }
+    const r = (examData.bandC[ek] ?? examData.bandC.exam1).reading;
     return r.part1.passages.reduce((s, p) => s + p.questions.length, 0)
          + r.part2.passages.reduce((s, p) => s + p.questions.length, 0);
-  })();
+  };
 
   const examLabels: Record<ExamKey, Record<string, string>> = {
     exam1: { vi: 'Đề 1', zh: '第1套', en: 'Exam 1' },
@@ -576,6 +606,14 @@ const SelectPhase: React.FC<{
     exam3: { vi: 'Đề 3', zh: '第3套', en: 'Exam 3' },
     exam4: { vi: 'Đề 4', zh: '第4套', en: 'Exam 4' },
     exam5: { vi: 'Đề 5', zh: '第5套', en: 'Exam 5' },
+  };
+
+  const examIdxMap: Record<ExamKey, number> = { exam1: 1, exam2: 2, exam3: 3, exam4: 4, exam5: 5 };
+
+  const bandDescLabel: Record<'A'|'B'|'C', Record<string, string>> = {
+    A: { vi: 'Sơ cấp', zh: '初階', en: 'Elementary' },
+    B: { vi: 'Trung cấp', zh: '進階', en: 'Intermediate' },
+    C: { vi: 'Cao cấp', zh: '高階', en: 'Advanced' },
   };
 
   return (
@@ -595,7 +633,7 @@ const SelectPhase: React.FC<{
         return (
           <div style={{
             background: 'var(--accent-light)', border: '1px solid var(--accent)',
-            borderRadius: 'var(--radius-lg)', padding: '14px 16px', marginBottom: 14,
+            borderRadius: 'var(--radius-lg)', padding: '14px 16px', marginBottom: 20,
             display: 'flex', alignItems: 'center', gap: 12, flexWrap: 'wrap',
           }}>
             <div style={{ flex: 1, minWidth: 180 }}>
@@ -616,83 +654,176 @@ const SelectPhase: React.FC<{
         );
       })()}
 
-      <div className="card">
-        <h2 style={{ marginBottom: 6 }}>{t('exam_title')}</h2>
-        <p className="text-sm text-muted" style={{ marginBottom: 16 }}>{t('exam_subtitle')}</p>
+      {/* ── Section label: Band ─────────────────────────────────────────────── */}
+      <div style={{ fontSize: '.72rem', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '.08em', color: 'var(--text-muted)', marginBottom: 10 }}>
+        {{ vi: 'Chọn trình độ', zh: '選擇級別', en: 'Select Level' }[lang]}
+      </div>
 
-        {/* Band selector */}
-        <div className="seg-control" style={{ marginBottom: 12 }}>
-          {(['A', 'B', 'C'] as const).map(b => (
+      {/* ── Band poster cards (horizontal scroll) ─────────────────────────── */}
+      <div style={{
+        display: 'flex', gap: 12, overflowX: 'auto', paddingBottom: 4, marginBottom: 28,
+        scrollbarWidth: 'none', msOverflowStyle: 'none',
+      }}>
+        {(['A', 'B', 'C'] as const).map(b => {
+          const th = BAND_THEME[b];
+          const isActive = selectedBand === b;
+          const examCt = b === 'A' ? availableBandAExams.length : b === 'B' ? availableBandBExams.length : availableBandCExams.length;
+          return (
             <button
               key={b}
               onClick={() => onBandChange(b)}
-              className={`seg-control__btn${selectedBand === b ? ' seg-control__btn--active' : ''}`}
+              style={{
+                flexShrink: 0,
+                width: 130,
+                height: 190,
+                borderRadius: 16,
+                border: isActive ? `3px solid ${th.gradDark}` : '3px solid transparent',
+                background: `linear-gradient(160deg, ${th.grad} 0%, ${th.gradDark} 100%)`,
+                cursor: 'pointer',
+                padding: 0,
+                overflow: 'hidden',
+                position: 'relative',
+                boxShadow: isActive ? `0 6px 24px ${th.gradDark}55` : '0 2px 8px rgba(0,0,0,.12)',
+                transition: 'all .2s',
+                fontFamily: 'inherit',
+                outline: 'none',
+              }}
             >
-              Band {b}
+              {/* Decorative circles */}
+              <div style={{ position: 'absolute', top: -18, right: -18, width: 90, height: 90, borderRadius: '50%', background: 'rgba(255,255,255,.13)', pointerEvents: 'none' }} />
+              <div style={{ position: 'absolute', bottom: 28, left: -22, width: 70, height: 70, borderRadius: '50%', background: 'rgba(255,255,255,.09)', pointerEvents: 'none' }} />
+              <div style={{ position: 'absolute', top: 36, left: -10, width: 40, height: 40, borderRadius: '50%', background: 'rgba(255,255,255,.07)', pointerEvents: 'none' }} />
+
+              {/* Content */}
+              <div style={{ position: 'absolute', inset: 0, display: 'flex', flexDirection: 'column', justifyContent: 'flex-end', padding: '14px 14px 16px', color: '#fff', textAlign: 'left' }}>
+                <div style={{ fontSize: '2rem', fontWeight: 900, lineHeight: 1, letterSpacing: '-.02em', textShadow: '0 2px 8px rgba(0,0,0,.2)' }}>
+                  Band {b}
+                </div>
+                <div style={{ fontSize: '.72rem', fontWeight: 700, opacity: .9, marginTop: 3, letterSpacing: '.02em' }}>
+                  {th.levels}
+                </div>
+                <div style={{ fontSize: '.68rem', opacity: .8, marginTop: 2 }}>
+                  {bandDescLabel[b][lang]}
+                </div>
+                <div style={{ marginTop: 10, display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+                  <span style={{ fontSize: '.62rem', background: 'rgba(255,255,255,.25)', borderRadius: 20, padding: '2px 8px', fontWeight: 700 }}>
+                    {examCt} {{ vi: 'đề', zh: '套', en: 'sets' }[lang]}
+                  </span>
+                  {isActive && (
+                    <span style={{ fontSize: '.72rem', fontWeight: 800 }}>✓</span>
+                  )}
+                </div>
+              </div>
             </button>
-          ))}
-        </div>
-
-        {/* Exam selector */}
-        {selectedBand === 'A' && availableBandAExams.length > 1 && (
-          <div className="seg-control seg-control--sm" style={{ marginBottom: 16 }}>
-            {availableBandAExams.map(ek => (
-              <button
-                key={ek}
-                onClick={() => onExamChange(ek)}
-                className={`seg-control__btn${selectedExam === ek ? ' seg-control__btn--active' : ''}`}
-              >
-                {examLabels[ek][lang]}
-              </button>
-            ))}
-          </div>
-        )}
-        {selectedBand === 'B' && availableBandBExams.length > 1 && (
-          <div className="seg-control seg-control--sm" style={{ marginBottom: 16 }}>
-            {availableBandBExams.map(ek => (
-              <button
-                key={ek}
-                onClick={() => onExamChange(ek)}
-                className={`seg-control__btn${selectedExam === ek ? ' seg-control__btn--active' : ''}`}
-              >
-                {examLabels[ek][lang]}
-              </button>
-            ))}
-          </div>
-        )}
-        {selectedBand === 'C' && availableBandCExams.length > 1 && (
-          <div className="seg-control seg-control--sm" style={{ marginBottom: 16 }}>
-            {availableBandCExams.map(ek => (
-              <button
-                key={ek}
-                onClick={() => onExamChange(ek)}
-                className={`seg-control__btn${selectedExam === ek ? ' seg-control__btn--active' : ''}`}
-              >
-                {examLabels[ek][lang]}
-              </button>
-            ))}
-          </div>
-        )}
-
-        <button
-          className="btn btn-primary"
-          style={{ width: '100%', minHeight: 52, fontSize: '1rem' }}
-          onClick={() => onStart(selectedBand, selectedExam)}
-        >
-          {t('exam_start')}
-        </button>
-
-        <div className="flex gap-12 mt-12" style={{ flexWrap: 'wrap' }}>
-          {selectedBand === 'A' ? (
-            <ExamCard band="A" count={50} parts="Phần 1 · 2 · 3 · 4 · 5" onClick={() => onStart('A', selectedExam)} />
-          ) : selectedBand === 'B' ? (
-            <ExamCard band="B" count={countB} parts="Phần 1 · 2" onClick={() => onStart('B', selectedExam)} />
-          ) : (
-            <ExamCard band="C" count={countC} parts="Phần 1 · 2" onClick={() => onStart('C', selectedExam)} />
-          )}
-        </div>
+          );
+        })}
       </div>
 
+      {/* ── Section label: Exam ─────────────────────────────────────────────── */}
+      <div style={{ fontSize: '.72rem', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '.08em', color: 'var(--text-muted)', marginBottom: 10 }}>
+        {{ vi: 'Chọn đề thi', zh: '選擇試卷', en: 'Select Exam' }[lang]}
+      </div>
+
+      {/* ── Exam book-cover cards ─────────────────────────────────────────── */}
+      <div style={{
+        display: 'flex', gap: 12, overflowX: 'auto', paddingBottom: 8, marginBottom: 24,
+        scrollbarWidth: 'none', msOverflowStyle: 'none',
+      }}>
+        {availableExams.map(ek => {
+          const th = BAND_THEME[selectedBand];
+          const idx = examIdxMap[ek];
+          const zhNum = ZH_NUMS[idx] ?? String(idx);
+          const best = attempts
+            .filter(a => a.band === selectedBand && a.examKey === ek)
+            .sort((a, b) => b.score / b.total - a.score / a.total)[0];
+          const pct = best ? Math.round(best.score / best.total * 100) : null;
+          const qc = getQCount(selectedBand, ek);
+          return (
+            <button
+              key={ek}
+              onClick={() => onStart(selectedBand, ek)}
+              style={{
+                flexShrink: 0,
+                width: 130,
+                borderRadius: 14,
+                border: 'none',
+                background: 'var(--surface)',
+                cursor: 'pointer',
+                padding: 0,
+                overflow: 'hidden',
+                boxShadow: '0 2px 12px rgba(0,0,0,.10)',
+                fontFamily: 'inherit',
+                outline: 'none',
+                transition: 'transform .15s, box-shadow .15s',
+                display: 'flex',
+                flexDirection: 'column',
+              }}
+              onMouseEnter={e => { (e.currentTarget as HTMLButtonElement).style.transform = 'translateY(-3px)'; (e.currentTarget as HTMLButtonElement).style.boxShadow = `0 8px 24px ${th.gradDark}44`; }}
+              onMouseLeave={e => { (e.currentTarget as HTMLButtonElement).style.transform = ''; (e.currentTarget as HTMLButtonElement).style.boxShadow = '0 2px 12px rgba(0,0,0,.10)'; }}
+            >
+              {/* Cover image area */}
+              <div style={{
+                background: `linear-gradient(150deg, ${th.grad} 0%, ${th.gradDark} 100%)`,
+                padding: '18px 12px 14px',
+                position: 'relative',
+                overflow: 'hidden',
+                minHeight: 108,
+                display: 'flex',
+                flexDirection: 'column',
+                justifyContent: 'flex-end',
+              }}>
+                {/* Decorative circles */}
+                <div style={{ position: 'absolute', top: -14, right: -14, width: 64, height: 64, borderRadius: '50%', background: 'rgba(255,255,255,.15)' }} />
+                <div style={{ position: 'absolute', top: 20, right: 18, width: 30, height: 30, borderRadius: '50%', background: 'rgba(255,255,255,.10)' }} />
+
+                <div style={{ position: 'relative', color: '#fff', textAlign: 'left' }}>
+                  <div style={{ fontSize: '.65rem', fontWeight: 700, opacity: .85, letterSpacing: '.04em', marginBottom: 4 }}>
+                    Band {selectedBand}
+                  </div>
+                  <div style={{ fontSize: '1.55rem', fontWeight: 900, lineHeight: 1, letterSpacing: '-.01em' }}>
+                    {zhNum}
+                  </div>
+                  <div style={{ fontSize: '.62rem', opacity: .8, marginTop: 3 }}>
+                    {{ vi: 'Mô phỏng thi thật', zh: '模擬試題練習', en: 'Mock Exam' }[lang]}
+                  </div>
+                </div>
+
+                {/* Score badge */}
+                {pct !== null && (
+                  <div style={{
+                    position: 'absolute', top: 10, right: 10,
+                    background: pct >= 70 ? '#16a34a' : pct >= 50 ? '#d97706' : '#dc2626',
+                    color: '#fff', borderRadius: 20, padding: '2px 7px',
+                    fontSize: '.6rem', fontWeight: 800,
+                  }}>
+                    {pct}%
+                  </div>
+                )}
+              </div>
+
+              {/* Bottom white section */}
+              <div style={{ padding: '10px 10px 12px', background: 'var(--surface)', textAlign: 'left', flex: 1 }}>
+                <div style={{ fontSize: '.7rem', fontWeight: 700, color: 'var(--text)', marginBottom: 2 }}>
+                  {examLabels[ek][lang]}
+                </div>
+                <div style={{ fontSize: '.6rem', color: 'var(--text-muted)', marginBottom: 10 }}>
+                  {qc} {{ vi: 'câu', zh: '題', en: 'Q' }[lang]} · 60'
+                </div>
+                <div style={{
+                  display: 'inline-flex', alignItems: 'center', gap: 4,
+                  background: `${th.grad}22`, color: th.gradDark,
+                  borderRadius: 8, padding: '4px 8px',
+                  fontSize: '.62rem', fontWeight: 800, letterSpacing: '.02em',
+                }}>
+                  {{ vi: 'Vào thi', zh: '進入測驗', en: 'Start' }[lang]} →
+                </div>
+              </div>
+            </button>
+          );
+        })}
+      </div>
+
+      {/* ── Recent history ─────────────────────────────────────────────────── */}
       {attempts.length > 0 && (() => {
         const histLbl = {
           vi: { title: 'Lịch sử gần đây', viewAll: 'Xem tất cả', wrong: 'câu sai', review: 'Xem lại' },
@@ -710,21 +841,33 @@ const SelectPhase: React.FC<{
             {attempts.slice(0, 3).map((a) => {
               const pct = Math.round(a.score / a.total * 100);
               const wrongCt = a.questions.filter(q => q.chosen !== q.answer).length;
+              const th = BAND_THEME[a.band as 'A'|'B'|'C'];
               return (
                 <div key={a.id} style={{
                   display: 'flex', alignItems: 'center', gap: 10,
                   padding: '8px 0', borderBottom: '1px solid var(--bg)',
                   flexWrap: 'wrap',
                 }}>
-                  <div style={{ flex: 1, minWidth: 120 }}>
-                    <div style={{ fontSize: '.82rem' }}>Band {a.band} · {examLabels[a.examKey as ExamKey]?.[lang] ?? a.examKey} · ⏱ {fmtDuration(a.timeTakenSecs)}</div>
-                    <div style={{ fontSize: '.75rem', color: 'var(--text-muted)' }}>{fmtDate(a.date)}</div>
+                  <div style={{
+                    width: 34, height: 34, borderRadius: 8, flexShrink: 0,
+                    background: `linear-gradient(135deg, ${th.grad}, ${th.gradDark})`,
+                    display: 'flex', alignItems: 'center', justifyContent: 'center',
+                    fontSize: '.75rem', fontWeight: 800, color: '#fff',
+                  }}>
+                    {a.band}
+                  </div>
+                  <div style={{ flex: 1, minWidth: 100 }}>
+                    <div style={{ fontSize: '.82rem', fontWeight: 600 }}>
+                      {examLabels[a.examKey as ExamKey]?.[lang] ?? a.examKey}
+                      <span style={{ fontWeight: 400, color: 'var(--text-muted)', marginLeft: 6 }}>⏱ {fmtDuration(a.timeTakenSecs)}</span>
+                    </div>
+                    <div style={{ fontSize: '.72rem', color: 'var(--text-muted)' }}>{fmtDate(a.date)}</div>
                   </div>
                   <div style={{ textAlign: 'right', flexShrink: 0 }}>
-                    <div style={{ fontWeight: 700, color: pct >= 70 ? 'var(--success)' : 'var(--error)' }}>
-                      {a.score}/{a.total} ({pct}%)
+                    <div style={{ fontWeight: 700, color: pct >= 70 ? 'var(--success)' : 'var(--error)', fontSize: '.9rem' }}>
+                      {a.score}/{a.total}
                     </div>
-                    <div style={{ fontSize: '.75rem', color: 'var(--text-muted)' }}>
+                    <div style={{ fontSize: '.7rem', color: 'var(--text-muted)' }}>
                       {wrongCt} {histLbl.wrong}
                     </div>
                   </div>
@@ -737,23 +880,6 @@ const SelectPhase: React.FC<{
           </div>
         );
       })()}
-    </div>
-  );
-};
-
-const ExamCard: React.FC<{ band: 'A' | 'B' | 'C'; count: number; parts: string; onClick: () => void }> = ({ band, count, parts, onClick }) => {
-  const { t } = useLang();
-  return (
-    <div style={{ flex: 1, minWidth: 200, border: '1px solid var(--border)', borderRadius: 'var(--radius-lg)', padding: '20px', cursor: 'pointer', transition: 'border-color .15s' }}
-         onClick={onClick}
-         onMouseEnter={e => (e.currentTarget.style.borderColor = 'var(--accent)')}
-         onMouseLeave={e => (e.currentTarget.style.borderColor = 'var(--border)')}>
-      <span className={`badge badge-${band}`} style={{ marginBottom: 10, display: 'inline-block' }}>Band {band}</span>
-      <div style={{ fontSize: '2rem', fontWeight: 700 }}>{count} câu</div>
-      <div className="text-sm text-muted" style={{ marginTop: 4 }}>{parts} · 60 phút</div>
-      <button className="btn btn-primary btn-sm" style={{ marginTop: 12 }} onClick={e => { e.stopPropagation(); onClick(); }}>
-        {t('exam_start')}
-      </button>
     </div>
   );
 };
