@@ -12,6 +12,7 @@ import {
 } from '../../utils/aiExplanation';
 import { progressApi } from '../../api/client';
 import { HighlightableText } from '../HighlightableText';
+import { OfficialTranscript } from './OfficialTranscript';
 
 interface Props {
   listeningData: ListeningData;
@@ -896,6 +897,9 @@ export const ListeningModule: React.FC<Props> = ({ listeningData, token }) => {
         {/* ── Left 80%: question content ─────────────────────────────────────── */}
         <div className="exam-content">
           <div className="card">
+
+            {/* Official transcript (PDF-extracted) — spoiler with first-time warning */}
+            <OfficialTranscript band={band} examKey={examKey} questionId={q.id} />
 
             {/* Page image (image_choice) */}
             {q.page_image && q.partType === 'image_choice' && (

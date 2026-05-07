@@ -266,6 +266,27 @@ export interface ListeningData {
   bandC: Record<ExamKey, ListeningExam>;
 }
 
+// ─── Listening official transcripts (extracted from PDFs) ─────────────────────
+export type TranscriptSpeaker = string; // '男' | '女' | '男1' | '女2' | '老師' | etc.
+
+export type TranscriptBlock =
+  | { kind: 'narration'; text: string }
+  | { kind: 'dialogue'; lines: { speaker: TranscriptSpeaker; text: string }[] }
+  | { kind: 'qa'; question: string; asked_by?: TranscriptSpeaker; options?: Partial<Record<OptionKey, string>> };
+
+export interface TranscriptItem {
+  ids: number[];                // question IDs sharing this audio block
+  blocks: TranscriptBlock[];
+}
+
+export interface ExamTranscripts {
+  source: string;
+  examKey: string;              // e.g. "bandB-exam1"
+  stats?: Record<string, unknown>;
+  // Band A has parts 1-4; Band B/C have parts 1-2
+  parts: Partial<Record<'part1' | 'part2' | 'part3' | 'part4', TranscriptItem[]>>;
+}
+
 // ─── AI Generator types ───────────────────────────────────────────────────────
 export type AIContentType = 'sentences' | 'reading';
 

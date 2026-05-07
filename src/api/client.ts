@@ -1,5 +1,5 @@
 // ── API base URL ──────────────────────────────────────────────────────────────
-export const API_BASE = "https://tocfl-study-api.ngrok.app";
+export const API_BASE = "https://tocflapi.a.pinggy.link";
 
 // ── Types ─────────────────────────────────────────────────────────────────────
 export interface AuthResponse {
