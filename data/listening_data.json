@@ -5478,7 +5478,7 @@
     },
     "exam4": {
       "title": "進階高階級聽力測驗 模擬試題 第四回",
-      "duration": 3600,
+      "duration": 36000,
       "parts": [
         {
           "id": "part1",
@@ -6213,7 +6213,7 @@
     },
     "exam5": {
       "title": "進階高階級聽力測驗 模擬試題 第五回",
-      "duration": 3600,
+      "duration": 36000,
       "parts": [
         {
           "id": "part1",
